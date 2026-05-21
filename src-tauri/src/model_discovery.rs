@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::sync::Mutex;
 use std::time::{Duration, Instant};
-use crate::hermes_cli;
+use crate::providers::PROVIDER_ENV_KEYS;
 
 static CACHE: once_cell::sync::Lazy<Mutex<HashMap<String, (Instant, Vec<String>)>>> =
     once_cell::sync::Lazy::new(|| Mutex::new(HashMap::new()));
@@ -16,6 +16,7 @@ const PROVIDER_BASE_URLS: &[(&str, &str)] = &[
     ("fireworks", "https://api.fireworks.ai/inference/v1"), ("cerebras", "https://api.cerebras.ai/v1"),
     ("perplexity", "https://api.perplexity.ai"), ("huggingface", "https://router.huggingface.co/v1"),
     ("zai", "https://api.z.ai/api/paas/v4"), ("anthropic", "https://api.anthropic.com/v1"),
+    ("nvidia", "https://integrate.api.nvidia.com/v1"),
 ];
 
 const NON_DISCOVERABLE: &[&str] = &[
@@ -75,7 +76,20 @@ pub async fn discover_provider_models(
         }
     }
 
-    let key = api_key.unwrap_or_default();
+    let mut key = api_key.unwrap_or_default();
+    if key.is_empty() {
+        // Fall back to reading from .env
+        if let Ok(env) = crate::config::get_env_all_raw(profile.as_deref()) {
+            for (k, v) in PROVIDER_ENV_KEYS {
+                if *k == lower { key = env.get(*v).cloned().unwrap_or_default(); break; }
+            }
+            if key.is_empty() {
+                for (pattern, env_key) in PROVIDER_ENV_KEYS {
+                    if base.to_lowercase().contains(pattern) { key = env.get(*env_key).cloned().unwrap_or_default(); break; }
+                }
+            }
+        }
+    }
     if key.is_empty() { return Ok(DiscoverModelsResult { models: vec![], status: "no-key".into(), cached: false }); }
 
     let url = format!("{}/models", base.trim_end_matches('/'));
