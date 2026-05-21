@@ -1,6 +1,6 @@
 {
   "productName": "Hermes Agent",
-  "version": "0.4.5",
+  "version": "0.5.0",
   "identifier": "com.nousresearch.hermes",
   "build": {
     "frontendDist": "../dist",
