@@ -37,6 +37,7 @@ function Chat({
   const [isLoading, setIsLoading] = useState(false);
   const [hermesSessionId, setHermesSessionId] = useState<string | null>(null);
   const [toolProgress, setToolProgress] = useState<string | null>(null);
+  const [goal, setGoal] = useState("");
   const [usage, setUsage] = useState<UsageState | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const [remoteMode, setRemoteMode] = useState(false);
@@ -137,6 +138,8 @@ function Chat({
     onSessionStarted,
     chatInputRef,
     localCommands,
+    goal,
+    setGoal,
   });
 
   const handleSuggestion = useCallback((text: string) => {
@@ -225,8 +228,18 @@ function Chat({
         <div ref={bottomRef} />
       </div>
 
+      {goal && (
+        <div className="chat-goal-bar" style={{ display: "flex", alignItems: "center", gap: 8, padding: "4px 12px", background: "var(--accent-subtle)", fontSize: 12 }}>
+          <span style={{ fontWeight: 600, color: "var(--accent-text)" }}>Goal:</span>
+          <span style={{ flex: 1, color: "var(--text-primary)" }}>{goal}</span>
+          <button className="btn-ghost" onClick={() => setGoal("")} style={{ fontSize: 11, color: "var(--text-muted)" }}>✕</button>
+        </div>
+      )}
       <div className="chat-input-area">
         <ChatInput
+          goal={goal}
+          onGoalChange={setGoal}
+
           ref={chatInputRef}
           isLoading={isLoading}
           hasSession={!!hermesSessionId}

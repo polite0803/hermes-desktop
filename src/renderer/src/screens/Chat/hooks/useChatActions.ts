@@ -18,6 +18,8 @@ interface UseChatActionsArgs {
   onSessionStarted?: () => void;
   chatInputRef: React.RefObject<ChatInputHandle | null>;
   localCommands: LocalCommands;
+  goal?: string;
+  setGoal?: (goal: string) => void;
 }
 
 interface UseChatActionsResult {
@@ -44,6 +46,8 @@ export function useChatActions({
   onSessionStarted,
   chatInputRef,
   localCommands,
+  goal,
+  setGoal,
 }: UseChatActionsArgs): UseChatActionsResult {
   const messagesRef = useRef(messages);
   const isLoadingRef = useRef(isLoading);
@@ -70,8 +74,9 @@ export function useChatActions({
   const sendToAgent = useCallback(
     async (text: string, attachments?: Attachment[]): Promise<void> => {
       try {
+        const fullText = goal ? `[Goal: ${goal}]\n\n${text}` : text;
         await hermesAPI.sendMessage(
-          text,
+          fullText,
           profile,
           hermesSessionId || undefined,
           messagesRef.current.map((m) => ({
@@ -91,6 +96,15 @@ export function useChatActions({
     async (text: string, attachments?: Attachment[]): Promise<void> => {
       const hasPayload = text.length > 0 || (attachments?.length ?? 0) > 0;
       if (!hasPayload || isLoadingRef.current) return;
+
+      if (text && text.startsWith("/goal ") && setGoal) {
+        setGoal(text.slice(6).trim());
+        return;
+      }
+      if (text && text === "/goal clear" && setGoal) {
+        setGoal("");
+        return;
+      }
 
       if (text && localCommands.isLocal(text)) {
         const cmd = text.split(/\s+/)[0].toLowerCase();
