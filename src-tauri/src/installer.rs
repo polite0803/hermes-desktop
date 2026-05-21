@@ -221,8 +221,14 @@ pub async fn start_pypi_install(app: AppHandle) -> Result<InstallResult, String>
 
 #[tauri::command]
 pub fn verify_install() -> Result<bool, String> {
-    if !hermes_python().exists() || !hermes_script().exists() { return Ok(false); }
-    hermes_cli::run_hermes_cli(&["--version"], None).map(|v| !v.is_empty()).or(Ok(false))
+    // Try the hermess CLI directly — this uses resolve_python/script which handle multiple install locations
+    match hermes_cli::run_hermes_cli(&["--version"], None) {
+        Ok(v) => Ok(!v.is_empty()),
+        Err(_) => {
+            // Fallback: check file existence via installer paths
+            Ok(hermes_python().exists() && hermes_script().exists())
+        }
+    }
 }
 
 // ─── Async Install ───
@@ -458,7 +464,8 @@ pub async fn claw3d_setup(app: AppHandle) -> Result<InstallResult, String> {
 
     if !claw3d_dir.exists() {
         let _ = app.emit("claw3d-setup-progress", InstallProgress { step: 2, total_steps: 3, title: "Cloning Claw3D".into(), detail: "Cloning repository...".into(), log: None });
-        let out = Command::new("git").args(&["clone","https://github.com/iamlukethedev/Claw3D"]).arg(&claw3d_dir).output().map_err(|e| e.to_string())?;
+        let out = Command::new("git").args(&["clone","https://github.com/iamlukethedev/Claw3D"]).arg(&claw3d_dir)
+            .env("PATH", get_enhanced_path()).output().map_err(|e| format!("git not found: {}", e))?;
         if !out.status.success() {
             let err = String::from_utf8_lossy(&out.stderr).trim().to_string();
             return Ok(InstallResult { success: false, error: Some(err) });
@@ -469,7 +476,7 @@ pub async fn claw3d_setup(app: AppHandle) -> Result<InstallResult, String> {
     let app2 = app.clone();
     let dir = claw3d_dir.to_string_lossy().to_string();
     let mut npm_cmd = Command::new("npm");
-    npm_cmd.arg("install").current_dir(&dir);
+    npm_cmd.arg("install").current_dir(&dir).env("PATH", get_enhanced_path());
     spawn_and_stream(app2, &mut npm_cmd, 3, 3, "Installing dependencies".into(),
         move |ok, log| { let _ = tx.send((ok, log)); }
     );

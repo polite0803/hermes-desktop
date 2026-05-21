@@ -11,8 +11,15 @@ pub fn resolve_hermes_home() -> PathBuf {
     // Default locations (platform-specific)
     #[cfg(target_os = "windows")]
     {
+        // Prefer LOCALAPPDATA\hermes (install.ps1 default), fall back to USERPROFILE\.hermes
+        if let Ok(local) = std::env::var("LOCALAPPDATA") {
+            let p = PathBuf::from(&local).join("hermes");
+            if p.join("hermes-agent").exists() || p.join("config.yaml").exists() {
+                return p;
+            }
+        }
         let base = std::env::var("USERPROFILE").unwrap_or_else(|_| "C:\\".to_string());
-        return PathBuf::from(base).join(".hermes");
+        PathBuf::from(base).join(".hermes")
     }
 
     #[cfg(not(target_os = "windows"))]
@@ -34,23 +41,48 @@ pub fn resolve_profile_home(profile: Option<&str>) -> PathBuf {
 /// Resolve Python executable path from Hermes venv
 pub fn resolve_python() -> PathBuf {
     let hermes_home = resolve_hermes_home();
-    let venv_dir = hermes_home.join("venv");
+    let repo_dir = hermes_home.join("hermes-agent");
+    // Check both possible locations: hermes-agent/venv (install.sh) and venv (legacy)
+    let venv_agent = repo_dir.join("venv");
+    let venv_legacy = hermes_home.join("venv");
 
     #[cfg(target_os = "windows")]
     {
-        venv_dir.join("Scripts").join("python.exe")
+        let p = venv_agent.join("Scripts").join("python.exe");
+        if p.exists() { return p; }
+        venv_legacy.join("Scripts").join("python.exe")
     }
 
     #[cfg(not(target_os = "windows"))]
     {
-        venv_dir.join("bin").join("python3")
+        let p = venv_agent.join("bin").join("python3");
+        if p.exists() { return p; }
+        let p = venv_agent.join("bin").join("python");
+        if p.exists() { return p; }
+        venv_legacy.join("bin").join("python3")
     }
 }
 
 /// Resolve the Hermes agent script path
 pub fn resolve_hermes_script() -> PathBuf {
     let hermes_home = resolve_hermes_home();
-    hermes_home.join("hermes")
+    let repo_dir = hermes_home.join("hermes-agent");
+
+    #[cfg(target_os = "windows")]
+    {
+        let p = repo_dir.join("venv").join("Scripts").join("hermes.exe");
+        if p.exists() { return p; }
+        hermes_home.join("hermes")
+    }
+
+    #[cfg(not(target_os = "windows"))]
+    {
+        let p = repo_dir.join("hermes");
+        if p.exists() { return p; }
+        let p = repo_dir.join("venv").join("bin").join("hermes");
+        if p.exists() { return p; }
+        hermes_home.join("hermes")
+    }
 }
 
 /// Run Hermes CLI command and capture stdout
