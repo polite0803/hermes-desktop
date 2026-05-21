@@ -25,8 +25,7 @@ mod yaml_path;
 mod sse_parser;
 
 use std::collections::HashMap;
-use tauri::Emitter;
-use tauri::menu::{Menu, Submenu, MenuItem, PredefinedMenuItem};
+use tauri::menu::MenuItem;
 use tauri::tray::TrayIconBuilder;
 use tauri::Manager;
 
@@ -177,28 +176,6 @@ fn get_system_info() -> serde_json::Value {
     })
 }
 
-fn build_menu(app: &tauri::AppHandle, locale: &str) -> tauri::Result<Menu<tauri::Wry>> {
-    let new_chat = MenuItem::with_id(app, "new_chat", t("menu.newChat", locale), true, Some("CmdOrCtrl+N"))?;
-    let search = MenuItem::with_id(app, "search_sessions", t("menu.searchSessions", locale), true, Some("CmdOrCtrl+K"))?;
-    let chat_menu = Submenu::with_items(app, t("menu.chat", locale), true, &[&new_chat, &search])?;
-    let edit_menu = Submenu::with_items(app, t("menu.edit", locale), true, &[
-        &PredefinedMenuItem::undo(app, None)?, &PredefinedMenuItem::redo(app, None)?,
-        &PredefinedMenuItem::separator(app)?,
-        &PredefinedMenuItem::cut(app, None)?, &PredefinedMenuItem::copy(app, None)?,
-        &PredefinedMenuItem::paste(app, None)?, &PredefinedMenuItem::select_all(app, None)?,
-    ])?;
-    let view_menu = Submenu::with_items(app, t("menu.view", locale), true, &[
-        &PredefinedMenuItem::fullscreen(app, None)?,
-    ])?;
-    let window_menu = Submenu::with_items(app, t("menu.window", locale), true, &[
-        &PredefinedMenuItem::minimize(app, None)?, &PredefinedMenuItem::close_window(app, None)?,
-    ])?;
-    let help_menu = Submenu::with_items(app, t("menu.help", locale), true, &[
-        &MenuItem::with_id(app, "about", t("menu.about", locale), true, None::<&str>)?,
-    ])?;
-    Menu::with_items(app, &[&chat_menu, &edit_menu, &view_menu, &window_menu, &help_menu])
-}
-
 fn current_locale() -> String {
     crate::locale::get_locale()
 }
@@ -214,15 +191,6 @@ pub fn run() {
         .plugin(tauri_plugin_process::init())
         .setup(move |app| {
             let loc = locale.clone();
-            let menu = build_menu(app.handle(), &loc)?;
-            app.set_menu(menu)?;
-            app.on_menu_event(move |app_handle, event| {
-                match event.id().as_ref() {
-                    "new_chat" => { let _ = app_handle.emit("menu-new-chat", ()); }
-                    "search_sessions" => { let _ = app_handle.emit("menu-search-sessions", ()); }
-                    _ => {}
-                }
-            });
 
             let icon = app.default_window_icon().cloned();
             let mut builder = TrayIconBuilder::new().tooltip(t("tray.tooltip", &loc));
