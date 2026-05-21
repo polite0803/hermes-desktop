@@ -1038,15 +1038,10 @@ function LanguageSelect({
 }): React.JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
   const btnRef = useRef<HTMLButtonElement>(null);
-  const [dropStyle, setDropStyle] = useState<React.CSSProperties>({});
+  const dropStyleRef = useRef<React.CSSProperties>({});
 
   useEffect(() => {
     if (!isOpen) return;
-    const el = btnRef.current;
-    if (el) {
-      const r = el.getBoundingClientRect();
-      setDropStyle({ top: r.bottom + 4, left: r.left, width: r.width });
-    }
     function outside(e: MouseEvent): void {
       if (btnRef.current && !btnRef.current.contains(e.target as Node)) setIsOpen(false);
     }
@@ -1056,13 +1051,22 @@ function LanguageSelect({
     return () => { document.removeEventListener("mousedown", outside); document.removeEventListener("keydown", esc); };
   }, [isOpen]);
 
+  function openDropdown(): void {
+    const el = btnRef.current;
+    if (el) {
+      const r = el.getBoundingClientRect();
+      dropStyleRef.current = { top: r.bottom + 4, left: r.left, width: r.width };
+    }
+    setIsOpen(true);
+  }
+
   return (
     <div className="settings-language-select">
       <button
         ref={btnRef}
         type="button"
         className="settings-language-trigger"
-        onClick={() => setIsOpen((v) => !v)}
+        onClick={openDropdown}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
       >
@@ -1070,7 +1074,7 @@ function LanguageSelect({
         <ChevronDown size={14} />
       </button>
       {isOpen && (
-        <div className="settings-language-dropdown" style={dropStyle} role="listbox">
+        <div className="settings-language-dropdown" style={dropStyleRef.current} role="listbox">
           {APP_LOCALES.map((l) => {
             const active = l === locale;
             return (
