@@ -2638,7 +2638,10 @@ body {
 }
 
 .settings-language-dropdown {
-  position: fixed;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
   max-height: 280px;
   overflow-y: auto;
   background: var(--bg-secondary);
@@ -5561,5 +5564,4 @@ body {
 .tab-bar-item { padding: 8px 16px; font-size: 13px; font-weight: 500; color: var(--text-muted); background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; transition: all var(--transition); font-family: var(--font-sans); }
 .tab-bar-item:hover { color: var(--text-primary); }
 .tab-bar-item.active { color: var(--accent-text); border-bottom-color: var(--accent); }
-.tab-content { flex: 1; overflow: auto; }
-.tab-content .settings-container { overflow: visible; }
+.tab-content { flex: 1; }

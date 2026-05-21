@@ -1037,13 +1037,12 @@ function LanguageSelect({
   onSelect: (l: AppLocale) => void;
 }): React.JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
-  const btnRef = useRef<HTMLButtonElement>(null);
-  const [dropStyle, setDropStyle] = useState<React.CSSProperties>({});
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!isOpen) return;
     function outside(e: MouseEvent): void {
-      if (btnRef.current && !btnRef.current.contains(e.target as Node)) setIsOpen(false);
+      if (ref.current && !ref.current.contains(e.target as Node)) setIsOpen(false);
     }
     function esc(e: KeyboardEvent): void { if (e.key === "Escape") setIsOpen(false); }
     document.addEventListener("mousedown", outside);
@@ -1051,24 +1050,12 @@ function LanguageSelect({
     return () => { document.removeEventListener("mousedown", outside); document.removeEventListener("keydown", esc); };
   }, [isOpen]);
 
-  function toggleDropdown(): void {
-    if (!isOpen) {
-      const el = btnRef.current;
-      if (el) {
-        const r = el.getBoundingClientRect();
-        setDropStyle({ top: r.bottom + 4, left: r.left, width: r.width });
-      }
-    }
-    setIsOpen((v) => !v);
-  }
-
   return (
-    <div className="settings-language-select">
+    <div className="settings-language-select" ref={ref}>
       <button
-        ref={btnRef}
         type="button"
         className="settings-language-trigger"
-        onClick={toggleDropdown}
+        onClick={() => setIsOpen((v) => !v)}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
       >
@@ -1076,7 +1063,7 @@ function LanguageSelect({
         <ChevronDown size={14} />
       </button>
       {isOpen && (
-        <div className="settings-language-dropdown" style={dropStyle} role="listbox">
+        <div className="settings-language-dropdown" role="listbox">
           {APP_LOCALES.map((l) => {
             const active = l === locale;
             return (
@@ -1087,8 +1074,8 @@ function LanguageSelect({
                 aria-selected={active}
                 className={`settings-language-option ${active ? "active" : ""}`}
                 onClick={() => {
+                  onSelect(l);
                   setIsOpen(false);
-                  requestAnimationFrame(() => onSelect(l));
                 }}
               >
                 <span>{LANGUAGE_NATIVE_NAMES[l]}</span>
