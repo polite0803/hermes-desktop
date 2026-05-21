@@ -10,7 +10,7 @@ import commonEn from "./locales/en/common";
 import mcpEn from "./locales/en/mcp";
 import pluginsEn from "./locales/en/plugins";
 import usageEn from "./locales/en/usage";
-import contextFilesEn from "./locales/en/contextfiles";
+import contextFilesEn from "./locales/en/contextFiles";
 import securityEn from "./locales/en/security";
 import curatorEn from "./locales/en/curator";
 import navigationEn from "./locales/en/navigation";
