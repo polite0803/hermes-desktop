@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { hermesAPI } from "@shared/hermes-api";
 
 export type DiscoveryStatus =
   | "idle"
@@ -56,7 +57,7 @@ export function useDiscoveredModels(
     setStatus("loading");
     const handle = setTimeout(async () => {
       try {
-        const result = await window.hermesAPI.discoverProviderModels(
+        const result = await hermesAPI.discoverProviderModels(
           provider,
           baseUrl,
           apiKey,

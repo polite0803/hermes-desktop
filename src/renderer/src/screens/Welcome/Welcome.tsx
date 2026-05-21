@@ -10,6 +10,7 @@ import {
 } from "../../assets/icons";
 import { getInstallCmd } from "../../constants";
 import { useI18n } from "../../components/useI18n";
+import { hermesAPI } from "@shared/hermes-api";
 
 interface WelcomeProps {
   error: string | null;
@@ -56,9 +57,9 @@ function Welcome({
     setRemoteTesting(true);
     setRemoteError(null);
     try {
-      const ok = await window.hermesAPI.testRemoteConnection(url, key);
+      const ok = await hermesAPI.testRemoteConnection(url, key);
       if (ok) {
-        await window.hermesAPI.setConnectionConfig("remote", url, key);
+        await hermesAPI.setConnectionConfig("remote", url, key);
         onRecheck();
       } else {
         setRemoteError(
@@ -84,7 +85,7 @@ function Welcome({
     setSshTesting(true);
     setSshError(null);
     try {
-      const ok = await window.hermesAPI.testSshConnection(
+      const ok = await hermesAPI.testSshConnection(
         host,
         port,
         user,
@@ -92,7 +93,7 @@ function Welcome({
         remotePort,
       );
       if (ok) {
-        await window.hermesAPI.setSshConfig(
+        await hermesAPI.setSshConfig(
           host,
           port,
           user,

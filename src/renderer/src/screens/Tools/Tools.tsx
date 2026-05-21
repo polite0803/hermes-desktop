@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useI18n } from "../../components/useI18n";
+import { hermesAPI } from "@shared/hermes-api";
 
 interface ToolsetInfo {
   key: string;
@@ -265,8 +266,8 @@ function Tools({ profile }: ToolsProps): React.JSX.Element {
   const loadToolsets = useCallback(async (): Promise<void> => {
     setLoading(true);
     const [list, mcp] = await Promise.all([
-      window.hermesAPI.getToolsets(profile),
-      window.hermesAPI.listMcpServers(profile),
+      hermesAPI.getToolsets(profile),
+      hermesAPI.listMcpServers(profile),
     ]);
     setToolsets(list);
     setMcpServers(mcp);
@@ -284,7 +285,7 @@ function Tools({ profile }: ToolsProps): React.JSX.Element {
     setToolsets((prev) =>
       prev.map((t) => (t.key === key ? { ...t, enabled: !currentEnabled } : t)),
     );
-    await window.hermesAPI.setToolsetEnabled(key, !currentEnabled, profile);
+    await hermesAPI.setToolsetEnabled(key, !currentEnabled, profile);
   }
 
   if (loading) {

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { GATEWAY_SECTIONS, GATEWAY_PLATFORMS } from "../../constants";
 import { useI18n } from "../../components/useI18n";
 import BrandLogo from "../../components/common/BrandLogo";
+import { hermesAPI } from "@shared/hermes-api";
 
 function Gateway({ profile }: { profile?: string }): React.JSX.Element {
   const { t } = useI18n();
@@ -20,11 +21,11 @@ function Gateway({ profile }: { profile?: string }): React.JSX.Element {
   );
 
   const loadConfig = useCallback(async (): Promise<void> => {
-    const envData = await window.hermesAPI.getEnv(profile);
+    const envData = await hermesAPI.getEnv(profile);
     setEnv(envData);
-    const gwStatus = await window.hermesAPI.gatewayStatus();
+    const gwStatus = await hermesAPI.gatewayStatus();
     setGatewayRunning(gwStatus);
-    const platforms = await window.hermesAPI.getPlatformEnabled(profile);
+    const platforms = await hermesAPI.getPlatformEnabled(profile);
     setPlatformEnabled(platforms);
   }, [profile]);
 
@@ -35,7 +36,7 @@ function Gateway({ profile }: { profile?: string }): React.JSX.Element {
   // Poll gateway status (10s interval to reduce IPC overhead)
   useEffect(() => {
     const interval = setInterval(async () => {
-      const status = await window.hermesAPI.gatewayStatus();
+      const status = await hermesAPI.gatewayStatus();
       setGatewayRunning(status);
     }, 10000);
     return () => clearInterval(interval);
@@ -47,13 +48,13 @@ function Gateway({ profile }: { profile?: string }): React.JSX.Element {
       gatewayStatusTimeoutRef.current = null;
     }
     if (gatewayRunning) {
-      await window.hermesAPI.stopGateway();
+      await hermesAPI.stopGateway();
       setGatewayRunning(false);
     } else {
-      const started = await window.hermesAPI.startGateway();
+      const started = await hermesAPI.startGateway();
       setGatewayRunning(started);
       gatewayStatusTimeoutRef.current = setTimeout(async () => {
-        const status = await window.hermesAPI.gatewayStatus();
+        const status = await hermesAPI.gatewayStatus();
         setGatewayRunning(status);
         gatewayStatusTimeoutRef.current = null;
       }, 2000);
@@ -67,9 +68,9 @@ function Gateway({ profile }: { profile?: string }): React.JSX.Element {
     }
     const newValue = !platformEnabled[platform];
     setPlatformEnabled((prev) => ({ ...prev, [platform]: newValue }));
-    await window.hermesAPI.setPlatformEnabled(platform, newValue, profile);
+    await hermesAPI.setPlatformEnabled(platform, newValue, profile);
     platformStatusTimeoutRef.current = setTimeout(async () => {
-      const status = await window.hermesAPI.gatewayStatus();
+      const status = await hermesAPI.gatewayStatus();
       setGatewayRunning(status);
       platformStatusTimeoutRef.current = null;
     }, 3000);
@@ -77,7 +78,7 @@ function Gateway({ profile }: { profile?: string }): React.JSX.Element {
 
   async function handleBlur(key: string): Promise<void> {
     const value = env[key] || "";
-    await window.hermesAPI.setEnv(key, value, profile);
+    await hermesAPI.setEnv(key, value, profile);
     setSavedKey(key);
     setTimeout(() => setSavedKey(null), 2000);
   }

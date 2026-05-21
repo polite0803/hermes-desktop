@@ -8,6 +8,16 @@ import {
 import { I18nProvider } from "./I18nProvider";
 import { useI18n } from "./useI18n";
 
+const getLocale = vi.fn().mockResolvedValue(DEFAULT_ACTIVE_LOCALE);
+const setLocale = vi.fn().mockResolvedValue(undefined);
+
+vi.mock("@shared/hermes-api", () => ({
+  hermesAPI: {
+    get getLocale() { return getLocale; },
+    get setLocale() { return setLocale; },
+  },
+}));
+
 function Probe(): React.JSX.Element {
   const { t } = useI18n();
   return <div>{t("welcome.title")}</div>;
@@ -24,28 +34,12 @@ function LocaleSwitcherProbe(): React.JSX.Element {
   );
 }
 
-function installHermesAPI(
-  api: Pick<Window["hermesAPI"], "getLocale" | "setLocale">,
-): void {
-  Object.defineProperty(window, "hermesAPI", {
-    configurable: true,
-    value: api,
-  });
-}
-
 describe("I18nProvider", () => {
-  const getLocale = vi.fn().mockResolvedValue(DEFAULT_ACTIVE_LOCALE);
-  const setLocale = vi.fn().mockResolvedValue(DEFAULT_ACTIVE_LOCALE);
-
   beforeEach(() => {
-    installHermesAPI({
-      getLocale,
-      setLocale,
-    });
     getLocale.mockClear();
     setLocale.mockClear();
     getLocale.mockResolvedValue(DEFAULT_ACTIVE_LOCALE);
-    setLocale.mockResolvedValue(DEFAULT_ACTIVE_LOCALE);
+    setLocale.mockResolvedValue(undefined);
   });
 
   afterEach(() => {

@@ -8,6 +8,7 @@ import {
   type AppLocale,
 } from "../../../shared/i18n";
 import { I18nContext, type I18nContextValue } from "./I18nContext";
+import { hermesAPI } from "@shared/hermes-api";
 
 void sharedI18n.use(initReactI18next);
 
@@ -35,7 +36,7 @@ export function I18nProvider({
 }): React.JSX.Element {
   const [locale, setLocaleState] = useState<AppLocale>(initialLocale);
   const [mainLocaleLoaded, setMainLocaleLoaded] = useState(
-    () => !window.hermesAPI?.getLocale,
+    () => !hermesAPI?.getLocale,
   );
   const userSelectedLocale = useRef(false);
 
@@ -46,7 +47,7 @@ export function I18nProvider({
 
   useEffect(() => {
     let cancelled = false;
-    const getMainLocale = window.hermesAPI?.getLocale;
+    const getMainLocale = hermesAPI?.getLocale;
 
     if (!getMainLocale) {
       return;
@@ -77,7 +78,7 @@ export function I18nProvider({
     if (sharedI18n.language !== locale) {
       setSharedLocale(locale);
     }
-    void window.hermesAPI?.setLocale?.(locale).catch(() => {
+    void hermesAPI?.setLocale?.(locale).catch(() => {
       /* ignore */
     });
     try {

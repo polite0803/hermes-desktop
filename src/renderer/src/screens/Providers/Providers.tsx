@@ -3,6 +3,7 @@ import { SETTINGS_SECTIONS, PROVIDERS } from "../../constants";
 import { useI18n } from "../../components/useI18n";
 import BrandLogo from "../../components/common/BrandLogo";
 import { useDiscoveredModels } from "../../hooks/useDiscoveredModels";
+import { hermesAPI } from "@shared/hermes-api";
 
 function Providers({
   profile,
@@ -51,9 +52,9 @@ function Providers({
 
   const loadConfig = useCallback(async (): Promise<void> => {
     const [envData, mc, pool] = await Promise.all([
-      window.hermesAPI.getEnv(profile),
-      window.hermesAPI.getModelConfig(profile),
-      window.hermesAPI.getCredentialPool(),
+      hermesAPI.getEnv(profile),
+      hermesAPI.getModelConfig(profile),
+      hermesAPI.getCredentialPool(),
     ]);
     setEnv(envData);
     setModelProvider(mc.provider);
@@ -75,7 +76,7 @@ function Providers({
   useEffect(() => {
     if (!visible) return;
     (async (): Promise<void> => {
-      const mc = await window.hermesAPI.getModelConfig(profile);
+      const mc = await hermesAPI.getModelConfig(profile);
       modelLoaded.current = false;
       setModelProvider(mc.provider);
       setModelName(mc.model);
@@ -90,7 +91,7 @@ function Providers({
   // typing in the Model field still feels responsive.
   const saveModelConfig = useCallback(async () => {
     if (!modelLoaded.current) return;
-    await window.hermesAPI.setModelConfig(
+    await hermesAPI.setModelConfig(
       modelProvider,
       modelName,
       modelBaseUrl,
@@ -125,7 +126,7 @@ function Providers({
     if (modelLibTimer.current) clearTimeout(modelLibTimer.current);
     modelLibTimer.current = setTimeout(() => {
       const displayName = modelName.split("/").pop() || modelName;
-      window.hermesAPI
+      hermesAPI
         .addModel(displayName, modelProvider, modelName, modelBaseUrl)
         .catch(() => {
           /* non-fatal — library write is best-effort */
@@ -145,7 +146,7 @@ function Providers({
       envSaveTimers.current.delete(key);
     }
     const value = env[key] || "";
-    await window.hermesAPI.setEnv(key, value, profile);
+    await hermesAPI.setEnv(key, value, profile);
     setSavedKey(key);
     setTimeout(() => setSavedKey(null), 2000);
   }
@@ -162,7 +163,7 @@ function Providers({
     if (pending) clearTimeout(pending);
     const timer = setTimeout(() => {
       envSaveTimers.current.delete(key);
-      void window.hermesAPI.setEnv(key, value, profile);
+      void hermesAPI.setEnv(key, value, profile);
     }, 400);
     envSaveTimers.current.set(key, timer);
   }
@@ -183,7 +184,7 @@ function Providers({
     return () => {
       for (const [key, timer] of timers) {
         clearTimeout(timer);
-        void window.hermesAPI.setEnv(key, envRef.current[key] || "", profile);
+        void hermesAPI.setEnv(key, envRef.current[key] || "", profile);
       }
       timers.clear();
     };
@@ -199,7 +200,7 @@ function Providers({
         label: poolNewLabel.trim() || `Key ${existing.length + 1}`,
       },
     ];
-    await window.hermesAPI.setCredentialPool(poolProvider, entries);
+    await hermesAPI.setCredentialPool(poolProvider, entries);
     setCredPool((prev) => ({ ...prev, [poolProvider]: entries }));
     setPoolNewKey("");
     setPoolNewLabel("");
@@ -211,7 +212,7 @@ function Providers({
   ): Promise<void> {
     const entries = [...(credPool[provider] || [])];
     entries.splice(index, 1);
-    await window.hermesAPI.setCredentialPool(provider, entries);
+    await hermesAPI.setCredentialPool(provider, entries);
     setCredPool((prev) => ({ ...prev, [provider]: entries }));
   }
 

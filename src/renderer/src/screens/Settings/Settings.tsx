@@ -3,6 +3,7 @@ import { useTheme } from "../../components/ThemeProvider";
 import { THEME_OPTIONS } from "../../constants";
 import { useI18n } from "../../components/useI18n";
 import { APP_LOCALES, type AppLocale } from "../../../../shared/i18n";
+import { hermesAPI } from "@shared/hermes-api";
 import {
   Check,
   ChevronDown,
@@ -132,9 +133,9 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
   const loadConfig = useCallback(async (): Promise<void> => {
     // Load fast config first (cached in main process)
     const [home, aVersion, conn] = await Promise.all([
-      window.hermesAPI.getHermesHome(profile),
-      window.hermesAPI.getAppVersion(),
-      window.hermesAPI.getConnectionConfig(),
+      hermesAPI.getHermesHome(profile),
+      hermesAPI.getAppVersion(),
+      hermesAPI.getConnectionConfig(),
     ]);
     setHermesHome(home);
     setAppVersion(aVersion);
@@ -152,15 +153,15 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
     connLoaded.current = true;
 
     // Load network settings from config.yaml
-    window.hermesAPI.getConfig("network.force_ipv4", profile).then((v) => {
+    hermesAPI.getConfig("network.force_ipv4", profile).then((v) => {
       setForceIpv4(v === "true" || v === "True");
     });
-    window.hermesAPI.getConfig("network.proxy", profile).then((v) => {
+    hermesAPI.getConfig("network.proxy", profile).then((v) => {
       setHttpProxy(v || "");
     });
 
     // Defer slow calls — background refresh, cached values show instantly
-    window.hermesAPI.getHermesVersion().then((v) => {
+    hermesAPI.getHermesVersion().then((v) => {
       setHermesVersion(v);
       if (v) {
         try {
@@ -172,7 +173,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
     });
 
     if (localStorage.getItem("hermes-openclaw-dismissed") !== "true") {
-      window.hermesAPI.checkOpenClaw().then((claw) => {
+      hermesAPI.checkOpenClaw().then((claw) => {
         setOpenclawFound(claw.found);
         setOpenclawPath(claw.path);
         try {
@@ -193,12 +194,12 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
     setMigrationLog("");
     setMigrationResult(null);
 
-    const cleanup = window.hermesAPI.onInstallProgress((p) => {
+    const cleanup = hermesAPI.onInstallProgress((p) => {
       setMigrationLog(p.log);
     });
 
     try {
-      const result = await window.hermesAPI.runClawMigrate();
+      const result = await hermesAPI.runClawMigrate();
       cleanup();
       if (result.success) {
         setMigrationResult(t("settings.migrationComplete"));
@@ -238,7 +239,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
 
   async function handleSaveConnection(): Promise<void> {
     if (connMode === "ssh") {
-      await window.hermesAPI.setSshConfig(
+      await hermesAPI.setSshConfig(
         sshHost.trim(),
         parseInt(sshPort, 10) || 22,
         sshUser.trim(),
@@ -248,7 +249,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
       );
     } else {
       const apiKey = getConnectionApiKeyForSave();
-      await window.hermesAPI.setConnectionConfig(
+      await hermesAPI.setConnectionConfig(
         connMode,
         connRemoteUrl,
         apiKey,
@@ -277,7 +278,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
       }
       setConnTesting(true);
       setConnStatus(null);
-      const ok = await window.hermesAPI.testSshConnection(
+      const ok = await hermesAPI.testSshConnection(
         sshHost.trim(),
         parseInt(sshPort, 10) || 22,
         sshUser.trim(),
@@ -294,7 +295,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
       }
       setConnTesting(true);
       setConnStatus(null);
-      const ok = await window.hermesAPI.testRemoteConnection(
+      const ok = await hermesAPI.testRemoteConnection(
         url,
         getConnectionApiKeyForSave(),
       );
@@ -309,7 +310,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
     setConnApiKey("");
     setConnApiKeyMask("");
     setConnHasApiKey(false);
-    await window.hermesAPI.setConnectionConfig("local", "", "");
+    await hermesAPI.setConnectionConfig("local", "", "");
     setConnStatus(t("settings.switchedToLocal"));
     setTimeout(() => setConnStatus(null), 2000);
   }
@@ -317,7 +318,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
   async function handleBackup(): Promise<void> {
     setBackingUp(true);
     setBackupResult(null);
-    const result = await window.hermesAPI.runHermesBackup(profile);
+    const result = await hermesAPI.runHermesBackup(profile);
     setBackingUp(false);
     if (result.success) {
       setBackupResult(`Backup created: ${result.path || "success"}`);
@@ -336,7 +337,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
       setImporting(true);
       setImportResult(null);
       const filePath = (file as File & { path: string }).path;
-      const result = await window.hermesAPI.runHermesImport(filePath, profile);
+      const result = await hermesAPI.runHermesImport(filePath, profile);
       setImporting(false);
       if (result.success) {
         setImportResult(t("settings.migrationComplete"));
@@ -348,7 +349,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
   }
 
   async function loadLogs(): Promise<void> {
-    const result = await window.hermesAPI.readLogs(logFile, 300);
+    const result = await hermesAPI.readLogs(logFile, 300);
     setLogContent(result.content);
     setLogPath(result.path);
   }
@@ -356,14 +357,14 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
   async function handleDoctor(): Promise<void> {
     setDoctorRunning(true);
     setDoctorOutput(null);
-    const output = await window.hermesAPI.runHermesDoctor();
+    const output = await hermesAPI.runHermesDoctor();
     setDoctorOutput(output);
     setDoctorRunning(false);
   }
 
   // Helper to fetch fresh version, clear backend cache, and update localStorage
   function refreshVersion(): void {
-    window.hermesAPI.refreshHermesVersion().then((v) => {
+    hermesAPI.refreshHermesVersion().then((v) => {
       setHermesVersion(v);
       if (v) {
         try {
@@ -378,7 +379,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
   async function handleUpdateHermes(): Promise<void> {
     setUpdating(true);
     setUpdateResult(null);
-    const result = await window.hermesAPI.runHermesUpdate();
+    const result = await hermesAPI.runHermesUpdate();
     setUpdating(false);
     if (result.success) {
       setUpdateResult(t("settings.updateSuccess"));
@@ -515,7 +516,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
               onClick={async () => {
                 setDumpRunning(true);
                 setDumpOutput(null);
-                const output = await window.hermesAPI.runHermesDump();
+                const output = await hermesAPI.runHermesDump();
                 setDumpOutput(output);
                 setDumpRunning(false);
               }}
@@ -551,7 +552,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
             <button
               className="btn btn-secondary"
               onClick={() =>
-                window.hermesAPI.openExternal(TELEGRAM_COMMUNITY_URL)
+                hermesAPI.openExternal(TELEGRAM_COMMUNITY_URL)
               }
               title={TELEGRAM_COMMUNITY_URL}
             >
@@ -876,7 +877,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
                 onChange={async (e) => {
                   const val = e.target.checked;
                   setForceIpv4(val);
-                  await window.hermesAPI.setConfig(
+                  await hermesAPI.setConfig(
                     "network.force_ipv4",
                     val ? "true" : "false",
                     profile,
@@ -902,7 +903,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
             value={httpProxy}
             onChange={(e) => setHttpProxy(e.target.value)}
             onBlur={async () => {
-              await window.hermesAPI.setConfig(
+              await hermesAPI.setConfig(
                 "network.proxy",
                 httpProxy.trim(),
                 profile,
@@ -1001,7 +1002,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
                   className={`btn btn-sm ${logFile === f ? "btn-primary" : "btn-secondary"}`}
                   onClick={() => {
                     setLogFile(f);
-                    window.hermesAPI.readLogs(f, 300).then((r) => {
+                    hermesAPI.readLogs(f, 300).then((r) => {
                       setLogContent(r.content);
                       setLogPath(r.path);
                     });

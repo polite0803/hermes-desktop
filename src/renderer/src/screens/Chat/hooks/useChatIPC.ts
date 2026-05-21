@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import type { ChatMessage, UsageState } from "../types";
+import { hermesAPI } from "@shared/hermes-api";
 
 interface UseChatIPCArgs {
   setMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
@@ -23,7 +24,7 @@ export function useChatIPC({
   setUsage,
 }: UseChatIPCArgs): void {
   useEffect(() => {
-    const cleanupChunk = window.hermesAPI.onChatChunk((chunk) => {
+    const cleanupChunk = hermesAPI.onChatChunk((chunk) => {
       setMessages((prev) => {
         const last = prev[prev.length - 1];
         if (last && last.role === "agent") {
@@ -41,13 +42,13 @@ export function useChatIPC({
       });
     });
 
-    const cleanupDone = window.hermesAPI.onChatDone((sessionId) => {
+    const cleanupDone = hermesAPI.onChatDone((sessionId) => {
       if (sessionId) setHermesSessionId(sessionId);
       setToolProgress(null);
       setIsLoading(false);
     });
 
-    const cleanupError = window.hermesAPI.onChatError((error) => {
+    const cleanupError = hermesAPI.onChatError((error) => {
       setMessages((prev) => [
         ...prev,
         {
@@ -60,11 +61,11 @@ export function useChatIPC({
       setIsLoading(false);
     });
 
-    const cleanupToolProgress = window.hermesAPI.onChatToolProgress((tool) => {
+    const cleanupToolProgress = hermesAPI.onChatToolProgress((tool) => {
       setToolProgress(tool);
     });
 
-    const cleanupUsage = window.hermesAPI.onChatUsage((u) => {
+    const cleanupUsage = hermesAPI.onChatUsage((u) => {
       setUsage((prev) => ({
         promptTokens: (prev?.promptTokens || 0) + u.promptTokens,
         completionTokens: (prev?.completionTokens || 0) + u.completionTokens,

@@ -1,39 +1,43 @@
-.DS_Store
-.idea/
-
-# Dependencies
+# Node
 node_modules/
-
-# Build output
 dist/
 out/
 
-# TypeScript incremental build info
+# TypeScript
 *.tsbuildinfo
 
-# Logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
+# Rust / Tauri
+src-tauri/target/
+src-tauri/gen/
+src-tauri/WixTools/
 
-# Environment files
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
 .env
 .env.*
 !.env.example
 
-# ESLint cache
+# Logs
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# ESLint
 .eslintcache
 
-# Electron packaging artifacts
-release/
+# Hermes local
 .claude/worktrees
+release/
 
-# Tauri
-**/src-tauri/target/
-**/src-tauri/gen/
-**/src-tauri/WixTools/
-
-# Local launcher scripts (user-specific, do not commit)
+# Local scripts
 /*.bat
 /*.ps1

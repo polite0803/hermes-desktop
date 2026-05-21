@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
+import { hermesAPI } from "@shared/hermes-api";
 import {
   Plus,
   Refresh,
@@ -155,8 +156,8 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
       if (!silent) setLoading(true);
       try {
         const [boardsRes, tasksRes] = await Promise.all([
-          window.hermesAPI.kanbanListBoards(false, profile),
-          window.hermesAPI.kanbanListTasks({
+          hermesAPI.kanbanListBoards(false, profile),
+          hermesAPI.kanbanListTasks({
             includeArchived: false,
             profile,
           }),
@@ -195,7 +196,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
 
   useEffect(() => {
     if (!showCreate) return;
-    window.hermesAPI.listProfiles().then((profiles) => {
+    hermesAPI.listProfiles().then((profiles) => {
       setProfileOptions(profiles.map((p) => p.name));
     });
   }, [showCreate]);
@@ -216,7 +217,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
     }
     let cancelled = false;
     setDetailLoading(true);
-    window.hermesAPI.kanbanGetTask(detailTaskId, profile).then((res) => {
+    hermesAPI.kanbanGetTask(detailTaskId, profile).then((res) => {
       if (cancelled) return;
       if (res.success && res.data) setDetail(res.data);
       setDetailLoading(false);
@@ -257,7 +258,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
   }
 
   async function handlePickWorkspaceFolder(): Promise<void> {
-    const dir = await window.hermesAPI.selectFolder();
+    const dir = await hermesAPI.selectFolder();
     if (dir) setNewWorkspaceDir(dir);
   }
 
@@ -274,7 +275,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
       workspaceArg = newWorkspace || undefined;
     }
     setActionBusy("create");
-    const res = await window.hermesAPI.kanbanCreateTask(
+    const res = await hermesAPI.kanbanCreateTask(
       {
         title: newTitle.trim(),
         body: newBody.trim() || undefined,
@@ -298,7 +299,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
   async function handleBoardSwitch(slug: string): Promise<void> {
     if (currentBoard?.slug === slug) return;
     setActionBusy("board-switch");
-    const res = await window.hermesAPI.kanbanSwitchBoard(slug, profile);
+    const res = await hermesAPI.kanbanSwitchBoard(slug, profile);
     setActionBusy(null);
     if (!res.success) {
       setError(res.error || "Failed to switch board");
@@ -310,7 +311,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
   async function handleCreateBoard(): Promise<void> {
     if (!newBoardSlug.trim()) return;
     setActionBusy("board-create");
-    const res = await window.hermesAPI.kanbanCreateBoard(
+    const res = await hermesAPI.kanbanCreateBoard(
       newBoardSlug.trim(),
       newBoardName.trim() || undefined,
       true,
@@ -332,20 +333,20 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
     setActionBusy(task.id);
     let res: { success: boolean; error?: string };
     if (target === "done") {
-      res = await window.hermesAPI.kanbanCompleteTask(
+      res = await hermesAPI.kanbanCompleteTask(
         task.id,
         undefined,
         profile,
       );
     } else if (target === "blocked") {
       const reason = window.prompt("Reason for blocking?") || "";
-      res = await window.hermesAPI.kanbanBlockTask(
+      res = await hermesAPI.kanbanBlockTask(
         task.id,
         reason || undefined,
         profile,
       );
     } else if (target === "ready" && task.status === "blocked") {
-      res = await window.hermesAPI.kanbanUnblockTask(task.id, profile);
+      res = await hermesAPI.kanbanUnblockTask(task.id, profile);
     } else {
       setActionBusy(null);
       setError(
@@ -363,7 +364,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
 
   async function handleSpecify(task: KanbanTask): Promise<void> {
     setActionBusy(task.id);
-    const res = await window.hermesAPI.kanbanSpecifyTask(task.id, profile);
+    const res = await hermesAPI.kanbanSpecifyTask(task.id, profile);
     setActionBusy(null);
     if (!res.success) {
       setError(res.error || "Failed to specify task");
@@ -395,7 +396,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
   async function handleArchive(task: KanbanTask): Promise<void> {
     if (!window.confirm(`Archive "${task.title}"?`)) return;
     setActionBusy(task.id);
-    const res = await window.hermesAPI.kanbanArchiveTask(task.id, profile);
+    const res = await hermesAPI.kanbanArchiveTask(task.id, profile);
     setActionBusy(null);
     if (!res.success) {
       setError(res.error || "Failed to archive task");
@@ -407,7 +408,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
 
   async function handleReclaim(task: KanbanTask): Promise<void> {
     setActionBusy(task.id);
-    const res = await window.hermesAPI.kanbanReclaimTask(
+    const res = await hermesAPI.kanbanReclaimTask(
       task.id,
       "reclaimed from desktop",
       profile,
@@ -419,7 +420,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
 
   async function handleDispatch(): Promise<void> {
     setActionBusy("dispatch");
-    const res = await window.hermesAPI.kanbanDispatchOnce(false, profile);
+    const res = await hermesAPI.kanbanDispatchOnce(false, profile);
     setActionBusy(null);
     if (!res.success) {
       setError(res.error || "Dispatch failed");

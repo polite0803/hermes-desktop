@@ -2,19 +2,16 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { processFiles, filesFromClipboard } from "./attachmentUtils";
 
-// Stub the window.hermesAPI surface used by the path-ref code path.
-// Picker / drag-drop normally return an absolute path via webUtils; we
-// simulate the paste path (no origin) by leaving getPathForFile empty
-// and routing through a fake stageAttachment.
-beforeEach(() => {
-  (window as unknown as { hermesAPI: Record<string, unknown> }).hermesAPI = {
+// Mock the hermesAPI module
+vi.mock("@shared/hermes-api", () => ({
+  hermesAPI: {
     getPathForFile: vi.fn(() => ""),
     stageAttachment: vi.fn(
       async (sessionId: string, filename: string): Promise<string> =>
         `C:/staging/${sessionId || "default"}/${filename}`,
     ),
-  };
-});
+  },
+}));
 
 // ── helpers ──────────────────────────────────────────────
 
@@ -26,8 +23,6 @@ function makeFile(
 ): File {
   const blob = new File([contents as BlobPart], name, { type });
   if (sizeOverride !== undefined) {
-    // jsdom honors the blob's byte length, but some tests need a huge size
-    // without actually allocating the bytes — override the getter.
     Object.defineProperty(blob, "size", { value: sizeOverride });
   }
   return blob;
@@ -96,7 +91,6 @@ describe("processFiles", () => {
     expect(out.attachments).toHaveLength(1);
     expect(out.attachments[0].kind).toBe("text-file");
     expect(out.attachments[0].text).toBe("print('hi')");
-    // No explicit MIME → falls back to text/plain
     expect(out.attachments[0].mime).toBe("text/plain");
   });
 
@@ -112,11 +106,12 @@ describe("processFiles", () => {
     expect(a.mime).toBe("application/pdf");
   });
 
-  it("uses the origin path returned by webUtils for picker/drag-drop files", async () => {
-    (window as unknown as { hermesAPI: Record<string, unknown> }).hermesAPI = {
-      getPathForFile: vi.fn(() => "C:/Users/me/Downloads/doc.pdf"),
-      stageAttachment: vi.fn(),
-    };
+  it("uses the origin path returned by getPathForFile for picker/drag-drop files", async () => {
+    // Override the mock to return a file path (simulating picker/drag-drop)
+    const { hermesAPI } = await import("@shared/hermes-api");
+    vi.mocked(hermesAPI.getPathForFile).mockReturnValue("C:/Users/me/Downloads/doc.pdf");
+    vi.mocked(hermesAPI.stageAttachment).mockClear();
+
     const file = makeFile("doc.pdf", "application/pdf", "%PDF-1.4");
     const out = await processFiles([file], 0);
     expect(out.errors).toEqual([]);
@@ -124,13 +119,10 @@ describe("processFiles", () => {
     const a = out.attachments[0];
     expect(a.kind).toBe("path-ref");
     expect(a.path).toBe("C:/Users/me/Downloads/doc.pdf");
-    expect(
-      (
-        window as unknown as {
-          hermesAPI: { stageAttachment: ReturnType<typeof vi.fn> };
-        }
-      ).hermesAPI.stageAttachment,
-    ).not.toHaveBeenCalled();
+    expect(hermesAPI.stageAttachment).not.toHaveBeenCalled();
+
+    // Reset mock for other tests
+    vi.mocked(hermesAPI.getPathForFile).mockReturnValue("");
   });
 
   it("blocks path-ref attachments in remote mode", async () => {
@@ -156,7 +148,6 @@ describe("processFiles", () => {
   });
 
   it("accepts up to the per-message cap and emits too-many for the rest", async () => {
-    // existingCount=8, cap=10 → only 2 slots remain.  Send 5 files.
     const files = [
       makeFile("1.txt", "text/plain", "a"),
       makeFile("2.txt", "text/plain", "b"),

@@ -3,6 +3,7 @@ import { ArrowRight, Copy, Send } from "../../assets/icons";
 
 const TELEGRAM_COMMUNITY_URL = "https://t.me/hermes_agent_desktop";
 import { useI18n } from "../../components/useI18n";
+import { hermesAPI } from "@shared/hermes-api";
 
 interface InstallProgress {
   step: number;
@@ -33,11 +34,11 @@ function Install({ onComplete, onFailed }: InstallProps): React.JSX.Element {
 
   useEffect(() => {
     let isMounted = true;
-    const cleanup = window.hermesAPI.onInstallProgress((p) => {
+    const cleanup = hermesAPI.onInstallProgress((p) => {
       if (isMounted) setProgress(p);
     });
 
-    window.hermesAPI
+    hermesAPI
       .startInstall()
       .then((result) => {
         if (!isMounted) return;
@@ -127,7 +128,7 @@ function Install({ onComplete, onFailed }: InstallProps): React.JSX.Element {
             <button
               className="btn btn-secondary btn-sm"
               onClick={() =>
-                window.hermesAPI.openExternal(TELEGRAM_COMMUNITY_URL)
+                hermesAPI.openExternal(TELEGRAM_COMMUNITY_URL)
               }
               title={TELEGRAM_COMMUNITY_URL}
             >

@@ -35,6 +35,7 @@ import {
 } from "../../assets/icons";
 import type { LucideIcon } from "lucide-react";
 import { useI18n } from "../../components/useI18n";
+import { hermesAPI } from "@shared/hermes-api";
 
 type View =
   | "chat"
@@ -107,7 +108,7 @@ function Layout({
 
   // Re-check remote mode on tab switch (picks up Settings changes)
   useEffect(() => {
-    window.hermesAPI.isRemoteOnlyMode().then(setRemoteMode);
+    hermesAPI.isRemoteOnlyMode().then(setRemoteMode);
   }, [view]);
 
   // Auto-update state
@@ -119,22 +120,22 @@ function Layout({
   const [updateError, setUpdateError] = useState<string | null>(null);
 
   useEffect(() => {
-    const cleanupAvailable = window.hermesAPI.onUpdateAvailable((info) => {
+    const cleanupAvailable = hermesAPI.onUpdateAvailable((info) => {
       setUpdateVersion(info.version);
       setUpdateState("available");
       setUpdateError(null);
       setDownloadPercent(0);
     });
-    const cleanupProgress = window.hermesAPI.onUpdateDownloadProgress(
+    const cleanupProgress = hermesAPI.onUpdateDownloadProgress(
       (info) => {
         setDownloadPercent(info.percent);
       },
     );
-    const cleanupDownloaded = window.hermesAPI.onUpdateDownloaded(() => {
+    const cleanupDownloaded = hermesAPI.onUpdateDownloaded(() => {
       setUpdateState("ready");
       setUpdateError(null);
     });
-    const cleanupError = window.hermesAPI.onUpdateError((message) => {
+    const cleanupError = hermesAPI.onUpdateError((message) => {
       setUpdateState("error");
       setUpdateError(message);
       setDownloadPercent(0);
@@ -153,20 +154,20 @@ function Layout({
       setDownloadPercent(0);
       setUpdateState("downloading");
       try {
-        const ok = await window.hermesAPI.downloadUpdate();
+        const ok = await hermesAPI.downloadUpdate();
         if (!ok) setUpdateState("error");
       } catch (err) {
         setUpdateError(err instanceof Error ? err.message : String(err));
         setUpdateState("error");
       }
     } else if (updateState === "ready") {
-      await window.hermesAPI.installUpdate();
+      await hermesAPI.installUpdate();
     }
   }
 
   const handleNewChat = useCallback(() => {
     // Abort any in-flight chat before clearing
-    window.hermesAPI.abortChat();
+    hermesAPI.abortChat();
     setMessages([]);
     setCurrentSessionId(null);
     goTo("chat");
@@ -174,10 +175,10 @@ function Layout({
 
   // Listen for menu IPC events (Cmd+N, Cmd+K from app menu)
   useEffect(() => {
-    const cleanupNewChat = window.hermesAPI.onMenuNewChat(() => {
+    const cleanupNewChat = hermesAPI.onMenuNewChat(() => {
       handleNewChat();
     });
-    const cleanupSearch = window.hermesAPI.onMenuSearchSessions(() => {
+    const cleanupSearch = hermesAPI.onMenuSearchSessions(() => {
       goTo("sessions");
     });
     return () => {
@@ -194,7 +195,7 @@ function Layout({
 
   const handleResumeSession = useCallback(
     async (sessionId: string) => {
-      const dbMessages = await window.hermesAPI.getSessionMessages(sessionId);
+      const dbMessages = await hermesAPI.getSessionMessages(sessionId);
       const chatMessages: ChatMessage[] = dbMessages.map((m) => ({
         id: `db-${m.id}`,
         role: m.role === "user" ? "user" : "agent",

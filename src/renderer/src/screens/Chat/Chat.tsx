@@ -12,6 +12,7 @@ import { useFastMode } from "./hooks/useFastMode";
 import { useLocalCommands } from "./hooks/useLocalCommands";
 import { useI18n } from "../../components/useI18n";
 import type { ChatMessage, UsageState } from "./types";
+import { hermesAPI } from "@shared/hermes-api";
 
 export type { ChatMessage } from "./types";
 
@@ -45,7 +46,7 @@ function Chat({
   useEffect(() => {
     let cancelled = false;
     (async (): Promise<void> => {
-      const flag = await window.hermesAPI.isRemoteMode();
+      const flag = await hermesAPI.isRemoteMode();
       if (!cancelled) setRemoteMode(flag);
     })();
     return (): void => {
@@ -103,13 +104,13 @@ function Chat({
 
   const handleClear = useCallback(() => {
     if (isLoading) {
-      window.hermesAPI.abortChat();
+      hermesAPI.abortChat();
       setIsLoading(false);
     }
     const idToDelete = hermesSessionId ?? sessionId;
     if (idToDelete) {
-      void window.hermesAPI.deleteSession(idToDelete);
-      void window.hermesAPI.clearStagedAttachments(idToDelete);
+      void hermesAPI.deleteSession(idToDelete);
+      void hermesAPI.clearStagedAttachments(idToDelete);
     }
     setMessages([]);
     setHermesSessionId(null);

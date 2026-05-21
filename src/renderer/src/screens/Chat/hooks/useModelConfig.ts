@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { PROVIDERS } from "../../../constants";
 import { useI18n } from "../../../components/useI18n";
 import type { ModelGroup } from "../types";
+import { hermesAPI } from "@shared/hermes-api";
 
 interface UseModelConfigResult {
   currentModel: string;
@@ -48,8 +49,8 @@ export function useModelConfig(profile?: string): UseModelConfigResult {
 
   const reload = useCallback(async (): Promise<void> => {
     const [mc, savedModels] = await Promise.all([
-      window.hermesAPI.getModelConfig(profile),
-      window.hermesAPI.listModels(),
+      hermesAPI.getModelConfig(profile),
+      hermesAPI.listModels(),
     ]);
     setCurrentModel(mc.model);
     setCurrentProvider(mc.provider);
@@ -74,7 +75,7 @@ export function useModelConfig(profile?: string): UseModelConfigResult {
       // baseUrl whenever the entry isn't `custom`; the gateway falls back
       // to the provider's canonical URL.
       const effectiveBaseUrl = provider === "custom" ? baseUrl : "";
-      await window.hermesAPI.setModelConfig(
+      await hermesAPI.setModelConfig(
         provider,
         model,
         effectiveBaseUrl,

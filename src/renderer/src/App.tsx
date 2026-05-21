@@ -6,6 +6,7 @@ import Install from "./screens/Install/Install";
 import Setup from "./screens/Setup/Setup";
 import Layout from "./screens/Layout/Layout";
 import SplashScreen from "./screens/SplashScreen/SplashScreen";
+import { hermesAPI } from "@shared/hermes-api";
 
 type Screen = "splash" | "welcome" | "installing" | "setup" | "main";
 
@@ -34,21 +35,21 @@ function App(): React.JSX.Element {
     let isRemote = false;
 
     try {
-      const conn = await window.hermesAPI.getConnectionConfig();
+      const conn = await hermesAPI.getConnectionConfig();
       isRemote = conn.mode === "remote" || conn.mode === "ssh";
       setConnectionMode(conn.mode);
 
       if (conn.mode === "ssh" && conn.ssh) {
         // Start (or ensure) the SSH tunnel, then go straight to main
         try {
-          await window.hermesAPI.startSshTunnel();
+          await hermesAPI.startSshTunnel();
           next = "main";
         } catch (tunnelErr) {
           error = `SSH tunnel failed to start: ${(tunnelErr as Error).message}`;
           next = "welcome";
         }
       } else if (conn.mode === "remote" && conn.remoteUrl) {
-        const ok = await window.hermesAPI.testRemoteConnection(conn.remoteUrl);
+        const ok = await hermesAPI.testRemoteConnection(conn.remoteUrl);
         if (ok) {
           next = "main";
         } else {
@@ -56,7 +57,7 @@ function App(): React.JSX.Element {
           next = "welcome";
         }
       } else {
-        const status = await window.hermesAPI.checkInstall();
+        const status = await hermesAPI.checkInstall();
         if (!status.installed) {
           next = "welcome";
         } else if (!status.hasApiKey) {
@@ -87,7 +88,7 @@ function App(): React.JSX.Element {
     // this guard the user is bounced back to Welcome with an "installBroken"
     // error immediately after a successful remote connect. (#47, #41, #30)
     if ((next === "main" || next === "setup") && !isRemote) {
-      window.hermesAPI.verifyInstall().then((ok) => {
+      hermesAPI.verifyInstall().then((ok) => {
         // Files exist (checkInstall passed) but the probe failed. Surface
         // a soft warning instead of bouncing to Welcome — see #130.
         if (!ok) setVerifyWarning(true);
@@ -125,7 +126,7 @@ function App(): React.JSX.Element {
   }
 
   async function handleSwitchToLocal(): Promise<void> {
-    await window.hermesAPI.setConnectionConfig("local", "", "");
+    await hermesAPI.setConnectionConfig("local", "", "");
     setConnectionMode("local");
     handleRecheck();
   }

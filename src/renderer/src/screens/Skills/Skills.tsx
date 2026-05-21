@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { Search, X, Download, Trash, Refresh } from "../../assets/icons";
 import { AgentMarkdown } from "../../components/AgentMarkdown";
 import { useI18n } from "../../components/useI18n";
+import { hermesAPI } from "@shared/hermes-api";
 
 interface InstalledSkill {
   name: string;
@@ -39,12 +40,12 @@ function Skills({ profile }: SkillsProps): React.JSX.Element {
   const searchRef = useRef<HTMLInputElement>(null);
 
   const loadInstalled = useCallback(async (): Promise<void> => {
-    const list = await window.hermesAPI.listInstalledSkills(profile);
+    const list = await hermesAPI.listInstalledSkills(profile);
     setInstalledSkills(list);
   }, [profile]);
 
   const loadBundled = useCallback(async (): Promise<void> => {
-    const list = await window.hermesAPI.listBundledSkills();
+    const list = await hermesAPI.listBundledSkills();
     setBundledSkills(list);
   }, []);
 
@@ -60,14 +61,14 @@ function Skills({ profile }: SkillsProps): React.JSX.Element {
 
   async function handleViewDetail(skill: InstalledSkill): Promise<void> {
     setDetailSkill(skill);
-    const content = await window.hermesAPI.getSkillContent(skill.path);
+    const content = await hermesAPI.getSkillContent(skill.path);
     setDetailContent(content);
   }
 
   async function handleInstall(name: string): Promise<void> {
     setActionInProgress(name);
     setError("");
-    const result = await window.hermesAPI.installSkill(name, profile);
+    const result = await hermesAPI.installSkill(name, profile);
     setActionInProgress(null);
     if (result.success) {
       await loadInstalled();
@@ -79,7 +80,7 @@ function Skills({ profile }: SkillsProps): React.JSX.Element {
   async function handleUninstall(name: string): Promise<void> {
     setActionInProgress(name);
     setError("");
-    const result = await window.hermesAPI.uninstallSkill(name, profile);
+    const result = await hermesAPI.uninstallSkill(name, profile);
     setActionInProgress(null);
     if (result.success) {
       setDetailSkill(null);

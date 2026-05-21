@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import type { ChatInputHandle } from "../ChatInput";
 import type { Attachment, ChatMessage } from "../types";
+import { hermesAPI } from "@shared/hermes-api";
 
 interface LocalCommands {
   isLocal: (text: string) => boolean;
@@ -69,7 +70,7 @@ export function useChatActions({
   const sendToAgent = useCallback(
     async (text: string, attachments?: Attachment[]): Promise<void> => {
       try {
-        await window.hermesAPI.sendMessage(
+        await hermesAPI.sendMessage(
           text,
           profile,
           hermesSessionId || undefined,
@@ -117,7 +118,7 @@ export function useChatActions({
   );
 
   const handleAbort = useCallback(() => {
-    window.hermesAPI.abortChat();
+    hermesAPI.abortChat();
     setIsLoading(false);
     setTimeout(() => chatInputRef.current?.focus(), 50);
   }, [chatInputRef, setIsLoading]);

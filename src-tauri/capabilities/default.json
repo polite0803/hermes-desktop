@@ -1,0 +1,33 @@
+{
+  "identifier": "default",
+  "description": "Default capabilities for Hermes Desktop",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "shell:allow-open",
+    "dialog:default",
+    "notification:default",
+    "updater:default",
+    "process:default",
+    {
+      "identifier": "shell:allow-execute",
+      "allow": [
+        {
+          "name": "hermes-python",
+          "cmd": "python*",
+          "args": true
+        },
+        {
+          "name": "hermes-install",
+          "cmd": "pwsh*",
+          "args": true
+        },
+        {
+          "name": "hermes-git",
+          "cmd": "git*",
+          "args": true
+        }
+      ]
+    }
+  ]
+}

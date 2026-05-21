@@ -5,6 +5,7 @@ import { useI18n } from "../../components/useI18n";
 import BrandLogo from "../../components/common/BrandLogo";
 import { detectProviderFromUrl } from "./detect-provider";
 import { useDiscoveredModels } from "../../hooks/useDiscoveredModels";
+import { hermesAPI } from "@shared/hermes-api";
 
 interface SavedModel {
   id: string;
@@ -64,7 +65,7 @@ function Models({ visible }: ModelsProps = {}): React.JSX.Element {
   }
 
   const loadModels = useCallback(async () => {
-    const list = await window.hermesAPI.listModels();
+    const list = await hermesAPI.listModels();
     setModels(list);
     setLoading(false);
   }, []);
@@ -165,14 +166,14 @@ function Models({ visible }: ModelsProps = {}): React.JSX.Element {
     setFormError("");
 
     if (editingModel) {
-      await window.hermesAPI.updateModel(editingModel.id, {
+      await hermesAPI.updateModel(editingModel.id, {
         name,
         provider: formProvider,
         model,
         baseUrl: formBaseUrl.trim(),
       });
     } else {
-      await window.hermesAPI.addModel(
+      await hermesAPI.addModel(
         name,
         formProvider,
         model,
@@ -182,7 +183,7 @@ function Models({ visible }: ModelsProps = {}): React.JSX.Element {
 
     if (formApiKey.trim() && formProvider === "custom") {
       const envKey = resolveCustomEnvKey(formBaseUrl.trim());
-      await window.hermesAPI.setEnv(envKey, formApiKey.trim());
+      await hermesAPI.setEnv(envKey, formApiKey.trim());
     }
 
     closeModal();
@@ -190,7 +191,7 @@ function Models({ visible }: ModelsProps = {}): React.JSX.Element {
   }
 
   async function handleDelete(id: string): Promise<void> {
-    await window.hermesAPI.removeModel(id);
+    await hermesAPI.removeModel(id);
     setConfirmDelete(null);
     await loadModels();
   }

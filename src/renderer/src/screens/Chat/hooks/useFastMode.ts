@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { hermesAPI } from "@shared/hermes-api";
 
 interface UseFastModeResult {
   fastMode: boolean;
@@ -15,7 +16,7 @@ export function useFastMode(profile?: string): UseFastModeResult {
   const [fastMode, setFastMode] = useState(false);
 
   useEffect(() => {
-    window.hermesAPI.getConfig("agent.service_tier", profile).then((val) => {
+    hermesAPI.getConfig("agent.service_tier", profile).then((val) => {
       setFastMode(isFastTier(val));
     });
   }, [profile]);
@@ -23,7 +24,7 @@ export function useFastMode(profile?: string): UseFastModeResult {
   const set = useCallback(
     async (next: boolean): Promise<void> => {
       setFastMode(next);
-      await window.hermesAPI.setConfig(
+      await hermesAPI.setConfig(
         "agent.service_tier",
         next ? "fast" : "normal",
         profile,

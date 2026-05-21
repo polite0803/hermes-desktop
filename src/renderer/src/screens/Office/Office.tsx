@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Refresh, ExternalLink, Settings } from "../../assets/icons";
 import { useI18n } from "../../components/useI18n";
+import { hermesAPI } from "@shared/hermes-api";
 
 type OfficeState =
   | "checking"
@@ -62,7 +63,7 @@ function Office({
 
   const checkStatus = useCallback(async (): Promise<void> => {
     setState("checking");
-    const status = await window.hermesAPI.claw3dStatus();
+    const status = await hermesAPI.claw3dStatus();
     setRemoteUrl(status.remoteUrl ?? null);
     setRunning(status.running);
     setPort(status.port);
@@ -85,7 +86,7 @@ function Office({
   useEffect(() => {
     if (state !== "ready" || !visible) return;
     const interval = setInterval(async () => {
-      const status = await window.hermesAPI.claw3dStatus();
+      const status = await hermesAPI.claw3dStatus();
       setRemoteUrl(status.remoteUrl ?? null);
       setRunning(status.running);
       setPort(status.port);
@@ -167,12 +168,12 @@ function Office({
     setState("installing");
     setError("");
 
-    const cleanup = window.hermesAPI.onClaw3dSetupProgress((p) => {
+    const cleanup = hermesAPI.onClaw3dSetupProgress((p) => {
       setProgress(p);
     });
 
     try {
-      const result = await window.hermesAPI.claw3dSetup();
+      const result = await hermesAPI.claw3dSetup();
       cleanup();
       if (result.success) {
         setState("ready");
@@ -189,7 +190,7 @@ function Office({
 
   async function handleStartStop(): Promise<void> {
     if (running) {
-      await window.hermesAPI.claw3dStopAll();
+      await hermesAPI.claw3dStopAll();
       setRunning(false);
       setWebviewReady(false);
       setWebviewError("");
@@ -198,7 +199,7 @@ function Office({
       setError("");
       setWebviewError("");
       setStarting(true);
-      const result = await window.hermesAPI.claw3dStartAll(profile);
+      const result = await hermesAPI.claw3dStartAll(profile);
       if (!result.success) {
         setError(result.error || "Failed to start Claw3D");
         setStarting(false);
@@ -214,20 +215,20 @@ function Office({
   async function handlePortSave(): Promise<void> {
     const newPort = parseInt(portInput, 10);
     if (isNaN(newPort) || newPort < 1024 || newPort > 65535) return;
-    await window.hermesAPI.claw3dSetPort(newPort);
+    await hermesAPI.claw3dSetPort(newPort);
     setPort(newPort);
-    const status = await window.hermesAPI.claw3dStatus();
+    const status = await hermesAPI.claw3dStatus();
     setPortInUse(status.portInUse);
   }
 
   async function handleWsUrlSave(): Promise<void> {
     const trimmed = wsUrlInput.trim();
     if (!trimmed) return;
-    await window.hermesAPI.claw3dSetWsUrl(trimmed);
+    await hermesAPI.claw3dSetWsUrl(trimmed);
   }
 
   async function loadLogs(): Promise<void> {
-    const l = await window.hermesAPI.claw3dGetLogs();
+    const l = await hermesAPI.claw3dGetLogs();
     setLogs(l);
     setShowLogs(true);
   }
@@ -279,7 +280,7 @@ function Office({
               <button
                 className="btn btn-secondary"
                 onClick={() =>
-                  window.hermesAPI.openExternal(
+                  hermesAPI.openExternal(
                     "https://github.com/iamlukethedev/Claw3D",
                   )
                 }
@@ -364,7 +365,7 @@ function Office({
               </button>
               <button
                 className="btn-ghost office-toolbar-btn"
-                onClick={() => window.hermesAPI.openExternal(claw3dUrl)}
+                onClick={() => hermesAPI.openExternal(claw3dUrl)}
                 title={t("office.openInBrowser")}
               >
                 <ExternalLink size={16} />

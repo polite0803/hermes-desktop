@@ -10,6 +10,7 @@ import {
   Alert,
 } from "../../assets/icons";
 import { useI18n } from "../../components/useI18n";
+import { hermesAPI } from "@shared/hermes-api";
 
 const DELIVER_TARGETS = [
   { value: "local", label: "Local" },
@@ -78,7 +79,7 @@ function Schedules({ profile }: SchedulesProps): React.JSX.Element {
 
   const loadJobs = useCallback(async (): Promise<void> => {
     try {
-      const list = await window.hermesAPI.listCronJobs(true, profile);
+      const list = await hermesAPI.listCronJobs(true, profile);
       setJobs(list);
     } catch {
       setError(t("schedules.loadFailed"));
@@ -153,7 +154,7 @@ function Schedules({ profile }: SchedulesProps): React.JSX.Element {
     setActionInProgress("creating");
     setError("");
     try {
-      const result = await window.hermesAPI.createCronJob(
+      const result = await hermesAPI.createCronJob(
         buildSchedule(),
         newPrompt.trim() || undefined,
         newName.trim() || undefined,
@@ -177,7 +178,7 @@ function Schedules({ profile }: SchedulesProps): React.JSX.Element {
     setActionInProgress(jobId);
     setError("");
     try {
-      const result = await window.hermesAPI.removeCronJob(jobId, profile);
+      const result = await hermesAPI.removeCronJob(jobId, profile);
       setConfirmDelete(null);
       if (result.success) {
         await loadJobs();
@@ -197,8 +198,8 @@ function Schedules({ profile }: SchedulesProps): React.JSX.Element {
     try {
       const result =
         job.state === "paused"
-          ? await window.hermesAPI.resumeCronJob(job.id, profile)
-          : await window.hermesAPI.pauseCronJob(job.id, profile);
+          ? await hermesAPI.resumeCronJob(job.id, profile)
+          : await hermesAPI.pauseCronJob(job.id, profile);
       if (result.success) {
         await loadJobs();
       } else {
@@ -215,7 +216,7 @@ function Schedules({ profile }: SchedulesProps): React.JSX.Element {
     setActionInProgress(jobId);
     setError("");
     try {
-      const result = await window.hermesAPI.triggerCronJob(jobId, profile);
+      const result = await hermesAPI.triggerCronJob(jobId, profile);
       if (result.success) {
         await loadJobs();
       } else {
