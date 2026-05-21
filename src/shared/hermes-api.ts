@@ -527,6 +527,18 @@ export const hermesAPI = {
     invoke("discover_memory_providers", { profile }),
 
   // ── MCP servers ───────────────────────────────────────
+  // ── Skills Hub ───────────────────────────────────
+  searchSkillsHub: (query: string): Promise<{ name: string; description: string; category: string; author: string; downloads: number; installed: boolean }[]> =>
+    invoke("search_skills_hub", { query }),
+  installFromHub: (name: string, profile?: string): Promise<{ success: boolean; error?: string }> =>
+    invoke("install_from_hub", { name, profile }),
+
+  // ── Personality Presets ───────────────────────────
+  listPersonalities: (profile?: string): Promise<{ name: string; description: string }[]> =>
+    invoke("list_personalities", { profile }),
+  applyPersonality: (name: string, profile?: string): Promise<void> =>
+    invoke("apply_personality", { name, profile }),
+
   // ── MCP Servers ──────────────────────────────────
   listMcpServers: (): Promise<McpServer[]> =>
     invoke("list_mcp_servers"),

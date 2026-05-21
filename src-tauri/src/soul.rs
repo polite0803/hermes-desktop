@@ -48,6 +48,34 @@ pub fn reset_soul(profile: Option<String>) -> Result<(), String> {
     fs::write(&path, DEFAULT_SOUL).map_err(|e| format!("Failed to reset SOUL.md: {}", e))
 }
 
+#[tauri::command]
+pub fn list_personalities(profile: Option<String>) -> Result<Vec<serde_json::Value>, String> {
+    let personalities_dir = hermes_cli::resolve_hermes_home().join("personalities");
+    if !personalities_dir.exists() { return Ok(Vec::new()); }
+
+    let mut presets = Vec::new();
+    if let Ok(entries) = fs::read_dir(&personalities_dir) {
+        for entry in entries.filter_map(|e| e.ok()) {
+            let path = entry.path();
+            if path.extension().map_or(true, |e| e != "yaml" && e != "yml") { continue; }
+            let name = path.file_stem().unwrap_or_default().to_string_lossy().to_string();
+            if let Ok(content) = fs::read_to_string(&path) {
+                let desc = content.lines().find(|l| l.trim().starts_with("description:")).and_then(|l| l.split_once(':')).map(|(_,v)| v.trim().trim_matches('"').trim_matches('\'').to_string()).unwrap_or_default();
+                presets.push(serde_json::json!({"name": name, "description": desc}));
+            }
+        }
+    }
+    Ok(presets)
+}
+
+#[tauri::command]
+pub fn apply_personality(name: String, profile: Option<String>) -> Result<(), String> {
+    let preset_path = hermes_cli::resolve_hermes_home().join("personalities").join(format!("{}.yaml", name));
+    if !preset_path.exists() { return Err(format!("Personality '{}' not found", name)); }
+    let content = fs::read_to_string(&preset_path).map_err(|e| format!("Failed: {}", e))?;
+    write_soul(content, profile)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

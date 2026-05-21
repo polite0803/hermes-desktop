@@ -24,6 +24,7 @@ mod attachment_staging;
 mod yaml_path;
 mod sse_parser;
 mod mcp;
+mod skills_hub;
 
 use std::collections::HashMap;
 use tauri::menu::MenuItem;
@@ -248,11 +249,13 @@ pub fn run() {
             memory::read_memory, memory::add_memory_entry, memory::update_memory_entry,
             memory::remove_memory_entry, memory::write_user_profile,
             soul::read_soul, soul::write_soul, soul::reset_soul,
+            soul::list_personalities, soul::apply_personality,
             models::list_models, models::add_model, models::remove_model, models::update_model,
             model_discovery::discover_provider_models,
             tools::get_toolsets, tools::set_toolset_enabled,
             skills::list_installed_skills, skills::list_bundled_skills,
             skills::get_skill_content, skills::install_skill, skills::uninstall_skill,
+            skills_hub::search_skills_hub, skills_hub::install_from_hub,
             cronjobs::list_cron_jobs, cronjobs::create_cron_job, cronjobs::remove_cron_job,
             cronjobs::pause_cron_job, cronjobs::resume_cron_job, cronjobs::trigger_cron_job,
             kanban::kanban_list_boards, kanban::kanban_current_board, kanban::kanban_switch_board,
