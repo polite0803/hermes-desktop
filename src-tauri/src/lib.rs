@@ -28,6 +28,7 @@ mod skills_hub;
 mod plugins;
 mod usage;
 mod context_files;
+mod sandbox;
 
 use std::collections::HashMap;
 use tauri::menu::MenuItem;
@@ -239,6 +240,7 @@ pub fn run() {
             config::is_remote_mode, config::is_remote_only_mode,
             config::get_platform_enabled_all, config::set_platform_enabled,
             config::get_credential_pool, config::set_credential_pool,
+            sandbox::get_terminal_backend, sandbox::set_terminal_backend,
             locale::get_locale, locale::set_locale,
             hermes::send_message, hermes::abort_chat,
             hermes::start_gateway, hermes::stop_gateway, hermes::gateway_status,
@@ -274,7 +276,8 @@ pub fn run() {
             claw3d::claw3d_start_adapter, claw3d::claw3d_stop_adapter,
             ssh::test_ssh_connection, ssh::start_ssh_tunnel,
             ssh::stop_ssh_tunnel, ssh::is_ssh_tunnel_active,
-            mcp::list_mcp_servers, mcp::add_mcp_server, mcp::remove_mcp_server, mcp::update_mcp_server, mcp::test_mcp_server,
+            mcp::list_mcp_servers, mcp::add_mcp_server, mcp::remove_mcp_server,
+            mcp::update_mcp_server, mcp::test_mcp_server, mcp::install_computer_use_mcp,
             attachment_staging::stage_attachment, attachment_staging::clear_staged_attachments,
             plugins::list_plugins, plugins::enable_plugin, plugins::disable_plugin,
             usage::get_usage_stats, usage::get_insights,

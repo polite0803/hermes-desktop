@@ -77,8 +77,35 @@ pub fn test_mcp_server(name: String) -> Result<bool, String> {
     let mut child = Command::new(&server.command).args(&server.args)
         .stdout(std::process::Stdio::null()).stderr(std::process::Stdio::null())
         .spawn().map_err(|e| format!("{}", e))?;
-    // Test: wait briefly, kill, report success if it started
     std::thread::sleep(std::time::Duration::from_millis(1500));
     let _ = child.kill();
     Ok(true)
+}
+
+#[tauri::command]
+pub fn install_computer_use_mcp() -> Result<bool, String> {
+    #[cfg(not(target_os = "linux"))]
+    { return Err("Computer-use MCP is only supported on Linux".into()); }
+
+    #[cfg(target_os = "linux")]
+    {
+        let dir = hermes_cli::resolve_hermes_home().join("mcp-servers").join("computer-use-linux");
+        if !dir.exists() {
+            std::fs::create_dir_all(dir.parent().unwrap_or(&dir)).map_err(|e| e.to_string())?;
+            let status = Command::new("git").args(&["clone", "https://github.com/avifenesh/computer-use-linux", &dir.to_string_lossy().to_string()])
+                .status().map_err(|e| e.to_string())?;
+            if !status.success() { return Err("Failed to clone repository".into()); }
+        }
+        // Add to MCP config
+        let mut servers = read_mcp_config();
+        if servers.iter().any(|s| s.name == "computer-use") { return Ok(true); }
+        servers.push(McpServer {
+            name: "computer-use".into(),
+            command: "python".into(),
+            args: vec!["-m".into(), "computer_use".into()],
+            enabled: true,
+        });
+        write_mcp_config(&servers)?;
+        Ok(true)
+    }
 }

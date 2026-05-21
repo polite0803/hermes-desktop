@@ -1102,6 +1102,43 @@ function LanguageSelect({
           })}
         </div>
       )}
+
+      <SandboxBackendSection />
+    </div>
+  );
+}
+
+function SandboxBackendSection(): React.JSX.Element {
+  const { t } = useI18n();
+  const [backend, setBackend] = useState("local");
+  const [saved, setSaved] = useState(false);
+
+  useEffect(() => { hermesAPI.getTerminalBackend().then(setBackend).catch(() => {}); }, []);
+
+  async function save(): Promise<void> {
+    await hermesAPI.setTerminalBackend(backend);
+    setSaved(true); setTimeout(() => setSaved(false), 2000);
+  }
+
+  return (
+    <div className="settings-section" style={{ marginTop: 24 }}>
+      <h2 className="settings-section-title">Sandbox Backend</h2>
+      <p style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 12 }}>
+        Choose where terminal commands execute. Docker, SSH, and cloud sandboxes are supported.
+      </p>
+      <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+        <select className="models-search-input" value={backend} onChange={(e) => setBackend(e.target.value)} style={{ maxWidth: 300 }}>
+          <option value="local">Local</option>
+          <option value="docker">Docker</option>
+          <option value="ssh">SSH</option>
+          <option value="modal">Modal</option>
+          <option value="daytona">Daytona</option>
+          <option value="vercel">Vercel Sandbox</option>
+        </select>
+        <button className="btn btn-primary btn-sm" onClick={save}>
+          {saved ? "✓ Saved" : "Save"}
+        </button>
+      </div>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useI18n } from "@renderer/components/useI18n";
 import { hermesAPI, type McpServer } from "@shared/hermes-api";
-import { Plus, Trash, Play, RefreshCw } from "lucide-react";
+import { Plus, Trash, Play, RefreshCw, Download } from "lucide-react";
 
 export default function McpServers(): React.JSX.Element {
   const { t } = useI18n();
@@ -67,9 +67,17 @@ export default function McpServers(): React.JSX.Element {
           <h1 className="settings-header models-title-tight">{t("navigation.mcpServers")}</h1>
           <p className="models-subtitle">{t("mcp.subtitle")}</p>
         </div>
-        <button className="btn btn-primary btn-sm" onClick={() => setShowAdd(true)}>
-          <Plus size={14} /> {t("mcp.addServer")}
-        </button>
+        <div style={{ display: "flex", gap: 8 }}>
+          <button className="btn btn-primary btn-sm" onClick={() => setShowAdd(true)}>
+            <Plus size={14} /> {t("mcp.addServer")}
+          </button>
+          <button className="btn btn-sm" onClick={async () => {
+            try { await hermesAPI.installComputerUseMcp(); await loadServers(); }
+            catch (e) { alert(String(e)); }
+          }}>
+            <Download size={14} /> Install Computer-Use
+          </button>
+        </div>
       </div>
 
       {showAdd && (

@@ -572,6 +572,14 @@ export const hermesAPI = {
     invoke("update_mcp_server", { name, command: updates.command, args: updates.args, enabled: updates.enabled }),
   testMcpServer: (name: string): Promise<boolean> =>
     invoke("test_mcp_server", { name }),
+  installComputerUseMcp: (): Promise<boolean> =>
+    invoke("install_computer_use_mcp"),
+
+  // ── Sandbox Backend ──────────────────────────────
+  getTerminalBackend: (): Promise<string> =>
+    invoke("get_terminal_backend"),
+  setTerminalBackend: (backend: string, config?: Record<string, string>): Promise<boolean> =>
+    invoke("set_terminal_backend", { backend, configJson: config ? JSON.stringify(config) : null }),
 
   // ── Log viewer ────────────────────────────────────────
   readLogs: (logFile?: string, lines?: number): Promise<{ content: string; path: string }> =>
