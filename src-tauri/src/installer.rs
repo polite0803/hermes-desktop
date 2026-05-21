@@ -367,10 +367,6 @@ pub async fn run_hermes_migrate(app: AppHandle) -> Result<InstallResult, String>
 
 // ─── MCP / Memory Providers / Logs ───
 
-#[tauri::command] pub fn list_mcp_servers(profile: Option<String>) -> Result<Vec<McpServer>, String> {
-    hermes_cli::run_hermes_cli(&["mcp","list","--json"], profile.as_deref()).and_then(|j| serde_json::from_str(&j).map_err(|e| e.to_string()))
-}
-
 const KNOWN_MEMORY_PROVIDERS: &[(&str, &str, &[&str])] = &[
     ("honcho", "Honcho", &["HONCHO_API_KEY"]), ("hindsight", "Hindsight", &["HINDSIGHT_API_KEY","HINDSIGHT_API_URL","HINDSIGHT_BANK_ID"]),
     ("mem0", "Mem0", &["MEM0_API_KEY"]), ("retaindb", "RetainDB", &["RETAINDB_API_KEY"]),

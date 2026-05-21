@@ -1,0 +1,14 @@
+export default {
+  subtitle: "Manage MCP (Model Context Protocol) servers to extend Hermes capabilities",
+  addServer: "Add Server",
+  serverName: "Server name",
+  command: "Command (e.g. npx, python)",
+  args: "Arguments (space-separated)",
+  fillAllFields: "Please fill in name and command",
+  empty: "No MCP servers configured. Add one to get started.",
+  enabled: "Enabled",
+  disabled: "Disabled",
+  test: "Test",
+  testSuccess: "Server started successfully",
+  testFailed: "Server failed to start",
+} as const;

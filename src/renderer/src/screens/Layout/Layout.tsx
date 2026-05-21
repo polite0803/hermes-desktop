@@ -13,6 +13,7 @@ import Models from "../Models/Models";
 import Providers from "../Providers/Providers";
 import Schedules from "../Schedules/Schedules";
 import Kanban from "../Kanban/Kanban";
+import McpServers from "../McpServers/McpServers";
 import RemoteNotice from "../../components/RemoteNotice";
 import VerifyWarningBanner from "../../components/VerifyWarningBanner";
 import hermeslogo from "../../assets/hermes.png";
@@ -53,7 +54,8 @@ type View =
   | "schedules"
   | "kanban"
   | "gateway"
-  | "settings";
+  | "settings"
+  | "mcpServers";
 
 const NAV_ITEMS: { view: View; icon: LucideIcon; labelKey: string }[] = [
   { view: "chat", icon: ChatBubble, labelKey: "navigation.chat" },
@@ -70,6 +72,7 @@ const NAV_ITEMS: { view: View; icon: LucideIcon; labelKey: string }[] = [
   { view: "schedules", icon: Timer, labelKey: "navigation.schedules" },
   { view: "gateway", icon: Signal, labelKey: "navigation.gateway" },
   { view: "settings", icon: SettingsIcon, labelKey: "navigation.settings" },
+  { view: "mcpServers", icon: Puzzle, labelKey: "navigation.mcpServers" },
 ];
 
 interface LayoutProps {
@@ -420,6 +423,12 @@ function Layout({
         {visitedViews.has("settings") && (
           <div style={paneStyle("settings")}>
             <Settings profile={activeProfile} />
+          </div>
+        )}
+
+        {visitedViews.has("mcpServers") && (
+          <div style={paneStyle("mcpServers")}>
+            <McpServers />
           </div>
         )}
       </main>

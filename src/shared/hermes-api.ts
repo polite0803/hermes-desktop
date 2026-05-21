@@ -193,9 +193,9 @@ export interface MemoryProvider {
 
 export interface McpServer {
   name: string;
-  type: string;
+  command: string;
+  args: string[];
   enabled: boolean;
-  detail: string;
 }
 
 // ══════════════════════════════════════════════════════════
@@ -527,8 +527,17 @@ export const hermesAPI = {
     invoke("discover_memory_providers", { profile }),
 
   // ── MCP servers ───────────────────────────────────────
-  listMcpServers: (profile?: string): Promise<McpServer[]> =>
-    invoke("list_mcp_servers", { profile }),
+  // ── MCP Servers ──────────────────────────────────
+  listMcpServers: (): Promise<McpServer[]> =>
+    invoke("list_mcp_servers"),
+  addMcpServer: (name: string, command: string, args: string[]): Promise<McpServer> =>
+    invoke("add_mcp_server", { name, command, args }),
+  removeMcpServer: (name: string): Promise<void> =>
+    invoke("remove_mcp_server", { name }),
+  updateMcpServer: (name: string, updates: { command?: string; args?: string[]; enabled?: boolean }): Promise<McpServer> =>
+    invoke("update_mcp_server", { name, command: updates.command, args: updates.args, enabled: updates.enabled }),
+  testMcpServer: (name: string): Promise<boolean> =>
+    invoke("test_mcp_server", { name }),
 
   // ── Log viewer ────────────────────────────────────────
   readLogs: (logFile?: string, lines?: number): Promise<{ content: string; path: string }> =>

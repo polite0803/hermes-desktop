@@ -14,9 +14,11 @@ export default {
   gateway: "ゲートウェイ",
   settings: "設定",
 
+  mcpServers: "MCP Servers",
   collapse: "Collapse sidebar",
   expand: "Expand sidebar",
 
+  mcpServers: "MCP Servers",
   collapse: "Collapse sidebar",
   expand: "Expand sidebar",
 } as const;

@@ -23,6 +23,7 @@ mod ssh;
 mod attachment_staging;
 mod yaml_path;
 mod sse_parser;
+mod mcp;
 
 use std::collections::HashMap;
 use tauri::menu::MenuItem;
@@ -225,7 +226,7 @@ pub fn run() {
             installer::run_hermes_doctor, installer::run_hermes_update,
             installer::check_openclaw, installer::run_hermes_migrate,
             installer::run_hermes_backup, installer::run_hermes_import, installer::run_hermes_dump,
-            installer::list_mcp_servers, installer::discover_memory_providers, installer::read_logs,
+            installer::discover_memory_providers, installer::read_logs,
             installer::check_for_updates, installer::download_update, installer::install_update,
             installer::claw3d_setup, installer::select_folder, installer::open_external,
             config::get_config_value, config::set_config_value, config::get_env_all, config::set_env,
@@ -267,6 +268,7 @@ pub fn run() {
             claw3d::claw3d_start_adapter, claw3d::claw3d_stop_adapter,
             ssh::test_ssh_connection, ssh::start_ssh_tunnel,
             ssh::stop_ssh_tunnel, ssh::is_ssh_tunnel_active,
+            mcp::list_mcp_servers, mcp::add_mcp_server, mcp::remove_mcp_server, mcp::update_mcp_server, mcp::test_mcp_server,
             attachment_staging::stage_attachment, attachment_staging::clear_staged_attachments,
             get_app_version, get_system_info,
         ])

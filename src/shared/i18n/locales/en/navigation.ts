@@ -13,6 +13,7 @@ export default {
   kanban: "Kanban",
   gateway: "Gateway",
   settings: "Settings",
+  mcpServers: "MCP Servers",
   collapse: "Collapse sidebar",
   expand: "Expand sidebar",
 } as const;
