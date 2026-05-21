@@ -208,6 +208,8 @@ export const hermesAPI = {
   verifyInstall: (): Promise<boolean> => invoke("verify_install"),
   startInstall: (): Promise<{ success: boolean; error?: string }> =>
     invoke("start_install"),
+  startPypiInstall: (): Promise<{ success: boolean; error?: string }> =>
+    invoke("start_pypi_install"),
   onInstallProgress: (cb: (p: InstallProgress) => void): (() => void) =>
     onEvent("install-progress", cb),
 

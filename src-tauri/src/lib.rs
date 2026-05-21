@@ -227,7 +227,7 @@ pub fn run() {
             ssh_tunnel_state: std::sync::Mutex::new(ssh::SshTunnelState::Disconnected),
         })
         .invoke_handler(tauri::generate_handler![
-            installer::check_install, installer::verify_install, installer::start_install,
+            installer::check_install, installer::verify_install, installer::start_install, installer::start_pypi_install,
             installer::get_hermes_version, installer::refresh_hermes_version,
             installer::run_hermes_doctor, installer::run_hermes_update,
             installer::check_openclaw, installer::run_hermes_migrate,

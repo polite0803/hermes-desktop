@@ -185,6 +185,41 @@ pub fn check_install() -> Result<InstallStatus, String> {
 }
 
 #[tauri::command]
+pub async fn start_pypi_install(app: AppHandle) -> Result<InstallResult, String> {
+    let total = 4u32;
+    let _ = app.emit("install-progress", InstallProgress { step: 1, total_steps: total, title: "PyPI Install".into(), detail: "Creating virtual environment...".into(), log: None });
+
+    let hermes_home = hermes_home();
+    let venv = hermes_venv();
+
+    // Create venv
+    let python = if cfg!(windows) { "python" } else { "python3" };
+    let venv_out = std::process::Command::new(python).args(&["-m", "venv", &venv.to_string_lossy()]).output().map_err(|e| format!("{}", e))?;
+    if !venv_out.status.success() && !venv.join(if cfg!(windows) { "Scripts/python.exe" } else { "bin/python3" }).exists() {
+        return Ok(InstallResult { success: false, error: Some(String::from_utf8_lossy(&venv_out.stderr).to_string()) });
+    }
+
+    // Install hermes-agent via pip
+    let _ = app.emit("install-progress", InstallProgress { step: 2, total_steps: total, title: "Installing hermes-agent".into(), detail: "pip install hermes-agent...".into(), log: None });
+    let pip = if cfg!(windows) { venv.join("Scripts/pip.exe") } else { venv.join("bin/pip") };
+    let (tx, rx) = std::sync::mpsc::channel();
+    let app2 = app.clone();
+    let mut pip_cmd = std::process::Command::new(&pip);
+    pip_cmd.args(&["install", "hermes-agent"]).env("PIP_REQUIRE_VIRTUALENV", "false");
+    spawn_and_stream(app2, &mut pip_cmd, 2, total, "Installing hermes-agent".into(), move |ok, log| { let _ = tx.send((ok, log)); });
+    let (ok, log) = rx.recv().map_err(|e| format!("{}", e))?;
+
+    let _ = app.emit("install-progress", InstallProgress { step: 3, total_steps: total, title: "Finalizing".into(), detail: "Writing config...".into(), log: None });
+    let config = hermes_home.join("config.yaml");
+    if !config.exists() {
+        let _ = fs::write(&config, "model:\n  provider: auto\n");
+    }
+
+    let _ = app.emit("install-progress", InstallProgress { step: 4, total_steps: total, title: "Installation complete".into(), detail: if ok { "hermes-agent installed via PyPI" } else { "Finished with warnings" }.into(), log: Some(log.clone()) });
+    Ok(InstallResult { success: ok, error: if ok { None } else { Some(log) } })
+}
+
+#[tauri::command]
 pub fn verify_install() -> Result<bool, String> {
     if !hermes_python().exists() || !hermes_script().exists() { return Ok(false); }
     hermes_cli::run_hermes_cli(&["--version"], None).map(|v| !v.is_empty()).or(Ok(false))

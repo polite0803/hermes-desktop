@@ -40,12 +40,18 @@ function Skills({ profile }: SkillsProps): React.JSX.Element {
   const [hubSearch, setHubSearch] = useState("");
   const [hubResults, setHubResults] = useState<{ name: string; description: string; category: string; author: string; downloads: number; installed: boolean }[]>([]);
   const [hubLoading, setHubLoading] = useState(false);
+  const [hubSource, setHubSource] = useState<"agentskills" | "huggingface">("agentskills");
   const searchRef = useRef<HTMLInputElement>(null);
 
   async function searchHub(): Promise<void> {
     if (!hubSearch.trim()) return;
     setHubLoading(true);
-    try { setHubResults(await hermesAPI.searchSkillsHub(hubSearch.trim())); } catch {}
+    try {
+      const results = hubSource === "huggingface"
+        ? await hermesAPI.searchHuggingfaceSkills(hubSearch.trim())
+        : await hermesAPI.searchSkillsHub(hubSearch.trim());
+      setHubResults(results);
+    } catch {}
     setHubLoading(false);
   }
 
