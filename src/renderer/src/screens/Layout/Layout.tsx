@@ -32,6 +32,8 @@ import {
   Timer,
   Kanban as KanbanIcon,
   Download,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from "../../assets/icons";
 import type { LucideIcon } from "lucide-react";
 import { useI18n } from "../../components/useI18n";
@@ -82,6 +84,7 @@ function Layout({
   onDismissVerifyWarning,
 }: LayoutProps = {}): React.JSX.Element {
   const { t } = useI18n();
+  const [collapsed, setCollapsed] = useState(false);
   const [view, setView] = useState<View>("chat");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
@@ -213,9 +216,16 @@ function Layout({
 
   return (
     <div className="layout">
-      <aside className="sidebar">
+      <aside className={`sidebar ${collapsed ? "sidebar-collapsed" : ""}`}>
         <div className="sidebar-brand">
           <img src={hermeslogo} height={30} alt="" />
+          <button
+            className="sidebar-toggle"
+            onClick={() => setCollapsed((c) => !c)}
+            title={collapsed ? t("navigation.expand") : t("navigation.collapse")}
+          >
+            {collapsed ? <PanelLeftOpen size={14} /> : <PanelLeftClose size={14} />}
+          </button>
         </div>
 
         <nav className="sidebar-nav">
@@ -224,9 +234,10 @@ function Layout({
               key={v}
               className={`sidebar-nav-item ${view === v ? "active" : ""}`}
               onClick={() => goTo(v)}
+              title={collapsed ? t(labelKey) : undefined}
             >
               <Icon size={16} />
-              {t(labelKey)}
+              <span className="sidebar-label">{t(labelKey)}</span>
             </button>
           ))}
         </nav>

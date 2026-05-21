@@ -13,4 +13,10 @@ export default {
   kanban: "カンバン",
   gateway: "ゲートウェイ",
   settings: "設定",
+
+  collapse: "Collapse sidebar",
+  expand: "Expand sidebar",
+
+  collapse: "Collapse sidebar",
+  expand: "Expand sidebar",
 } as const;
