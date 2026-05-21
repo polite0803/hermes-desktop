@@ -10,7 +10,7 @@ pub const PROVIDER_ENV_KEYS: &[(&str, &str)] = &[
     ("mistral", "MISTRAL_API_KEY"), ("perplexity", "PERPLEXITY_API_KEY"),
     ("huggingface", "HF_TOKEN"), ("hf", "HF_TOKEN"),
     ("qwen", "QWEN_API_KEY"), ("minimax", "MINIMAX_API_KEY"),
-    ("glm", "GLM_API_KEY"), ("kimi", "KIMI_API_KEY"), ("nvidia", "NVIDIA_API_KEY"),
+    ("glm", "GLM_API_KEY"), ("zai", "GLM_API_KEY"), ("kimi", "KIMI_API_KEY"), ("nvidia", "NVIDIA_API_KEY"),
 ];
 
 pub const PROVIDER_BASE_URLS: &[(&str, &str)] = &[

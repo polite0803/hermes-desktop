@@ -21,7 +21,7 @@ const PROVIDER_BASE_URLS: &[(&str, &str)] = &[
 
 const NON_DISCOVERABLE: &[&str] = &[
     "auto","custom","nous","google","xai","openai-codex","xai-oauth",
-    "qwen-oauth","qwen","minimax","kimi-coding",
+    "qwen-oauth","qwen","minimax","kimi-coding","minimax-oauth","google-gemini-cli",
 ];
 
 fn cache_key(provider: &str, base_url: &str) -> String {
