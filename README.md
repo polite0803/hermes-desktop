@@ -87,74 +87,96 @@ sudo dnf install ./hermes-desktop-<version>.rpm
 ## Features
 
 - **Guided first-run install** for Hermes Agent with progress tracking and dependency resolution
-- **Local or remote backend** — run Hermes locally on `127.0.0.1:8642`, or connect the desktop app to a remote Hermes API server with URL + API key
-- **Multi-provider support** — OpenRouter, Anthropic, OpenAI, Google (Gemini), xAI (Grok), Nous Portal, Qwen, MiniMax, Hugging Face, Groq, and local OpenAI-compatible endpoints (LM Studio, Ollama, vLLM, llama.cpp)
+- **Three connection modes** — local (127.0.0.1:8642), remote (custom URL + API key), SSH tunnel (no exposed ports)
+- **Multi-provider support** — OpenRouter, Anthropic, OpenAI, Google (Gemini), xAI (Grok), Nous Portal, Qwen, MiniMax, Hugging Face, Groq, DeepSeek, Mistral, Together AI, Fireworks AI, Cerebras, Perplexity, NVIDIA NIM, Z.ai/GLM, and local OpenAI-compatible endpoints (LM Studio, Ollama, vLLM, llama.cpp)
 - **Streaming chat UI** with SSE streaming, tool progress indicators, markdown rendering, and syntax highlighting
-- **Token usage tracking** — live prompt/completion token counts and cost display in the chat footer, plus a `/usage` slash command
-- **22 slash commands** — `/new`, `/clear`, `/fast`, `/web`, `/image`, `/browse`, `/code`, `/shell`, `/usage`, `/help`, `/tools`, `/skills`, `/model`, `/memory`, `/persona`, `/version`, `/compact`, `/compress`, `/undo`, `/retry`, `/debug`, `/status`, and more
+- **39+ slash commands** — `/new`, `/clear`, `/btw`, `/approve`, `/deny`, `/status`, `/reset`, `/compact`, `/undo`, `/retry`, `/fast`, `/compress`, `/usage`, `/debug`, `/goal`, `/steer`, `/queue`, `/update`, `/web`, `/image`, `/browse`, `/code`, `/file`, `/shell`, `/help`, `/tools`, `/skills`, `/reload-skills`, `/kanban`, `/curator`, `/model`, `/memory`, `/persona`, `/version`, and more
+- **Token usage tracking** — live prompt/completion token counts, cost display, and rate limit info in chat footer
 - **Session management** — full-text search (SQLite FTS5), date-grouped history, resume and search across conversations
 - **Profile switching** — create, delete, and switch between separate Hermes environments with isolated config
-- **14 toolsets** — web, browser, terminal, file, code execution, vision, image gen, TTS, skills, memory, session search, clarify, delegation, MoA, and task planning
-- **Memory system** — view/edit memory entries, user profile memory, capacity tracking, and discoverable memory providers (Honcho, Hindsight, Mem0, RetainDB, Supermemory, ByteRover)
+- **16 toolsets** — web search, browser, terminal, file operations, code execution, vision, image generation, TTS, skills, memory, session search, clarify, delegation, cron jobs, MoA, and todo management
+- **Memory system** — view/edit memory entries, user profile memory, character capacity tracking, and discoverable memory providers
 - **Persona editor** — edit and reset your agent's SOUL.md personality
-- **Saved models** — CRUD management for model configurations across providers
-- **Scheduled tasks** — cron job builder (minutes, hourly, daily, weekly, custom cron) with 15 delivery targets
+- **Saved models** — CRUD management for model configurations across providers with auto-discovery
+- **Scheduled tasks** — cron job builder with multiple delivery targets (Telegram, Discord, email, etc.)
 - **16 messaging gateways** — Telegram, Discord, Slack, WhatsApp, Signal, Matrix, Mattermost, Email (IMAP/SMTP), SMS (Twilio/Vonage), iMessage (BlueBubbles), DingTalk, Feishu/Lark, WeCom, WeChat (iLink Bot), Webhooks, Home Assistant
+- **MCP server management** — add, remove, test, and manage Model Context Protocol servers
+- **SSH tunnel support** — tunnel to remote Hermes over SSH without exposed ports or API keys
 - **Hermes Office (Claw3d)** — visual 3D interface with dev server and adapter management
+- **Curator** — autonomous background skill library maintenance agent
+- **Sandbox backends** — Docker, SSH, Modal, Daytona, Vercel Sandbox support for code execution
+- **Context files** — manage files attached to conversations
+- **Kanban boards** — visual task management with boards and cards
 - **Backup, import & debug dump** — full data backup/restore and system diagnostics from Settings
-- **Log viewer** — view gateway and agent logs directly from the Settings screen
-- **Auto-updater** — check for and install updates via electron-updater
-- **i18n ready** — internationalization framework with English locale covering all screens, ready for community translations
+- **Log viewer** — view gateway, agent, and error logs directly from the Settings screen
+- **Auto-updater** — check for and install Hermes Agent updates
+- **i18n ready** — internationalization framework with 8 languages (English, Spanish, Indonesian, Japanese, Portuguese BR/PT, Simplified Chinese, Traditional Chinese)
 - **Test suite** — SSE parser, IPC handlers, preload API surface, installer utilities, and constants validation with Vitest
-
 
 ## How It Works
 
 On first launch, the app:
 
-1. Asks whether you want to run Hermes **locally** or connect to a **remote** Hermes API server.
-2. **Local mode:** checks whether Hermes is already installed in `~/.hermes`; if not, runs the official Hermes installer with dependency resolution (Git, uv, Python 3.11+).
-3. **Remote mode:** prompts for the remote API URL and API key, validates the connection, and skips local install.
-4. Prompts for an API provider or local model endpoint.
-5. Saves provider config and API keys through Hermes config files.
-6. Launches the main workspace once setup is complete.
+1. Asks whether you want to run Hermes **locally**, connect to a **remote** Hermes API server, or use **SSH tunnel**
+2. **Local mode:** checks whether Hermes is already installed in `~/.hermes`; if not, runs the official Hermes installer with dependency resolution (Git, uv, Python 3.11+)
+3. **Remote mode:** prompts for the remote API URL and API key, validates the connection
+4. **SSH tunnel mode:** configures SSH connection to tunnel to a remote Hermes instance
+5. Prompts for an API provider or local model endpoint
+6. Saves provider config and API keys through Hermes config files
+7. Launches the main workspace once setup is complete
 
-In local mode, chat requests go through `http://127.0.0.1:8642` with SSE streaming. In remote mode, the app talks to your configured remote URL with the same streaming protocol. The desktop app parses the stream in real time, rendering tool progress, markdown content, and token usage as it arrives.
+In local mode, chat requests go through `http://127.0.0.1:8642` with SSE streaming. In remote mode, the app talks to your configured remote URL with the same streaming protocol. SSH tunnel mode creates a local port forward to the remote Hermes instance.
 
 ## Screens
 
-| Screen        | Description                                                                           |
-| ------------- | ------------------------------------------------------------------------------------- |
-| **Chat**      | Streaming conversation UI with slash commands, tool progress, and token tracking      |
-| **Sessions**  | Browse, search, and resume past conversations                                         |
-| **Agents**    | Create, delete, and switch between Hermes profiles                                    |
-| **Skills**    | Browse, install, and manage bundled and installed skills                              |
-| **Models**    | Manage saved model configurations per provider                                        |
-| **Memory**    | View/edit memory entries, user profile, and configure memory providers                |
-| **Soul**      | Edit the active profile's persona (SOUL.md)                                           |
-| **Tools**     | Enable or disable individual toolsets                                                 |
-| **Schedules** | Create and manage cron jobs with delivery targets                                     |
-| **Gateway**   | Configure and control messaging platform integrations                                 |
-| **Office**    | Claw3d visual interface setup and management                                          |
-| **Settings**  | Provider config, credential pools, backup/import, log viewer, network settings, theme |
+| Screen           | Description                                                                                      |
+| ---------------- | ------------------------------------------------------------------------------------------------ |
+| **Chat**         | Streaming conversation UI with slash commands, tool progress, and token tracking                   |
+| **Sessions**     | Browse, search, and resume past conversations                                                    |
+| **Agents**       | Create, delete, and switch between Hermes profiles                                               |
+| **Skills**       | Browse, install, and manage bundled and installed skills                                          |
+| **Models**       | Manage saved model configurations per provider with auto-discovery                                |
+| **Memory**       | View/edit memory entries, user profile, and configure memory providers                            |
+| **Soul**         | Edit the active profile's persona (SOUL.md)                                                      |
+| **Tools**        | Enable or disable individual toolsets (16 toolsets)                                              |
+| **Schedules**    | Create and manage cron jobs with delivery targets                                                 |
+| **Gateway**      | Configure and control 16 messaging platform integrations                                          |
+| **MCP Servers**  | Add, remove, test, and manage MCP servers                                                         |
+| **Office**       | Claw3d visual interface setup and management                                                      |
+| **Curator**      | View and trigger autonomous skill library maintenance                                             |
+| **Plugins**      | Enable/disable Hermes Agent plugins                                                              |
+| **Context Files** | Manage files attached to conversations                                                          |
+| **Kanban**       | Visual task management with boards                                                               |
+| **Security**     | Security settings and configuration                                                              |
+| **Usage**        | Token usage statistics and insights                                                              |
+| **Settings**     | Provider config, credential pools, SSH tunnel, backup/import, log viewer, network settings, theme, language |
 
 ## Supported Providers
 
 ### LLM Providers
 
-| Provider            | Notes                                    |
-| ------------------- | ---------------------------------------- |
-| **OpenRouter**      | 200+ models via single API (recommended) |
-| **Anthropic**       | Direct Claude access                     |
-| **OpenAI**          | Direct GPT access                        |
-| **Google (Gemini)** | Google AI Studio                         |
-| **xAI (Grok)**      | Grok models                              |
-| **Nous Portal**     | Free tier available                      |
-| **Qwen**            | QwenAI models                            |
-| **MiniMax**         | Global and China endpoints               |
-| **Hugging Face**    | 20+ open models via HF Inference         |
-| **Groq**            | Fast inference (voice/STT)               |
-| **Local/Custom**    | Any OpenAI-compatible endpoint           |
+| Provider            | Notes                                      |
+| ------------------- | ------------------------------------------ |
+| **OpenRouter**      | 200+ models via single API (recommended)   |
+| **Anthropic**       | Direct Claude access                       |
+| **OpenAI**          | Direct GPT access                         |
+| **OpenAI Codex**    | GitHub Copilot integration                 |
+| **Google (Gemini)** | Google AI Studio                          |
+| **xAI (Grok)**     | Grok models                               |
+| **Nous Portal**     | Free tier available                        |
+| **Qwen**            | QwenAI models (including OAuth)            |
+| **MiniMax**         | Global and China endpoints (including OAuth)|
+| **Hugging Face**    | 20+ open models via HF Inference           |
+| **Groq**            | Fast inference                             |
+| **DeepSeek**        | DeepSeek models                           |
+| **Mistral**         | Mistral AI models                         |
+| **Together AI**     | Open models via Together                   |
+| **Fireworks AI**    | Fast inference                            |
+| **Cerebras**        | Ultra-fast inference                      |
+| **Perplexity**      | Real-time search models                   |
+| **NVIDIA NIM**      | NVIDIA NIM inference endpoints             |
+| **Z.ai / GLM**      | Chinese models                            |
+| **Local/Custom**    | Any OpenAI-compatible endpoint             |
 
 Local presets are included for LM Studio, Ollama, vLLM, and llama.cpp.
 
@@ -164,13 +186,14 @@ Telegram, Discord, Slack, WhatsApp, Signal, Matrix/Element, Mattermost, Email (I
 
 ### Tool Integrations
 
-Exa Search, Parallel API, Tavily, Firecrawl, FAL.ai (image generation), Honcho, Browserbase, Weights & Biases, and Tinker.
+Exa Search, Parallel API, Tavily, Firecrawl, FAL.ai (image generation), Honcho, Browserbase, Weights & Biases, Tinker, and voice tools.
 
 ## Development
 
 ### Prerequisites
 
-- Node.js and npm
+- Node.js 18+ and npm
+- Rust 1.70+ (for Tauri backend)
 - A Unix-like shell environment for the Hermes installer
 - Network access for downloading Hermes during first-run install
 
@@ -183,7 +206,7 @@ npm install
 ### Start the app in development
 
 ```bash
-npm run dev
+npm run tauri:dev
 ```
 
 ### Run checks
@@ -203,7 +226,7 @@ npm run test:watch
 ### Build the desktop app
 
 ```bash
-npm run build
+npm run tauri:build
 ```
 
 Platform packaging:
@@ -224,14 +247,27 @@ Supported setup paths in the UI:
 - `OpenRouter`
 - `Anthropic`
 - `OpenAI`
+- `OpenAI Codex`
+- `Google (Gemini)`
+- `xAI (Grok)`
+- `Nous Portal`
 - `Local LLM` via an OpenAI-compatible base URL
 
-Local presets are included for:
+Built-in presets for local models:
 
 - LM Studio
 - Ollama
 - vLLM
 - llama.cpp
+
+Remote API presets:
+
+- Groq
+- DeepSeek
+- Together AI
+- Fireworks AI
+- Cerebras
+- Mistral
 
 Hermes files are managed in:
 
@@ -242,15 +278,16 @@ Hermes files are managed in:
 - `~/.hermes/profiles/` — named profile directories
 - `~/.hermes/state.db` — session history database
 - `~/.hermes/cron/jobs.json` — scheduled tasks
+- `~/.hermes/mcp.json` — MCP server configuration
 
 ## Tech Stack
 
-- **Electron** 39 — cross-platform desktop shell
-- **React** 19 — UI framework
-- **TypeScript** 5.9 — type safety across main and renderer processes
-- **Tailwind CSS** 4 — utility-first styling
-- **Vite** 7 + electron-vite — fast dev server and build tooling
-- **better-sqlite3** — local session storage with FTS5 full-text search
+- **Tauri 2** — cross-platform desktop shell (not Electron)
+- **React 19** — UI framework
+- **TypeScript 5.9** — type safety across main and renderer processes
+- **Tailwind CSS 4** — utility-first styling
+- **Vite 7** — fast dev server and build tooling
+- **rusqlite** — local session storage with SQLite FTS5 full-text search
 - **i18next** — internationalization framework
 - **Vitest** — test runner
 
@@ -260,6 +297,7 @@ Hermes files are managed in:
 - The built-in installer runs the official Hermes install script with `--skip-setup`, then completes provider configuration in the GUI.
 - Local model providers do not require an API key, but the compatible server must already be running.
 - Alternative npm registry routes are supported for environments with restricted network access.
+- SSH tunnel mode requires passwordless SSH access to the remote server (via SSH keys).
 
 ## Contributing
 

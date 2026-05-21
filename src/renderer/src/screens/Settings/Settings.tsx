@@ -1124,7 +1124,7 @@ function SandboxBackendSection(): React.JSX.Element {
     <div className="settings-section" style={{ marginTop: 24 }}>
       <h2 className="settings-section-title">Sandbox Backend</h2>
       <p style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 12 }}>
-        Choose where terminal commands execute. Docker, SSH, and cloud sandboxes are supported.
+        Choose where terminal commands execute.
       </p>
       <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
         <select className="models-search-input" value={backend} onChange={(e) => setBackend(e.target.value)} style={{ maxWidth: 300 }}>
