@@ -10,6 +10,8 @@ import commonEn from "./locales/en/common";
 import mcpEn from "./locales/en/mcp";
 import pluginsEn from "./locales/en/plugins";
 import usageen from "./locales/en/usage";
+import contextFilesen from "./locales/en/contextfiles";
+import securityen from "./locales/en/security";
 import navigationen from "./locales/en/navigation";
 import welcomeEn from "./locales/en/welcome";
 import setupEn from "./locales/en/setup";
@@ -33,6 +35,8 @@ import commonEs from "./locales/es/common";
 import mcpEs from "./locales/es/mcp";
 import pluginsEs from "./locales/es/plugins";
 import usagees from "./locales/es/usage";
+import contextFileses from "./locales/es/contextfiles";
+import securityes from "./locales/es/security";
 import navigationes from "./locales/es/navigation";
 import welcomeEs from "./locales/es/welcome";
 import setupEs from "./locales/es/setup";
@@ -56,6 +60,8 @@ import commonId from "./locales/id/common";
 import mcpId from "./locales/id/mcp";
 import pluginsId from "./locales/id/plugins";
 import usageid from "./locales/id/usage";
+import contextFilesid from "./locales/id/contextfiles";
+import securityid from "./locales/id/security";
 import navigationid from "./locales/id/navigation";
 import welcomeId from "./locales/id/welcome";
 import setupId from "./locales/id/setup";
@@ -119,6 +125,8 @@ import commonJa from "./locales/ja/common";
 import mcpJa from "./locales/ja/mcp";
 import pluginsJa from "./locales/ja/plugins";
 import usageja from "./locales/ja/usage";
+import contextFilesja from "./locales/ja/contextfiles";
+import securityja from "./locales/ja/security";
 import navigationja from "./locales/ja/navigation";
 import welcomeJa from "./locales/ja/welcome";
 import setupJa from "./locales/ja/setup";
@@ -184,6 +192,8 @@ export const resources = {
     translation: {
       common: commonEn,
       plugins: pluginsEn,
+      contextFiles: contextFilesEn,
+      security: securityEn,
       usage: usageEn,
       mcp: mcpEn,
       navigation: navigationEn,
@@ -211,6 +221,8 @@ export const resources = {
     translation: {
       common: commonEs,
       plugins: pluginsEs,
+      contextFiles: contextFilesEs,
+      security: securityEs,
       usage: usageEs,
       mcp: mcpEs,
       navigation: navigationEs,
@@ -238,6 +250,8 @@ export const resources = {
     translation: {
       common: commonId,
       plugins: pluginsId,
+      contextFiles: contextFilesId,
+      security: securityId,
       usage: usageId,
       mcp: mcpId,
       navigation: navigationId,
@@ -265,6 +279,8 @@ export const resources = {
     translation: {
       common: commonZh,
       plugins: pluginsZh,
+      contextFiles: contextFilesZh,
+      security: securityZh,
       usage: usageZh,
       mcp: mcpZh,
       navigation: navigationZh,
@@ -292,6 +308,8 @@ export const resources = {
     translation: {
       common: commonZhTw,
       plugins: pluginsZhTw,
+      contextFiles: contextFilesZhTw,
+      security: securityZhTw,
       usage: usageZhTw,
       mcp: mcpZhTw,
       navigation: navigationZhTw,
@@ -319,6 +337,8 @@ export const resources = {
     translation: {
       common: commonPt,
       plugins: pluginsPt,
+      contextFiles: contextFilesPt,
+      security: securityPt,
       usage: usagePt,
       mcp: mcpPt,
       navigation: navigationPt,
@@ -346,6 +366,8 @@ export const resources = {
     translation: {
       common: commonPtPt,
       plugins: pluginsPtPt,
+      contextFiles: contextFilesPtPt,
+      security: securityPtPt,
       usage: usagePtPt,
       mcp: mcpPtPt,
       navigation: navigationPtPt,
@@ -373,6 +395,8 @@ export const resources = {
     translation: {
       common: commonJa,
       plugins: pluginsJa,
+      contextFiles: contextFilesJa,
+      security: securityJa,
       usage: usageJa,
       mcp: mcpJa,
       navigation: navigationJa,

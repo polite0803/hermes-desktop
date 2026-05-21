@@ -16,6 +16,8 @@ import Kanban from "../Kanban/Kanban";
 import McpServers from "../McpServers/McpServers";
 import Plugins from "../Plugins/Plugins";
 import Usage from "../Usage/Usage";
+import ContextFiles from "../ContextFiles/ContextFiles";
+import SecurityScreen from "../Security/Security";
 import RemoteNotice from "../../components/RemoteNotice";
 import VerifyWarningBanner from "../../components/VerifyWarningBanner";
 import hermeslogo from "../../assets/hermes.png";
@@ -38,6 +40,8 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   BarChart3,
+  FileText,
+  Shield,
 } from "../../assets/icons";
 import type { LucideIcon } from "lucide-react";
 import { useI18n } from "../../components/useI18n";
@@ -60,7 +64,9 @@ type View =
   | "settings"
   | "mcpServers"
   | "plugins"
-  | "usage";
+  | "usage"
+  | "contextFiles"
+  | "security";
 
 const NAV_ITEMS: { view: View; icon: LucideIcon; labelKey: string }[] = [
   { view: "chat", icon: ChatBubble, labelKey: "navigation.chat" },
@@ -80,6 +86,8 @@ const NAV_ITEMS: { view: View; icon: LucideIcon; labelKey: string }[] = [
   { view: "mcpServers", icon: Puzzle, labelKey: "navigation.mcpServers" },
   { view: "plugins", icon: Puzzle, labelKey: "navigation.plugins" },
   { view: "usage", icon: BarChart3, labelKey: "navigation.usage" },
+  { view: "contextFiles", icon: FileText, labelKey: "navigation.contextFiles" },
+  { view: "security", icon: Shield, labelKey: "navigation.security" },
 ];
 
 interface LayoutProps {
@@ -448,6 +456,18 @@ function Layout({
         {visitedViews.has("usage") && (
           <div style={paneStyle("usage")}>
             <Usage />
+          </div>
+        )}
+
+        {visitedViews.has("contextFiles") && (
+          <div style={paneStyle("contextFiles")}>
+            <ContextFiles />
+          </div>
+        )}
+
+        {visitedViews.has("security") && (
+          <div style={paneStyle("security")}>
+            <SecurityScreen />
           </div>
         )}
       </main>

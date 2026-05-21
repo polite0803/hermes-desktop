@@ -13,6 +13,7 @@ function Soul({ profile }: SoulProps): React.JSX.Element {
   const [loading, setLoading] = useState(true);
   const [saved, setSaved] = useState(false);
   const [showReset, setShowReset] = useState(false);
+  const [presets, setPresets] = useState<{ name: string; description: string }[]>([]);
   const loaded = useRef(false);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
