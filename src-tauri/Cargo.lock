@@ -1672,6 +1672,7 @@ dependencies = [
  "dirs-next",
  "env_logger",
  "futures-util",
+ "libc",
  "log",
  "once_cell",
  "regex-lite",
