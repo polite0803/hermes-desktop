@@ -18,6 +18,7 @@ import Plugins from "../Plugins/Plugins";
 import Usage from "../Usage/Usage";
 import ContextFiles from "../ContextFiles/ContextFiles";
 import SecurityScreen from "../Security/Security";
+import Curator from "../Curator/Curator";
 import RemoteNotice from "../../components/RemoteNotice";
 import VerifyWarningBanner from "../../components/VerifyWarningBanner";
 import hermeslogo from "../../assets/hermes.png";
@@ -66,7 +67,8 @@ type View =
   | "plugins"
   | "usage"
   | "contextFiles"
-  | "security";
+  | "security"
+  | "curator";
 
 const NAV_ITEMS: { view: View; icon: LucideIcon; labelKey: string }[] = [
   { view: "chat", icon: ChatBubble, labelKey: "navigation.chat" },
@@ -88,6 +90,7 @@ const NAV_ITEMS: { view: View; icon: LucideIcon; labelKey: string }[] = [
   { view: "usage", icon: BarChart3, labelKey: "navigation.usage" },
   { view: "contextFiles", icon: FileText, labelKey: "navigation.contextFiles" },
   { view: "security", icon: Shield, labelKey: "navigation.security" },
+  { view: "curator", icon: Sparkles, labelKey: "navigation.curator" },
 ];
 
 interface LayoutProps {
@@ -468,6 +471,12 @@ function Layout({
         {visitedViews.has("security") && (
           <div style={paneStyle("security")}>
             <SecurityScreen />
+          </div>
+        )}
+
+        {visitedViews.has("curator") && (
+          <div style={paneStyle("curator")}>
+            <Curator />
           </div>
         )}
       </main>

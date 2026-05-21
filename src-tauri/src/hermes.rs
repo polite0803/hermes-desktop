@@ -439,6 +439,21 @@ pub fn gateway_status(state: tauri::State<'_, crate::AppState>) -> Result<bool, 
     }
 }
 
+// ─── OpenAI-compatible proxy ──────────────────────────────
+
+#[tauri::command]
+pub fn start_proxy(app: AppHandle) -> Result<bool, String> {
+    let python = hermes_cli::resolve_python();
+    let script = hermes_cli::resolve_hermes_script();
+    if !script.exists() { return Err("Hermes not installed".into()); }
+    let mut cmd = std::process::Command::new(&python);
+    cmd.arg(&script).arg("proxy").stdout(std::process::Stdio::null()).stderr(std::process::Stdio::null());
+    #[cfg(windows)] { use std::os::windows::process::CommandExt; cmd.creation_flags(0x08000000); }
+    cmd.spawn().map_err(|e| format!("{}", e))?;
+    let _ = app.emit("proxy-started", ());
+    Ok(true)
+}
+
 // ─── SSE Streaming API ───
 
 /// Send via HTTP API with SSE streaming.

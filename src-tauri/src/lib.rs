@@ -29,6 +29,7 @@ mod plugins;
 mod usage;
 mod context_files;
 mod sandbox;
+mod curator;
 
 use std::collections::HashMap;
 use tauri::menu::MenuItem;
@@ -244,7 +245,7 @@ pub fn run() {
             locale::get_locale, locale::set_locale,
             hermes::send_message, hermes::abort_chat,
             hermes::start_gateway, hermes::stop_gateway, hermes::gateway_status,
-            hermes::test_remote_connection,
+            hermes::start_proxy, hermes::test_remote_connection,
             sessions::list_sessions, sessions::get_session_messages,
             sessions::delete_session, sessions::search_sessions,
             session_cache::list_cached_sessions, session_cache::sync_session_cache,
@@ -261,6 +262,8 @@ pub fn run() {
             skills::list_installed_skills, skills::list_bundled_skills,
             skills::get_skill_content, skills::install_skill, skills::uninstall_skill,
             skills_hub::search_skills_hub, skills_hub::install_from_hub,
+            skills_hub::search_huggingface_skills,
+            curator::curator_status, curator::curator_trigger, curator::curator_report,
             cronjobs::list_cron_jobs, cronjobs::create_cron_job, cronjobs::remove_cron_job,
             cronjobs::pause_cron_job, cronjobs::resume_cron_job, cronjobs::trigger_cron_job,
             kanban::kanban_list_boards, kanban::kanban_current_board, kanban::kanban_switch_board,

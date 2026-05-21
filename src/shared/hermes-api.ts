@@ -575,6 +575,18 @@ export const hermesAPI = {
   installComputerUseMcp: (): Promise<boolean> =>
     invoke("install_computer_use_mcp"),
 
+  // ── Curator ──────────────────────────────────────
+  curatorStatus: (): Promise<string> => invoke("curator_status"),
+  curatorTrigger: (): Promise<string> => invoke("curator_trigger"),
+  curatorReport: (): Promise<string> => invoke("curator_report"),
+
+  // ── Proxy ─────────────────────────────────────────
+  startProxy: (): Promise<boolean> => invoke("start_proxy"),
+
+  // ── HuggingFace Skills ────────────────────────────
+  searchHuggingfaceSkills: (query: string): Promise<{ name: string; description: string; category: string; author: string; downloads: number; installed: boolean }[]> =>
+    invoke("search_huggingface_skills", { query }),
+
   // ── Sandbox Backend ──────────────────────────────
   getTerminalBackend: (): Promise<string> =>
     invoke("get_terminal_backend"),

@@ -12,6 +12,7 @@ import pluginsEn from "./locales/en/plugins";
 import usageen from "./locales/en/usage";
 import contextFilesen from "./locales/en/contextfiles";
 import securityen from "./locales/en/security";
+import curatoren from "./locales/en/curator";
 import navigationen from "./locales/en/navigation";
 import welcomeEn from "./locales/en/welcome";
 import setupEn from "./locales/en/setup";
@@ -37,6 +38,7 @@ import pluginsEs from "./locales/es/plugins";
 import usagees from "./locales/es/usage";
 import contextFileses from "./locales/es/contextfiles";
 import securityes from "./locales/es/security";
+import curatores from "./locales/es/curator";
 import navigationes from "./locales/es/navigation";
 import welcomeEs from "./locales/es/welcome";
 import setupEs from "./locales/es/setup";
@@ -62,6 +64,7 @@ import pluginsId from "./locales/id/plugins";
 import usageid from "./locales/id/usage";
 import contextFilesid from "./locales/id/contextfiles";
 import securityid from "./locales/id/security";
+import curatorid from "./locales/id/curator";
 import navigationid from "./locales/id/navigation";
 import welcomeId from "./locales/id/welcome";
 import setupId from "./locales/id/setup";
@@ -127,6 +130,7 @@ import pluginsJa from "./locales/ja/plugins";
 import usageja from "./locales/ja/usage";
 import contextFilesja from "./locales/ja/contextfiles";
 import securityja from "./locales/ja/security";
+import curatorja from "./locales/ja/curator";
 import navigationja from "./locales/ja/navigation";
 import welcomeJa from "./locales/ja/welcome";
 import setupJa from "./locales/ja/setup";
@@ -193,6 +197,7 @@ export const resources = {
       common: commonEn,
       plugins: pluginsEn,
       contextFiles: contextFilesEn,
+      curator: curatorEn,
       security: securityEn,
       usage: usageEn,
       mcp: mcpEn,
@@ -222,6 +227,7 @@ export const resources = {
       common: commonEs,
       plugins: pluginsEs,
       contextFiles: contextFilesEs,
+      curator: curatorEs,
       security: securityEs,
       usage: usageEs,
       mcp: mcpEs,
@@ -251,6 +257,7 @@ export const resources = {
       common: commonId,
       plugins: pluginsId,
       contextFiles: contextFilesId,
+      curator: curatorId,
       security: securityId,
       usage: usageId,
       mcp: mcpId,
@@ -280,6 +287,7 @@ export const resources = {
       common: commonZh,
       plugins: pluginsZh,
       contextFiles: contextFilesZh,
+      curator: curatorZh,
       security: securityZh,
       usage: usageZh,
       mcp: mcpZh,
@@ -309,6 +317,7 @@ export const resources = {
       common: commonZhTw,
       plugins: pluginsZhTw,
       contextFiles: contextFilesZhTw,
+      curator: curatorZhTw,
       security: securityZhTw,
       usage: usageZhTw,
       mcp: mcpZhTw,
@@ -338,6 +347,7 @@ export const resources = {
       common: commonPt,
       plugins: pluginsPt,
       contextFiles: contextFilesPt,
+      curator: curatorPt,
       security: securityPt,
       usage: usagePt,
       mcp: mcpPt,
@@ -367,6 +377,7 @@ export const resources = {
       common: commonPtPt,
       plugins: pluginsPtPt,
       contextFiles: contextFilesPtPt,
+      curator: curatorPtPt,
       security: securityPtPt,
       usage: usagePtPt,
       mcp: mcpPtPt,
@@ -396,6 +407,7 @@ export const resources = {
       common: commonJa,
       plugins: pluginsJa,
       contextFiles: contextFilesJa,
+      curator: curatorJa,
       security: securityJa,
       usage: usageJa,
       mcp: mcpJa,

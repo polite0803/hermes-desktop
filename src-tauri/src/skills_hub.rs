@@ -46,6 +46,25 @@ pub fn install_from_hub(name: String, profile: Option<String>) -> Result<serde_j
     }
 }
 
+/// Search huggingface/skills tap
+#[tauri::command]
+pub async fn search_huggingface_skills(query: String) -> Result<Vec<HubSkill>, String> {
+    let url = format!("https://huggingface.co/api/skills?search={}", urlencoding(&query));
+    let client = reqwest::Client::builder().timeout(Duration::from_secs(10)).build().map_err(|e| e.to_string())?;
+    let resp = client.get(&url).header("Accept", "application/json").send().await.map_err(|e| format!("Request failed: {}", e))?;
+    let body = resp.text().await.unwrap_or_default();
+    let json: serde_json::Value = serde_json::from_str(&body).unwrap_or_default();
+    let skills: Vec<HubSkill> = json.as_array().map_or(Vec::new(), |arr| arr.iter().map(|item| HubSkill {
+        name: item["name"].as_str().unwrap_or("").to_string(),
+        description: item["description"].as_str().unwrap_or("").to_string(),
+        category: item["category"].as_str().unwrap_or("").to_string(),
+        author: item["author"].as_str().unwrap_or("").to_string(),
+        downloads: item["downloads"].as_u64().unwrap_or(0) as u32,
+        installed: false,
+    }).collect());
+    Ok(skills)
+}
+
 fn urlencoding(s: &str) -> String {
     let mut result = String::new();
     for b in s.bytes() {
