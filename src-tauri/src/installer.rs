@@ -319,7 +319,7 @@ pub async fn run_hermes_update(app: AppHandle) -> Result<InstallResult, String> 
 #[tauri::command]
 pub fn check_openclaw() -> Result<OpenClawStatus, String> {
     let home = dirs_next::home_dir().unwrap_or_default();
-    for name in &[".openclaw", ".clawdbot", ".moldbot"] {
+    for name in &[".claw3d_dir", ".clawdbot", ".moldbot"] {
         let dir = home.join(name);
         if dir.exists() { return Ok(OpenClawStatus { found: true, path: Some(dir.to_string_lossy().to_string()) }); }
     }
@@ -422,13 +422,13 @@ const KNOWN_MEMORY_PROVIDERS: &[(&str, &str, &[&str])] = &[
 #[tauri::command]
 pub async fn claw3d_setup(app: AppHandle) -> Result<InstallResult, String> {
     let home = dirs_next::home_dir().unwrap_or_default();
-    let openclaw = hermes_home().join("hermes-office");
+    let claw3d_dir = hermes_home().join("claw3d");
 
     let _ = app.emit("claw3d-setup-progress", InstallProgress { step: 1, total_steps: 3, title: "Setting up Claw3D".into(), detail: "Checking directory...".into(), log: None });
 
-    if !openclaw.exists() {
-        let _ = app.emit("claw3d-setup-progress", InstallProgress { step: 2, total_steps: 3, title: "Cloning OpenClaw".into(), detail: "Cloning repository...".into(), log: None });
-        let out = Command::new("git").args(&["clone","https://github.com/fathah/hermes-office"]).arg(&openclaw).output().map_err(|e| e.to_string())?;
+    if !claw3d_dir.exists() {
+        let _ = app.emit("claw3d-setup-progress", InstallProgress { step: 2, total_steps: 3, title: "Cloning Claw3D".into(), detail: "Cloning repository...".into(), log: None });
+        let out = Command::new("git").args(&["clone","https://github.com/iamlukethedev/Claw3D"]).arg(&claw3d_dir).output().map_err(|e| e.to_string())?;
         if !out.status.success() {
             let err = String::from_utf8_lossy(&out.stderr).trim().to_string();
             return Ok(InstallResult { success: false, error: Some(err) });
@@ -437,9 +437,9 @@ pub async fn claw3d_setup(app: AppHandle) -> Result<InstallResult, String> {
 
     let (tx, rx) = std::sync::mpsc::channel();
     let app2 = app.clone();
-    let oc = openclaw.to_string_lossy().to_string();
+    let dir = claw3d_dir.to_string_lossy().to_string();
     let mut npm_cmd = Command::new("npm");
-    npm_cmd.arg("install").current_dir(&oc);
+    npm_cmd.arg("install").current_dir(&dir);
     spawn_and_stream(app2, &mut npm_cmd, 3, 3, "Installing dependencies".into(),
         move |ok, log| { let _ = tx.send((ok, log)); }
     );

@@ -21,7 +21,7 @@ const WS_URL_FILE: &str = "claw3d-ws-url";
 const DEFAULT_PORT: u16 = 3000;
 const DEFAULT_WS_URL: &str = "ws://localhost:18789";
 
-fn office_dir() -> PathBuf { hermes_cli::resolve_hermes_home().join("hermes-office") }
+fn office_dir() -> PathBuf { hermes_cli::resolve_hermes_home().join("claw3d") }
 fn setting_path(name: &str) -> PathBuf { hermes_cli::resolve_hermes_home().join(name) }
 
 // ─── Data Types ──────────────────────────────────────────
