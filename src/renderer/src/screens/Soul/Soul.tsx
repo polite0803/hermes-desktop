@@ -112,6 +112,17 @@ function Soul({ profile }: SoulProps): React.JSX.Element {
         </div>
       )}
 
+      {presets.length > 0 && (
+        <div className="soul-presets" style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
+          {presets.map((p) => (
+            <button key={p.name} className="btn btn-secondary btn-sm" title={p.description}
+              onClick={async () => { await hermesAPI.applyPersonality(p.name, profile); await loadSoul(); }}>
+              {p.name}
+            </button>
+          ))}
+        </div>
+      )}
+
       <textarea
         className="soul-editor"
         value={content}
