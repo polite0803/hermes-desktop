@@ -9,11 +9,11 @@ import type { AppLocale } from "./types";
 import commonEn from "./locales/en/common";
 import mcpEn from "./locales/en/mcp";
 import pluginsEn from "./locales/en/plugins";
-import usageen from "./locales/en/usage";
-import contextFilesen from "./locales/en/contextfiles";
-import securityen from "./locales/en/security";
-import curatoren from "./locales/en/curator";
-import navigationen from "./locales/en/navigation";
+import usageEn from "./locales/en/usage";
+import contextFilesEn from "./locales/en/contextfiles";
+import securityEn from "./locales/en/security";
+import curatorEn from "./locales/en/curator";
+import navigationEn from "./locales/en/navigation";
 import welcomeEn from "./locales/en/welcome";
 import setupEn from "./locales/en/setup";
 import chatEn from "./locales/en/chat";
@@ -33,13 +33,7 @@ import memoryEn from "./locales/en/memory";
 import installEn from "./locales/en/install";
 import constantsEn from "./locales/en/constants";
 import commonEs from "./locales/es/common";
-import mcpEs from "./locales/es/mcp";
-import pluginsEs from "./locales/es/plugins";
-import usagees from "./locales/es/usage";
-import contextFileses from "./locales/es/contextfiles";
-import securityes from "./locales/es/security";
-import curatores from "./locales/es/curator";
-import navigationes from "./locales/es/navigation";
+import navigationEs from "./locales/es/navigation";
 import welcomeEs from "./locales/es/welcome";
 import setupEs from "./locales/es/setup";
 import chatEs from "./locales/es/chat";
@@ -59,13 +53,7 @@ import memoryEs from "./locales/es/memory";
 import installEs from "./locales/es/install";
 import constantsEs from "./locales/es/constants";
 import commonId from "./locales/id/common";
-import mcpId from "./locales/id/mcp";
-import pluginsId from "./locales/id/plugins";
-import usageid from "./locales/id/usage";
-import contextFilesid from "./locales/id/contextfiles";
-import securityid from "./locales/id/security";
-import curatorid from "./locales/id/curator";
-import navigationid from "./locales/id/navigation";
+import navigationId from "./locales/id/navigation";
 import welcomeId from "./locales/id/welcome";
 import setupId from "./locales/id/setup";
 import chatId from "./locales/id/chat";
@@ -125,13 +113,7 @@ import memoryZhTw from "./locales/zh-TW/memory";
 import installZhTw from "./locales/zh-TW/install";
 import constantsZhTw from "./locales/zh-TW/constants";
 import commonJa from "./locales/ja/common";
-import mcpJa from "./locales/ja/mcp";
-import pluginsJa from "./locales/ja/plugins";
-import usageja from "./locales/ja/usage";
-import contextFilesja from "./locales/ja/contextfiles";
-import securityja from "./locales/ja/security";
-import curatorja from "./locales/ja/curator";
-import navigationja from "./locales/ja/navigation";
+import navigationJa from "./locales/ja/navigation";
 import welcomeJa from "./locales/ja/welcome";
 import setupJa from "./locales/ja/setup";
 import chatJa from "./locales/ja/chat";
@@ -225,12 +207,12 @@ export const resources = {
   es: {
     translation: {
       common: commonEs,
-      plugins: pluginsEs,
-      contextFiles: contextFilesEs,
-      curator: curatorEs,
-      security: securityEs,
-      usage: usageEs,
-      mcp: mcpEs,
+
+
+
+
+
+
       navigation: navigationEs,
       welcome: welcomeEs,
       setup: setupEs,
@@ -255,12 +237,12 @@ export const resources = {
   id: {
     translation: {
       common: commonId,
-      plugins: pluginsId,
-      contextFiles: contextFilesId,
-      curator: curatorId,
-      security: securityId,
-      usage: usageId,
-      mcp: mcpId,
+
+
+
+
+
+
       navigation: navigationId,
       welcome: welcomeId,
       setup: setupId,
@@ -285,12 +267,12 @@ export const resources = {
   "zh-CN": {
     translation: {
       common: commonZh,
-      plugins: pluginsZh,
-      contextFiles: contextFilesZh,
-      curator: curatorZh,
-      security: securityZh,
-      usage: usageZh,
-      mcp: mcpZh,
+
+
+
+
+
+
       navigation: navigationZh,
       welcome: welcomeZh,
       setup: setupZh,
@@ -315,12 +297,12 @@ export const resources = {
   "zh-TW": {
     translation: {
       common: commonZhTw,
-      plugins: pluginsZhTw,
-      contextFiles: contextFilesZhTw,
-      curator: curatorZhTw,
-      security: securityZhTw,
-      usage: usageZhTw,
-      mcp: mcpZhTw,
+
+
+
+
+
+
       navigation: navigationZhTw,
       welcome: welcomeZhTw,
       setup: setupZhTw,
@@ -345,12 +327,12 @@ export const resources = {
   "pt-BR": {
     translation: {
       common: commonPt,
-      plugins: pluginsPt,
-      contextFiles: contextFilesPt,
-      curator: curatorPt,
-      security: securityPt,
-      usage: usagePt,
-      mcp: mcpPt,
+
+
+
+
+
+
       navigation: navigationPt,
       welcome: welcomePt,
       setup: setupPt,
@@ -375,12 +357,12 @@ export const resources = {
   "pt-PT": {
     translation: {
       common: commonPtPt,
-      plugins: pluginsPtPt,
-      contextFiles: contextFilesPtPt,
-      curator: curatorPtPt,
-      security: securityPtPt,
-      usage: usagePtPt,
-      mcp: mcpPtPt,
+
+
+
+
+
+
       navigation: navigationPtPt,
       welcome: welcomePtPt,
       setup: setupPtPt,
@@ -405,12 +387,12 @@ export const resources = {
   ja: {
     translation: {
       common: commonJa,
-      plugins: pluginsJa,
-      contextFiles: contextFilesJa,
-      curator: curatorJa,
-      security: securityJa,
-      usage: usageJa,
-      mcp: mcpJa,
+
+
+
+
+
+
       navigation: navigationJa,
       welcome: welcomeJa,
       setup: setupJa,
