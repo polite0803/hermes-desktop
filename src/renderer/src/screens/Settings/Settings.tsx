@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { useTheme } from "../../components/ThemeProvider";
 import { THEME_OPTIONS } from "../../constants";
 import { useI18n } from "../../components/useI18n";
@@ -1062,8 +1063,8 @@ function LanguageSelect({
         <span>{LANGUAGE_NATIVE_NAMES[locale]}</span>
         <ChevronDown size={14} />
       </button>
-      {isOpen && (
-        <div className="settings-language-dropdown" role="listbox">
+      {isOpen && createPortal(
+        <div className="settings-language-dropdown" style={{ position: "fixed", top: (ref.current?.getBoundingClientRect().bottom ?? 0) + 4, left: ref.current?.getBoundingClientRect().left ?? 0, width: ref.current?.getBoundingClientRect().width, zIndex: 9999 }} role="listbox">
           {APP_LOCALES.map((l) => {
             const active = l === locale;
             return (
@@ -1083,7 +1084,8 @@ function LanguageSelect({
               </button>
             );
           })}
-        </div>
+        </div>,
+        document.body
       )}
 
       <SandboxBackendSection />
