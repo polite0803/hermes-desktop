@@ -66,5 +66,8 @@ pub fn set_locale(locale: String) -> Result<(), String> {
     config["locale"] = serde_json::json!(locale);
     let content = serde_json::to_string_pretty(&config)
         .map_err(|e| format!("Serialize error: {}", e))?;
+    if let Some(parent) = desktop_path.parent() {
+        fs::create_dir_all(parent).map_err(|e| format!("Failed to create dir: {}", e))?;
+    }
     fs::write(&desktop_path, content).map_err(|e| format!("Failed to write: {}", e))
 }
