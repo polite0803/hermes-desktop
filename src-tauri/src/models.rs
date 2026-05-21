@@ -7,17 +7,6 @@ use crate::hermes_cli;
 #[serde(rename_all = "camelCase")]
 pub struct SavedModel { pub id: String, pub name: String, pub provider: String, pub model: String, pub base_url: String, #[serde(rename = "createdAt")] pub created_at: u64 }
 
-const DEFAULT_MODELS: &[(&str, &str, &str, &str)] = &[
-    ("Claude Opus 4.7 (OpenRouter)", "openrouter", "anthropic/claude-opus-4-7", "https://openrouter.ai/api/v1"),
-    ("Claude Sonnet 4.7 (Anthropic)", "anthropic", "claude-sonnet-4-7-20250514", "https://api.anthropic.com/v1"),
-    ("GPT-4.1 (OpenAI)", "openai", "gpt-4.1", "https://api.openai.com/v1"),
-    ("GPT-4.1 mini (OpenAI)", "openai", "gpt-4.1-mini", "https://api.openai.com/v1"),
-    ("Claude Opus 4.7 (Anthropic)", "anthropic", "claude-opus-4-7-20250514", "https://api.anthropic.com/v1"),
-    ("DeepSeek V3", "deepseek", "deepseek-chat", "https://api.deepseek.com/v1"),
-    ("Gemini 2.5 Pro", "google", "gemini-2.5-pro-preview-05-06", ""),
-    ("Grok 4", "xai", "grok-4", ""),
-];
-
 fn models_path(profile: Option<&str>) -> std::path::PathBuf { hermes_cli::resolve_profile_home(profile).join("models.json") }
 
 fn read_models_raw(profile: Option<&str>) -> Vec<SavedModel> {
@@ -32,22 +21,9 @@ fn write_models(models: &[SavedModel], profile: Option<&str>) -> Result<(), Stri
     fs::write(&path, serde_json::to_string_pretty(models).unwrap_or_default()).map_err(|e| e.to_string())
 }
 
-fn seed_defaults(profile: Option<&str>) -> Vec<SavedModel> {
-    let ts = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map(|d| d.as_secs()).unwrap_or(0);
-    DEFAULT_MODELS.iter().map(|(name, provider, model, base_url)| SavedModel {
-        id: uuid::Uuid::new_v4().to_string(), name: name.to_string(), provider: provider.to_string(),
-        model: model.to_string(), base_url: base_url.to_string(), created_at: ts,
-    }).collect()
-}
-
 #[tauri::command]
 pub fn list_models() -> Result<Vec<SavedModel>, String> {
-    let mut models = read_models_raw(None);
-    if models.is_empty() {
-        models = seed_defaults(None);
-        let _ = write_models(&models, None);
-    }
-    Ok(models)
+    Ok(read_models_raw(None))
 }
 
 #[tauri::command]
