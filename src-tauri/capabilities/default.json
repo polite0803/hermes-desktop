@@ -7,7 +7,6 @@
     "shell:allow-open",
     "dialog:default",
     "notification:default",
-    "updater:default",
     "process:default",
     {
       "identifier": "shell:allow-execute",
