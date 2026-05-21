@@ -230,9 +230,9 @@ function Chat({
 
       {goal && (
         <div className="chat-goal-bar" style={{ display: "flex", alignItems: "center", gap: 8, padding: "4px 12px", background: "var(--accent-subtle)", fontSize: 12 }}>
-          <span style={{ fontWeight: 600, color: "var(--accent-text)" }}>Goal:</span>
+          <span style={{ fontWeight: 600, color: "var(--accent-text)" }}>{t("chat.goal")}:</span>
           <span style={{ flex: 1, color: "var(--text-primary)" }}>{goal}</span>
-          <button className="btn-ghost" onClick={() => setGoal("")} style={{ fontSize: 11, color: "var(--text-muted)" }}>✕</button>
+          <button className="btn-ghost" onClick={() => setGoal("")} style={{ fontSize: 11, color: "var(--text-muted)" }} title={t("chat.closeGoal")}>✕</button>
         </div>
       )}
       <div className="chat-input-area">

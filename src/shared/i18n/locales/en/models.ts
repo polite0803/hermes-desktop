@@ -24,4 +24,5 @@ export default {
   apiKeyLabel: "API Key",
   apiKeyHint:
     "Stored as an environment variable. Picks the matching env key based on the URL, or CUSTOM_API_KEY otherwise.",
+  autoDetected: "auto-detected from base URL",
 } as const;

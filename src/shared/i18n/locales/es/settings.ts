@@ -5,6 +5,10 @@ export default {
     appearance: "Apariencia",
     credentialPool: "Grupo de credenciales",
   },
+  community: "Comunidad",
+  communityDesc:
+    "Únete a nuestro grupo de Telegram para hacer preguntas, reportar problemas y chatear con otros usuarios de Hermes.",
+  joinTelegram: "Unirse a la comunidad de Telegram",
   theme: {
     label: "Tema",
     system: "Sistema",

@@ -49,7 +49,7 @@ export const MessageRow = memo(function MessageRow({
   return (
     <div className={`chat-message chat-message-${msg.role}`}>
       {msg.role === "user" ? (
-        <div className="chat-avatar chat-avatar-user">U</div>
+        <div className="chat-avatar chat-avatar-user">{t("chat.userAvatar")}</div>
       ) : (
         <HermesAvatar />
       )}

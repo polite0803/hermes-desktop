@@ -45,6 +45,9 @@ export default {
   categoryTools: "Tools",
   categoryInfo: "Info",
   noUsageData: "No usage data yet. Send a message first.",
+  goal: "Goal",
+  closeGoal: "Close",
+  userAvatar: "User",
   commands: {
     new: "Start a new chat",
     clear: "Clear conversation history",

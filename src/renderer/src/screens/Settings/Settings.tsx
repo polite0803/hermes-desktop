@@ -321,9 +321,9 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
     const result = await hermesAPI.runHermesBackup(profile);
     setBackingUp(false);
     if (result.success) {
-      setBackupResult(`Backup created: ${result.path || "success"}`);
+      setBackupResult(t("settings.backupCreated", { path: result.path || "success" }));
     } else {
-      setBackupResult(result.error || "Backup failed.");
+      setBackupResult(result.error || t("settings.backupFailed"));
     }
   }
 
@@ -542,11 +542,12 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
       </div>
 
       <div className="settings-section">
-        <div className="settings-section-title">Community</div>
+        <div className="settings-section-title">
+          {t("settings.community")}
+        </div>
         <div className="settings-field">
           <div className="settings-field-hint" style={{ marginBottom: 10 }}>
-            Join our Telegram group to ask questions, report issues, and chat
-            with other Hermes users.
+            {t("settings.communityDesc")}
           </div>
           <div className="settings-hermes-actions">
             <button
@@ -557,7 +558,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
               title={TELEGRAM_COMMUNITY_URL}
             >
               <Send size={14} style={{ marginRight: 6 }} />
-              Join Telegram Community
+              {t("settings.joinTelegram")}
             </button>
           </div>
         </div>
@@ -597,7 +598,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
               className={`settings-theme-option ${connMode === "ssh" ? "active" : ""}`}
               onClick={() => setConnMode("ssh")}
             >
-              SSH Tunnel
+              {t("settings.modeSSHTunnel")}
             </button>
           </div>
           <div className="settings-field-hint">
@@ -671,7 +672,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
         {connMode === "ssh" && (
           <>
             <div className="settings-field">
-              <label className="settings-field-label">SSH Host</label>
+              <label className="settings-field-label">{t("settings.sshHost")}</label>
               <input
                 className="input"
                 type="text"
@@ -681,7 +682,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
               />
             </div>
             <div className="settings-field">
-              <label className="settings-field-label">SSH Port</label>
+              <label className="settings-field-label">{t("settings.sshPort")}</label>
               <input
                 className="input"
                 type="number"
@@ -691,7 +692,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
               />
             </div>
             <div className="settings-field">
-              <label className="settings-field-label">Username</label>
+              <label className="settings-field-label">{t("settings.username")}</label>
               <input
                 className="input"
                 type="text"
@@ -702,9 +703,9 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
             </div>
             <div className="settings-field">
               <label className="settings-field-label">
-                Private Key Path{" "}
+                {t("settings.privateKeyPath")}{" "}
                 <span style={{ fontWeight: 400, opacity: 0.6 }}>
-                  (optional, defaults to ~/.ssh/id_rsa)
+                  {t("settings.privateKeyPathOptional")}
                 </span>
               </label>
               <input
@@ -717,9 +718,9 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
             </div>
             <div className="settings-field">
               <label className="settings-field-label">
-                Remote Hermes Port{" "}
+                {t("settings.remoteHermesPort")}{" "}
                 <span style={{ fontWeight: 400, opacity: 0.6 }}>
-                  (default 8642)
+                  {t("settings.remoteHermesPortDefault")}
                 </span>
               </label>
               <input
@@ -729,18 +730,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
                 onChange={(e) => setSshRemotePort(e.target.value)}
                 placeholder="8642"
               />
-              <div className="settings-field-hint">
-                Make sure you can run{" "}
-                <code style={{ fontFamily: "monospace" }}>
-                  ssh {sshUser || "user"}@{sshHost || "host"}
-                </code>{" "}
-                without a password prompt. The first connection trusts the host
-                key and stores it in{" "}
-                <code style={{ fontFamily: "monospace" }}>
-                  ~/.ssh/known_hosts
-                </code>
-                ; SSH will fail closed if that key changes later.
-              </div>
+              <div className="settings-field-hint" dangerouslySetInnerHTML={{ __html: t("settings.sshConnectionHint", { user: sshUser || "user", host: sshHost || "host" }) }} />
             </div>
             <div className="settings-hermes-actions">
               <button
@@ -748,7 +738,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
                 onClick={handleTestConnection}
                 disabled={connTesting}
               >
-                {connTesting ? "Testing SSH…" : "Test SSH Connection"}
+                {connTesting ? t("settings.testingSSH") : t("settings.testSSHConnection")}
               </button>
               <button
                 className="btn btn-primary"
@@ -1122,21 +1112,21 @@ function SandboxBackendSection(): React.JSX.Element {
 
   return (
     <div className="settings-section" style={{ marginTop: 24 }}>
-      <h2 className="settings-section-title">Sandbox Backend</h2>
+      <h2 className="settings-section-title">{t("settings.sandboxBackend")}</h2>
       <p style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 12 }}>
-        Choose where terminal commands execute.
+        {t("settings.sandboxBackendHint")}
       </p>
       <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
         <select className="models-search-input" value={backend} onChange={(e) => setBackend(e.target.value)} style={{ maxWidth: 300 }}>
-          <option value="local">Local</option>
-          <option value="docker">Docker</option>
-          <option value="ssh">SSH</option>
-          <option value="modal">Modal</option>
-          <option value="daytona">Daytona</option>
-          <option value="vercel">Vercel Sandbox</option>
+          <option value="local">{t("settings.sandboxLocal")}</option>
+          <option value="docker">{t("settings.sandboxDocker")}</option>
+          <option value="ssh">{t("settings.sandboxSSH")}</option>
+          <option value="modal">{t("settings.sandboxModal")}</option>
+          <option value="daytona">{t("settings.sandboxDaytona")}</option>
+          <option value="vercel">{t("settings.sandboxVercel")}</option>
         </select>
         <button className="btn btn-primary btn-sm" onClick={save}>
-          {saved ? "✓ Saved" : "Save"}
+          {saved ? t("settings.savedButton") : t("settings.save")}
         </button>
       </div>
     </div>
