@@ -452,7 +452,6 @@ const KNOWN_MEMORY_PROVIDERS: &[(&str, &str, &[&str])] = &[
 
 #[tauri::command]
 pub async fn claw3d_setup(app: AppHandle) -> Result<InstallResult, String> {
-    let home = dirs_next::home_dir().unwrap_or_default();
     let claw3d_dir = hermes_home().join("claw3d");
 
     let _ = app.emit("claw3d-setup-progress", InstallProgress { step: 1, total_steps: 3, title: "Setting up Claw3D".into(), detail: "Checking directory...".into(), log: None });

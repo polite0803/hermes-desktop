@@ -8,6 +8,10 @@
 //   3. Remote operations — skills, memory, soul, sessions, profiles, config, etc.
 //   4. Tunnel management — long-lived `ssh -N -L` process for HTTP proxy
 
+// Silence unused variable warnings — many remote operation functions
+// accept `profile` for future use but don't reference it yet.
+#![allow(unused_variables)]
+
 use std::collections::HashMap;
 use std::io::Write;
 use std::net::TcpStream;
@@ -40,7 +44,7 @@ pub struct SshConnectionResult {
 // ─── Build SSH Args ─────────────────────────────────────
 
 /// Platform-aware SSH control options.
-fn build_ssh_control_options(for_tunnel: bool) -> Vec<String> {
+fn build_ssh_control_options(_for_tunnel: bool) -> Vec<String> {
     #[cfg(target_os = "windows")]
     {
         vec!["-o".into(), "ControlMaster=no".into(),
@@ -667,7 +671,7 @@ pub fn start_ssh_tunnel(
         cmd.creation_flags(0x08000000);
     }
 
-    let child = cmd.spawn().map_err(|e| format!("SSH tunnel spawn failed: {}", e))?;
+    let _child = cmd.spawn().map_err(|e| format!("SSH tunnel spawn failed: {}", e))?;
 
     // Wait for port to open
     if let Err(e) = wait_for_port(local_port, 12000) {
@@ -739,7 +743,7 @@ pub async fn ensure_ssh_tunnel(state: &tauri::State<'_, crate::AppState>) -> Res
     }
 
     // Need to restart tunnel — drop the lock before calling start
-    drop(state);
+    let _ = state;
     // start_ssh_tunnel will be called externally
     Ok(())
 }

@@ -81,7 +81,7 @@ pub fn sync_session_cache() -> Result<Vec<CachedSession>, String> {
         row.get(0)?, row.get(1)?, row.get(2)?, row.get(3)?, row.get::<_, String>(4).unwrap_or_default(), row.get(5)?
     ))).map_err(|e| e.to_string())?.filter_map(|r| r.ok()).collect();
 
-    let mut existing: std::collections::HashMap<String, usize> = cache.sessions.iter().enumerate().map(|(i, s)| (s.id.clone(), i)).collect();
+    let existing: std::collections::HashMap<String, usize> = cache.sessions.iter().enumerate().map(|(i, s)| (s.id.clone(), i)).collect();
     let mut refreshed = std::collections::HashSet::new();
 
     for (id, started_at, source, msg_count, model, row_title) in &rows {
