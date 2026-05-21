@@ -116,7 +116,7 @@ function Layout({ verifyWarning, onReinstall, onDismissVerifyWarning }: LayoutPr
     <div className="layout">
       <aside className={`sidebar ${collapsed ? "sidebar-collapsed" : ""}`}>
         <div className="sidebar-brand">
-          <img src={hermeslogo} height={30} alt="" />
+          <img src={hermeslogo} height={collapsed ? 24 : 30} width={collapsed ? 24 : undefined} alt="" style={collapsed ? { objectFit: "contain" } : undefined} />
           <button className="sidebar-toggle" onClick={() => setCollapsed((c) => !c)} title={collapsed ? t("navigation.expand") : t("navigation.collapse")}>
             {collapsed ? <PanelLeftOpen size={14} /> : <PanelLeftClose size={14} />}
           </button>

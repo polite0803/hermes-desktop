@@ -933,8 +933,14 @@ body {
 .sidebar-collapsed {
   width: 56px !important;
 }
+.sidebar-collapsed .sidebar-brand {
+  overflow: hidden;
+}
 .sidebar-collapsed .sidebar-brand img {
   height: 24px !important;
+  max-width: 40px;
+  object-fit: cover;
+  object-position: left center;
 }
 .sidebar-collapsed .sidebar-nav-item {
   justify-content: center;
