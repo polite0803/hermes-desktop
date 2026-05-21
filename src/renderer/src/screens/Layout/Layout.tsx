@@ -76,7 +76,7 @@ function Layout({ verifyWarning, onReinstall, onDismissVerifyWarning }: LayoutPr
     setView(v);
   }, []);
 
-  useEffect(() => { hermesAPI.isRemoteOnlyMode().then(setRemoteMode); }, [view]);
+  useEffect(() => { hermesAPI.isRemoteOnlyMode().then(setRemoteMode).catch(() => {}); }, []);
 
   useEffect(() => {
     const a = hermesAPI.onUpdateAvailable((info) => { setUpdateVersion(info.version); setUpdateState("available"); setUpdateError(null); setDownloadPercent(0); });

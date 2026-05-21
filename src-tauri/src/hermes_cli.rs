@@ -1,6 +1,15 @@
 use std::path::PathBuf;
 use std::process::Command;
 
+/// Apply no-window flag on Windows to prevent console popups
+fn hide_window(cmd: &mut Command) {
+    #[cfg(windows)]
+    {
+        use std::os::windows::process::CommandExt;
+        cmd.creation_flags(0x08000000); // CREATE_NO_WINDOW
+    }
+}
+
 /// Resolve HERMES_HOME directory
 /// Priority: env var -> profile config -> default locations
 pub fn resolve_hermes_home() -> PathBuf {
@@ -107,6 +116,7 @@ pub fn run_hermes_cli(args: &[&str], profile: Option<&str>) -> Result<String, St
         cmd.env("HERMES_PROFILE", p);
     }
 
+    hide_window(&mut cmd);
     let output = cmd.output().map_err(|e| format!("Failed to execute hermes CLI: {}", e))?;
 
     if output.status.success() {
@@ -138,7 +148,7 @@ pub fn run_hermes_cli_with_input(
         cmd.env("HERMES_PROFILE", p);
     }
 
-    // Write input to stdin
+    hide_window(&mut cmd);
     let mut child = cmd.spawn().map_err(|e| format!("Failed to spawn: {}", e))?;
     use std::io::Write;
     if let Some(mut stdin) = child.stdin.take() {
