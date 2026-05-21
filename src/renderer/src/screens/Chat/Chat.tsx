@@ -237,9 +237,6 @@ function Chat({
       )}
       <div className="chat-input-area">
         <ChatInput
-          goal={goal}
-          onGoalChange={setGoal}
-
           ref={chatInputRef}
           isLoading={isLoading}
           hasSession={!!hermesSessionId}
