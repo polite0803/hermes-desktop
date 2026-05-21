@@ -539,6 +539,28 @@ export const hermesAPI = {
   applyPersonality: (name: string, profile?: string): Promise<void> =>
     invoke("apply_personality", { name, profile }),
 
+  // ── Plugins ──────────────────────────────────────
+  listPlugins: (): Promise<{ name: string; description: string; installed: boolean; enabled: boolean }[]> =>
+    invoke("list_plugins"),
+  enablePlugin: (name: string): Promise<void> =>
+    invoke("enable_plugin", { name }),
+  disablePlugin: (name: string): Promise<void> =>
+    invoke("disable_plugin", { name }),
+
+  // ── Usage ─────────────────────────────────────────
+  getUsageStats: (): Promise<{ totalSessions: number; totalMessages: number; activeSkills: number; memoryEntries: number }> =>
+    invoke("get_usage_stats"),
+  getInsights: (): Promise<string> =>
+    invoke("get_insights"),
+
+  // ── Context Files ─────────────────────────────────
+  listContextFiles: (): Promise<string[]> =>
+    invoke("list_context_files"),
+  readContextFile: (name: string): Promise<{ name: string; content: string }> =>
+    invoke("read_context_file", { name }),
+  writeContextFile: (name: string, content: string): Promise<void> =>
+    invoke("write_context_file", { name, content }),
+
   // ── MCP Servers ──────────────────────────────────
   listMcpServers: (): Promise<McpServer[]> =>
     invoke("list_mcp_servers"),

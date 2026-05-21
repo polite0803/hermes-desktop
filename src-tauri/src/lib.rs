@@ -25,6 +25,9 @@ mod yaml_path;
 mod sse_parser;
 mod mcp;
 mod skills_hub;
+mod plugins;
+mod usage;
+mod context_files;
 
 use std::collections::HashMap;
 use tauri::menu::MenuItem;
@@ -273,6 +276,9 @@ pub fn run() {
             ssh::stop_ssh_tunnel, ssh::is_ssh_tunnel_active,
             mcp::list_mcp_servers, mcp::add_mcp_server, mcp::remove_mcp_server, mcp::update_mcp_server, mcp::test_mcp_server,
             attachment_staging::stage_attachment, attachment_staging::clear_staged_attachments,
+            plugins::list_plugins, plugins::enable_plugin, plugins::disable_plugin,
+            usage::get_usage_stats, usage::get_insights,
+            context_files::list_context_files, context_files::read_context_file, context_files::write_context_file,
             get_app_version, get_system_info,
         ])
         .run(tauri::generate_context!())
