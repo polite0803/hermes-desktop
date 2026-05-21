@@ -422,13 +422,13 @@ const KNOWN_MEMORY_PROVIDERS: &[(&str, &str, &[&str])] = &[
 #[tauri::command]
 pub async fn claw3d_setup(app: AppHandle) -> Result<InstallResult, String> {
     let home = dirs_next::home_dir().unwrap_or_default();
-    let openclaw = home.join("openclaw");
+    let openclaw = hermes_home().join("hermes-office");
 
     let _ = app.emit("claw3d-setup-progress", InstallProgress { step: 1, total_steps: 3, title: "Setting up Claw3D".into(), detail: "Checking directory...".into(), log: None });
 
     if !openclaw.exists() {
         let _ = app.emit("claw3d-setup-progress", InstallProgress { step: 2, total_steps: 3, title: "Cloning OpenClaw".into(), detail: "Cloning repository...".into(), log: None });
-        let out = Command::new("git").args(&["clone","https://github.com/nousresearch/openclaw"]).arg(&openclaw).output().map_err(|e| e.to_string())?;
+        let out = Command::new("git").args(&["clone","https://github.com/fathah/hermes-office"]).arg(&openclaw).output().map_err(|e| e.to_string())?;
         if !out.status.success() {
             let err = String::from_utf8_lossy(&out.stderr).trim().to_string();
             return Ok(InstallResult { success: false, error: Some(err) });
