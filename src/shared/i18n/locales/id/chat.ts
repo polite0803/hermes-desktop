@@ -45,6 +45,9 @@ export default {
   categoryTools: "Alat",
   categoryInfo: "Info",
   noUsageData: "Belum ada data penggunaan. Kirim pesan terlebih dahulu.",
+  goal: "Tujuan",
+  closeGoal: "Tutup",
+  userAvatar: "Pengguna",
   commands: {
     new: "Mulai chat baru",
     clear: "Bersihkan riwayat percakapan",

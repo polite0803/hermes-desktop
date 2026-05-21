@@ -24,4 +24,5 @@ export default {
   apiKeyLabel: "API Key",
   apiKeyHint:
     "Disimpan sebagai environment variable. Memilih env key yang cocok berdasarkan URL, atau CUSTOM_API_KEY jika tidak ada.",
+  autoDetected: "terdeteksi otomatis dari URL dasar",
 } as const;

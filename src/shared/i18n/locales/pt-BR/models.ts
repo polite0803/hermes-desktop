@@ -25,4 +25,5 @@ export default {
   apiKeyLabel: "Chave da API",
   apiKeyHint:
     "Armazenada como uma variável de ambiente. Escolhe a chave correspondente com base na URL ou CUSTOM_API_KEY caso contrário.",
+  autoDetected: "detectado automaticamente a partir do URL base",
 } as const;

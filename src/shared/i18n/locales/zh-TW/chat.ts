@@ -31,6 +31,9 @@ export default {
   categoryTools: "工具",
   categoryInfo: "資訊",
   noUsageData: "目前沒有使用資料。請先傳送一則訊息。",
+  goal: "目標",
+  closeGoal: "關閉",
+  userAvatar: "用戶",
   commands: {
     new: "開始新對話",
     clear: "清除對話歷史",

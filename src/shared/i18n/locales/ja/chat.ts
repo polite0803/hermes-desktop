@@ -44,6 +44,9 @@ export default {
   categoryInfo: "情報",
   noUsageData:
     "まだ使用データがありません。まずメッセージを送ってみてください。",
+  goal: "目標",
+  closeGoal: "閉じる",
+  userAvatar: "ユーザー",
   commands: {
     new: "新しいチャットを開始",
     clear: "会話履歴をクリア",

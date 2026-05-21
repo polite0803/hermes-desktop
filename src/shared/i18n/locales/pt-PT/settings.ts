@@ -37,6 +37,8 @@ export default {
   httpProxyHint:
     "Proxy SOCKS ou HTTP para todas as ligações de saída (deixe em branco para detecção automática)",
   saved: "Guardado",
+  savedStatus: "Guardado",
+  savedButton: "✓ Guardado",
   providerHint:
     "Seleccione um fornecedor de inferência ou detecte automaticamente com base na Chave da API",
   customProviderHint:
@@ -80,8 +82,11 @@ export default {
   connectionSection: "Ligação",
   modeLocal: "Local",
   modeRemote: "Remoto",
+  modeSSHTunnel: "Túnel SSH",
   modeLocalHint: "A usar o Hermes instalado neste dispositivo",
   modeRemoteHint: "Ligar a um servidor da API do Hermes na sua rede ou nuvem",
+  modeSSHTunnelHint:
+    "Ligar a um Hermes remoto via SSH — sem portas expostas ou chaves API necessárias.",
   remoteUrl: "URL Remoto",
   remoteUrlHint:
     "O URL do servidor da API do Hermes (deve expor /health e /v1/chat/completions)",
@@ -90,6 +95,23 @@ export default {
     "Deve coincidir com a API_SERVER_KEY no host remoto. Deixe em branco se o servidor aceitar pedidos não autenticados.",
   testingConnection: "A testar...",
   testConnection: "Testar Ligação",
+  testingSSH: "A testar SSH…",
+  testSSHConnection: "Testar Ligação SSH",
+  sshHost: "Host SSH",
+  sshPort: "Porta SSH",
+  username: "Utilizador",
+  privateKeyPath: "Caminho da Chave Privada",
+  privateKeyPathOptional: "(opcional, padrão ~/.ssh/id_rsa)",
+  remoteHermesPort: "Porta Remota do Hermes",
+  remoteHermesPortDefault: "(padrão 8642)",
+  sshConnectionHint:
+    "Certifique-se de que consegue executar <code>ssh {user}@{host}</code> sem pedido de palavra-passe. A primeira ligação confia na chave do host e guarda-a em <code>~/.ssh/known_hosts</code>; o SSH falhará se essa chave for alterada posteriormente.",
+  hostRequired: "Host e utilizador são obrigatórios",
+  sshTunnelConnected: "Túnel SSH ligado!",
+  sshConnectionFailed: "Não foi possível ligar via SSH",
+  enterURL: "Por favor, insira um URL",
+  connectionSuccess: "Ligado com sucesso!",
+  connectionFailed: "Não foi possível aceder ao servidor",
   save: "Guardar",
   serverConfigTitle: "Configuração do Servidor",
   serverConfigHint:

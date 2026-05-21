@@ -45,6 +45,9 @@ export default {
   categoryTools: "Herramientas",
   categoryInfo: "Información",
   noUsageData: "Todavía no hay datos de uso. Envía primero un mensaje.",
+  goal: "Meta",
+  closeGoal: "Cerrar",
+  userAvatar: "Usuario",
   commands: {
     new: "Iniciar un nuevo chat",
     clear: "Borrar el historial de la conversación",

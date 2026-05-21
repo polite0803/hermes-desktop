@@ -23,4 +23,5 @@ export default {
   apiKeyLabel: "API Key",
   apiKeyHint:
     "儲存為環境變數。會依 URL 符合對應的環境變數名稱，否則使用 CUSTOM_API_KEY。",
+  autoDetected: "根據基礎 URL 自動偵測",
 } as const;
