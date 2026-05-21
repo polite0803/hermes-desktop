@@ -58,6 +58,10 @@ pub fn run_hermes_cli(args: &[&str], profile: Option<&str>) -> Result<String, St
     let python = resolve_python();
     let script = resolve_hermes_script();
 
+    if !python.exists() || !script.exists() {
+        return Err("Hermes Agent is not installed. Please complete the installation first.".into());
+    }
+
     let mut cmd = Command::new(&python);
     cmd.arg(&script);
     for arg in args {
