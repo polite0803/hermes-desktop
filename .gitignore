@@ -36,7 +36,11 @@ pnpm-debug.log*
 
 # Hermes local
 .claude/worktrees
+.claude/settings.local.json
 release/
+
+# npm cache
+.npm-cache/
 
 # Local scripts
 /*.bat
