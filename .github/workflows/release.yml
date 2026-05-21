@@ -26,7 +26,7 @@ jobs:
             bundle_args: --bundles dmg
           - platform: macos-latest
             target: x86_64-apple-darwin
-            bundle_args: --bundles dmg,zip
+            bundle_args: --bundles dmg
           - platform: windows-latest
             target: x86_64-pc-windows-msvc
             bundle_args: --bundles nsis
