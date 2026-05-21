@@ -285,7 +285,7 @@ pub fn run() {
             plugins::list_plugins, plugins::enable_plugin, plugins::disable_plugin,
             usage::get_usage_stats, usage::get_insights,
             context_files::list_context_files, context_files::read_context_file, context_files::write_context_file,
-            get_app_version, get_system_info,
+            hermes_cli::debug_paths, get_app_version, get_system_info,
         ])
         .run(tauri::generate_context!())
         .unwrap_or_else(|e| {

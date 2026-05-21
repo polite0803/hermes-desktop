@@ -156,6 +156,34 @@ pub fn run_hermes_cli_with_input(
     }
 }
 
+/// Diagnostic: dump all resolved paths and their existence
+#[tauri::command]
+pub fn debug_paths() -> serde_json::Value {
+    let home = resolve_hermes_home();
+    let py = resolve_python();
+    let script = resolve_hermes_script();
+    let agent_dir = home.join("hermes-agent");
+    let venv_agent = agent_dir.join("venv");
+    let venv_legacy = home.join("venv");
+
+    serde_json::json!({
+        "hermes_home": home.to_string_lossy(),
+        "hermes_home_exists": home.exists(),
+        "hermes_agent_exists": agent_dir.exists(),
+        "venv_agent_exists": venv_agent.exists(),
+        "venv_legacy_exists": venv_legacy.exists(),
+        "python_path": py.to_string_lossy(),
+        "python_exists": py.exists(),
+        "script_path": script.to_string_lossy(),
+        "script_exists": script.exists(),
+        "config_yaml_exists": home.join("config.yaml").exists(),
+        "env_exists": home.join(".env").exists(),
+        "localappdata": std::env::var("LOCALAPPDATA").unwrap_or_default(),
+        "userprofile": std::env::var("USERPROFILE").unwrap_or_default(),
+        "hermes_home_env": std::env::var("HERMES_HOME").unwrap_or_default(),
+    })
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
