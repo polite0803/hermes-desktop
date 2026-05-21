@@ -1037,29 +1037,29 @@ function LanguageSelect({
   onSelect: (l: AppLocale) => void;
 }): React.JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const [dropStyle, setDropStyle] = useState<React.CSSProperties>({});
 
   useEffect(() => {
     if (!isOpen) return;
-    function handleClickOutside(e: MouseEvent): void {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setIsOpen(false);
-      }
+    const el = btnRef.current;
+    if (el) {
+      const r = el.getBoundingClientRect();
+      setDropStyle({ top: r.bottom + 4, left: r.left, width: r.width });
     }
-    function handleKey(e: KeyboardEvent): void {
-      if (e.key === "Escape") setIsOpen(false);
+    function outside(e: MouseEvent): void {
+      if (btnRef.current && !btnRef.current.contains(e.target as Node)) setIsOpen(false);
     }
-    document.addEventListener("mousedown", handleClickOutside);
-    document.addEventListener("keydown", handleKey);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("keydown", handleKey);
-    };
+    function esc(e: KeyboardEvent): void { if (e.key === "Escape") setIsOpen(false); }
+    document.addEventListener("mousedown", outside);
+    document.addEventListener("keydown", esc);
+    return () => { document.removeEventListener("mousedown", outside); document.removeEventListener("keydown", esc); };
   }, [isOpen]);
 
   return (
-    <div className="settings-language-select" ref={ref}>
+    <div className="settings-language-select">
       <button
+        ref={btnRef}
         type="button"
         className="settings-language-trigger"
         onClick={() => setIsOpen((v) => !v)}
@@ -1070,7 +1070,7 @@ function LanguageSelect({
         <ChevronDown size={14} />
       </button>
       {isOpen && (
-        <div className="settings-language-dropdown" role="listbox">
+        <div className="settings-language-dropdown" style={dropStyle} role="listbox">
           {APP_LOCALES.map((l) => {
             const active = l === locale;
             return (
@@ -1081,8 +1081,8 @@ function LanguageSelect({
                 aria-selected={active}
                 className={`settings-language-option ${active ? "active" : ""}`}
                 onClick={() => {
-                  onSelect(l);
                   setIsOpen(false);
+                  requestAnimationFrame(() => onSelect(l));
                 }}
               >
                 <span>{LANGUAGE_NATIVE_NAMES[l]}</span>
