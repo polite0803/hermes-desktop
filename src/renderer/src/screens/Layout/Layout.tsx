@@ -14,6 +14,8 @@ import Providers from "../Providers/Providers";
 import Schedules from "../Schedules/Schedules";
 import Kanban from "../Kanban/Kanban";
 import McpServers from "../McpServers/McpServers";
+import Plugins from "../Plugins/Plugins";
+import Usage from "../Usage/Usage";
 import RemoteNotice from "../../components/RemoteNotice";
 import VerifyWarningBanner from "../../components/VerifyWarningBanner";
 import hermeslogo from "../../assets/hermes.png";
@@ -35,6 +37,7 @@ import {
   Download,
   PanelLeftClose,
   PanelLeftOpen,
+  BarChart3,
 } from "../../assets/icons";
 import type { LucideIcon } from "lucide-react";
 import { useI18n } from "../../components/useI18n";
@@ -55,7 +58,9 @@ type View =
   | "kanban"
   | "gateway"
   | "settings"
-  | "mcpServers";
+  | "mcpServers"
+  | "plugins"
+  | "usage";
 
 const NAV_ITEMS: { view: View; icon: LucideIcon; labelKey: string }[] = [
   { view: "chat", icon: ChatBubble, labelKey: "navigation.chat" },
@@ -73,6 +78,8 @@ const NAV_ITEMS: { view: View; icon: LucideIcon; labelKey: string }[] = [
   { view: "gateway", icon: Signal, labelKey: "navigation.gateway" },
   { view: "settings", icon: SettingsIcon, labelKey: "navigation.settings" },
   { view: "mcpServers", icon: Puzzle, labelKey: "navigation.mcpServers" },
+  { view: "plugins", icon: Puzzle, labelKey: "navigation.plugins" },
+  { view: "usage", icon: BarChart3, labelKey: "navigation.usage" },
 ];
 
 interface LayoutProps {
@@ -429,6 +436,18 @@ function Layout({
         {visitedViews.has("mcpServers") && (
           <div style={paneStyle("mcpServers")}>
             <McpServers />
+          </div>
+        )}
+
+        {visitedViews.has("plugins") && (
+          <div style={paneStyle("plugins")}>
+            <Plugins />
+          </div>
+        )}
+
+        {visitedViews.has("usage") && (
+          <div style={paneStyle("usage")}>
+            <Usage />
           </div>
         )}
       </main>

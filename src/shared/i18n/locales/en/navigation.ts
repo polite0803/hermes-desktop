@@ -14,6 +14,8 @@ export default {
   gateway: "Gateway",
   settings: "Settings",
   mcpServers: "MCP Servers",
+  plugins: "Plugins",
+  usage: "Usage",
   collapse: "Collapse sidebar",
   expand: "Expand sidebar",
 } as const;

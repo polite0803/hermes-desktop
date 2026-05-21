@@ -15,10 +15,14 @@ export default {
   settings: "Configurações",
 
   mcpServers: "MCP Servers",
+  plugins: "Plugins",
+  usage: "Usage",
   collapse: "Collapse sidebar",
   expand: "Expand sidebar",
 
   mcpServers: "MCP Servers",
+  plugins: "Plugins",
+  usage: "Usage",
   collapse: "Collapse sidebar",
   expand: "Expand sidebar",
 } as const;

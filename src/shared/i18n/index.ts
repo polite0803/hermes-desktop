@@ -8,6 +8,8 @@ import {
 import type { AppLocale } from "./types";
 import commonEn from "./locales/en/common";
 import mcpEn from "./locales/en/mcp";
+import pluginsEn from "./locales/en/plugins";
+import usageen from "./locales/en/usage";
 import navigationen from "./locales/en/navigation";
 import welcomeEn from "./locales/en/welcome";
 import setupEn from "./locales/en/setup";
@@ -29,6 +31,8 @@ import installEn from "./locales/en/install";
 import constantsEn from "./locales/en/constants";
 import commonEs from "./locales/es/common";
 import mcpEs from "./locales/es/mcp";
+import pluginsEs from "./locales/es/plugins";
+import usagees from "./locales/es/usage";
 import navigationes from "./locales/es/navigation";
 import welcomeEs from "./locales/es/welcome";
 import setupEs from "./locales/es/setup";
@@ -50,6 +54,8 @@ import installEs from "./locales/es/install";
 import constantsEs from "./locales/es/constants";
 import commonId from "./locales/id/common";
 import mcpId from "./locales/id/mcp";
+import pluginsId from "./locales/id/plugins";
+import usageid from "./locales/id/usage";
 import navigationid from "./locales/id/navigation";
 import welcomeId from "./locales/id/welcome";
 import setupId from "./locales/id/setup";
@@ -111,6 +117,8 @@ import installZhTw from "./locales/zh-TW/install";
 import constantsZhTw from "./locales/zh-TW/constants";
 import commonJa from "./locales/ja/common";
 import mcpJa from "./locales/ja/mcp";
+import pluginsJa from "./locales/ja/plugins";
+import usageja from "./locales/ja/usage";
 import navigationja from "./locales/ja/navigation";
 import welcomeJa from "./locales/ja/welcome";
 import setupJa from "./locales/ja/setup";
@@ -175,6 +183,8 @@ export const resources = {
   en: {
     translation: {
       common: commonEn,
+      plugins: pluginsEn,
+      usage: usageEn,
       mcp: mcpEn,
       navigation: navigationEn,
       welcome: welcomeEn,
@@ -200,6 +210,8 @@ export const resources = {
   es: {
     translation: {
       common: commonEs,
+      plugins: pluginsEs,
+      usage: usageEs,
       mcp: mcpEs,
       navigation: navigationEs,
       welcome: welcomeEs,
@@ -225,6 +237,8 @@ export const resources = {
   id: {
     translation: {
       common: commonId,
+      plugins: pluginsId,
+      usage: usageId,
       mcp: mcpId,
       navigation: navigationId,
       welcome: welcomeId,
@@ -250,6 +264,8 @@ export const resources = {
   "zh-CN": {
     translation: {
       common: commonZh,
+      plugins: pluginsZh,
+      usage: usageZh,
       mcp: mcpZh,
       navigation: navigationZh,
       welcome: welcomeZh,
@@ -275,6 +291,8 @@ export const resources = {
   "zh-TW": {
     translation: {
       common: commonZhTw,
+      plugins: pluginsZhTw,
+      usage: usageZhTw,
       mcp: mcpZhTw,
       navigation: navigationZhTw,
       welcome: welcomeZhTw,
@@ -300,6 +318,8 @@ export const resources = {
   "pt-BR": {
     translation: {
       common: commonPt,
+      plugins: pluginsPt,
+      usage: usagePt,
       mcp: mcpPt,
       navigation: navigationPt,
       welcome: welcomePt,
@@ -325,6 +345,8 @@ export const resources = {
   "pt-PT": {
     translation: {
       common: commonPtPt,
+      plugins: pluginsPtPt,
+      usage: usagePtPt,
       mcp: mcpPtPt,
       navigation: navigationPtPt,
       welcome: welcomePtPt,
@@ -350,6 +372,8 @@ export const resources = {
   ja: {
     translation: {
       common: commonJa,
+      plugins: pluginsJa,
+      usage: usageJa,
       mcp: mcpJa,
       navigation: navigationJa,
       welcome: welcomeJa,

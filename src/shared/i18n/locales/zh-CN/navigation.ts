@@ -14,6 +14,8 @@ export default {
   gateway: "网关",
   settings: "设置",
   mcpServers: "MCP Servers",
+  plugins: "Plugins",
+  usage: "Usage",
   collapse: "收起侧边栏",
   expand: "展开侧边栏",
 } as const;
