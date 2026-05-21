@@ -34,11 +34,14 @@ export function I18nProvider({
 }: {
   children: React.ReactNode;
 }): React.JSX.Element {
-  const [locale, setLocaleState] = useState<AppLocale>(initialLocale);
+  // If localStorage has a prior selection, trust it and skip Rust override
+  const stored = readStoredLocale();
+  const hadPriorSelection = stored !== DEFAULT_ACTIVE_LOCALE;
+  const [locale, setLocaleState] = useState<AppLocale>(stored);
   const [mainLocaleLoaded, setMainLocaleLoaded] = useState(
-    () => !hermesAPI?.getLocale,
+    () => !hermesAPI?.getLocale || hadPriorSelection,
   );
-  const userSelectedLocale = useRef(false);
+  const userSelectedLocale = useRef(hadPriorSelection);
 
   const setLocale = useCallback((nextLocale: AppLocale) => {
     userSelectedLocale.current = true;

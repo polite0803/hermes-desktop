@@ -5565,3 +5565,4 @@ body {
 .tab-bar-item:hover { color: var(--text-primary); }
 .tab-bar-item.active { color: var(--accent-text); border-bottom-color: var(--accent); }
 .tab-content { flex: 1; overflow: auto; }
+.tab-content .settings-container { overflow: visible; }
