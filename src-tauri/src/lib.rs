@@ -93,17 +93,17 @@ pub fn run() {
                 }
             });
 
-            // System tray
-            let _tray = TrayIconBuilder::new()
-                .tooltip("Hermes Agent")
+            // System tray (non-fatal if it fails)
+            let icon = app.default_window_icon().cloned();
+            let mut builder = TrayIconBuilder::new().tooltip("Hermes Agent");
+            if let Some(ic) = icon { builder = builder.icon(ic); }
+            let _tray = builder
                 .on_menu_event(|app, event| {
-                    if event.id().as_ref() == "quit" {
-                        app.exit(0);
-                    }
+                    if event.id().as_ref() == "quit" { app.exit(0); }
                     if event.id().as_ref() == "show" {
-                        if let Some(window) = app.get_webview_window("main") {
-                            let _ = window.show();
-                            let _ = window.set_focus();
+                        if let Some(w) = app.get_webview_window("main") {
+                            let _ = w.show();
+                            let _ = w.set_focus();
                         }
                     }
                 })
@@ -112,7 +112,8 @@ pub fn run() {
                     .separator()
                     .item(&MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?)
                     .build()?)
-                .build(app)?;
+                .build(app)
+                .ok();
 
             Ok(())
         })
@@ -259,7 +260,15 @@ pub fn run() {
             get_system_info,
         ])
         .run(tauri::generate_context!())
-        .expect("error while running Hermes Desktop");
+        .unwrap_or_else(|e| {
+            let msg = format!("Hermes Desktop failed to start: {:#?}", e);
+            // Write crash log to desktop so user can see it
+            if let Some(desktop) = dirs_next::desktop_dir() {
+                let _ = std::fs::write(desktop.join("hermes-crash.log"), &msg);
+            }
+            eprintln!("{}", msg);
+            std::process::exit(1);
+        });
 }
 
 pub fn emit_event<R: tauri::Runtime>(
