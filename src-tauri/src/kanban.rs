@@ -12,8 +12,10 @@ pub struct KanbanResult<T> {
 pub fn kanban_list_boards(include_archived: Option<bool>, profile: Option<String>) -> Result<KanbanResult<Vec<serde_json::Value>>, String> {
     let mut args = vec!["kanban", "boards"];
     if include_archived.unwrap_or(false) { args.push("--include-archived"); }
-    ok_text(&args, profile.as_deref()).map(|t| KanbanResult { success: true, data: Some(t), error: None })
-        .unwrap_or_else(|e| Ok(KanbanResult { success: false, data: None, error: Some(e) }))
+    match ok_text(&args, profile.as_deref()) {
+        Ok(t) => Ok(KanbanResult { success: true, data: Some(t), error: None }),
+        Err(e) => Ok(KanbanResult { success: false, data: None, error: Some(e) }),
+    }
 }
 
 #[tauri::command]
@@ -49,8 +51,10 @@ pub fn kanban_list_tasks(filters: Option<serde_json::Value>, profile: Option<Str
         if let Some(a) = f.get("assignee").and_then(|v| v.as_str()) { args.push("--assignee"); args.push(a); }
         if f.get("includeArchived").and_then(|v| v.as_bool()).unwrap_or(false) { args.push("--include-archived"); }
     }
-    ok_text(&args, profile.as_deref()).map(|t| KanbanResult { success: true, data: Some(t), error: None })
-        .unwrap_or_else(|e| Ok(KanbanResult { success: false, data: None, error: Some(e) }))
+    match ok_text(&args, profile.as_deref()) {
+        Ok(t) => Ok(KanbanResult { success: true, data: Some(t), error: None }),
+        Err(e) => Ok(KanbanResult { success: false, data: None, error: Some(e) }),
+    }
 }
 
 #[tauri::command]
