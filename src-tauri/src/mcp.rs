@@ -44,7 +44,7 @@ pub fn list_mcp_servers() -> Result<Vec<McpServer>, String> {
 pub fn add_mcp_server(name: String, command: String, args: Vec<String>) -> Result<McpServer, String> {
     let mut servers = read_mcp_config();
     if servers.iter().any(|s| s.name == name) {
-        return Err(format!("Server '{}' already exists", name));
+        return Err("mcp.serverExists".into());
     }
     let server = McpServer { name: name.clone(), command, args, enabled: true };
     servers.push(server.clone());
@@ -87,7 +87,7 @@ pub fn test_mcp_server(name: String) -> Result<bool, String> {
 #[tauri::command]
 pub fn install_computer_use_mcp() -> Result<bool, String> {
     #[cfg(not(target_os = "linux"))]
-    { return Err("Computer-use MCP is only supported on Linux".into()); }
+    { return Err("mcp.computerUseLinuxOnly".into()); }
 
     #[cfg(target_os = "linux")]
     {
@@ -96,7 +96,7 @@ pub fn install_computer_use_mcp() -> Result<bool, String> {
             std::fs::create_dir_all(dir.parent().unwrap_or(&dir)).map_err(|e| e.to_string())?;
             let status = Command::new("git").args(&["clone", "https://github.com/avifenesh/computer-use-linux", &dir.to_string_lossy().to_string()])
                 .status().map_err(|e| e.to_string())?;
-            if !status.success() { return Err("Failed to clone repository".into()); }
+            if !status.success() { return Err("mcp.cloneFailed".into()); }
         }
         // Add to MCP config
         let mut servers = read_mcp_config();

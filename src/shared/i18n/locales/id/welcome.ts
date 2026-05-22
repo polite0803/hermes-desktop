@@ -21,4 +21,25 @@ export default {
   connect: "Hubungkan",
   remoteHint:
     "Biarkan key kosong jika server menerima request tanpa autentikasi (misalnya melalui SSH tunnel ke localhost).",
+  connectViaSsh: "Hubungkan via SSH",
+  sshSubtitle:
+    "Tunnel ke Hermes remote melalui SSH — tanpa perlu mengekspos port atau API key.",
+  sshHost: "Host SSH",
+  sshPort: "Port SSH",
+  username: "Nama pengguna",
+  privateKeyPath: "Path Kunci Privat",
+  privateKeyPathOptional: "(opsional — default ~/.ssh/id_rsa)",
+  remoteHermesPort: "Port Hermes Remote",
+  remoteHermesPortDefault: "(default 8642)",
+  testingSsh: "Menguji koneksi SSH…",
+  sshHint:
+    'Menggunakan SSH sistem Anda. Pastikan Anda sudah bisa menjalankan <code style="font-family:monospace;font-size:12px">ssh {user}@{host}</code> tanpa prompt password.',
+  errorUrlRequired: "Silakan masukkan URL.",
+  errorRemoteUnreachable:
+    "Tidak dapat menghubungi Hermes di URL ini. Periksa URL dan API key.\n\nBiarkan key kosong jika server menerima request tanpa autentikasi (misalnya melalui SSH tunnel ke localhost).",
+  errorConnectionFailed: "Pengujian koneksi gagal.",
+  errorHostRequired: "Host dan nama pengguna wajib diisi.",
+  errorSshUnreachable:
+    "Tidak dapat terhubung via SSH atau mengakses Hermes di remote. Pastikan:\n• Kunci SSH benar (atau default ~/.ssh/id_rsa berfungsi)\n• Gateway Hermes berjalan di remote\n• Port remote benar (default 8642)",
+  errorSshFailed: "Pengujian koneksi SSH gagal: {error}",
 } as const;

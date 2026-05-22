@@ -13,4 +13,6 @@ export default {
   emptyHint: "Start chatting to create your first session",
   messages: "msg",
   messageSingular: "msg",
+  msgCount: "{{count, plural, one {msg} other {msgs}}}",
+  dbNotFound: "state.db not found",
 } as const;

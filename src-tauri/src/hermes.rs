@@ -371,7 +371,7 @@ pub fn start_gateway(
 
     let child = cmd.spawn().map_err(|e| format!("Failed to start gateway: {}", e))?;
 
-    let _ = app.emit("chat-gateway-started", "Gateway started");
+    let _ = app.emit("chat-gateway-started", "gateway.started");
 
     *gw = GatewayState::Running(child);
     Ok(true)
@@ -445,7 +445,7 @@ pub fn gateway_status(state: tauri::State<'_, crate::AppState>) -> Result<bool, 
 pub fn start_proxy(app: AppHandle) -> Result<bool, String> {
     let python = hermes_cli::resolve_python();
     let script = hermes_cli::resolve_hermes_script();
-    if !script.exists() { return Err("Hermes not installed".into()); }
+    if !script.exists() { return Err("hermes.notInstalled".into()); }
     let mut cmd = std::process::Command::new(&python);
     cmd.arg(&script).arg("proxy").stdout(std::process::Stdio::null()).stderr(std::process::Stdio::null());
     #[cfg(windows)] { use std::os::windows::process::CommandExt; cmd.creation_flags(0x08000000); }
@@ -518,9 +518,9 @@ async fn send_via_api(
         let err_body = response.text().await.unwrap_or_default();
         if let Ok(err) = serde_json::from_str::<serde_json::Value>(&err_body) {
             let msg = err["error"]["message"].as_str().unwrap_or(&err_body);
-            return Err(format!("API error {}: {}", status.as_u16(), msg));
+            return Err("hermes.apiError".into());
         }
-        return Err(format!("API server returned {}: {}", status.as_u16(), err_body.chars().take(200).collect::<String>()));
+        return Err("hermes.apiServerError".into());
     }
 
     // SSE streaming
@@ -559,7 +559,7 @@ async fn send_via_api(
                 }
             }
             Err(e) => {
-                return Err(format!("Stream error: {}", e));
+                return Err("hermes.streamError".into());
             }
         }
     }
@@ -715,7 +715,7 @@ async fn probe_non_streaming(
         }
     }
 
-    Err("No response received from the model. Check your model configuration and API key.".into())
+    Err("hermes.noResponse".into())
 }
 
 // ─── CLI fallback ───

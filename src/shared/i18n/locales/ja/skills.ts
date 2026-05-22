@@ -21,4 +21,9 @@ export default {
   installedBadge: "インストール済み",
   installing: "インストール中...",
   install: "インストール",
+  hubTab: "スキルハブ",
+  searchHubPlaceholder: "agentskills.io を検索...",
+  searchHub: "検索",
+  hubSkillInfo: "{{author}} 作成 · {{downloads}} ダウンロード",
+  hubInstalled: "✓ インストール済み",
 } as const;

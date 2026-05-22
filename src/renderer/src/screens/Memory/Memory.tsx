@@ -28,23 +28,25 @@ interface MemoryData {
   stats: { totalSessions: number; totalMessages: number };
 }
 
-function timeAgo(ts: number | null): string {
+function timeAgo(ts: number | null, t: (key: string, opts?: Record<string, unknown>) => string): string {
   if (!ts) return "";
   const diff = Math.floor(Date.now() / 1000) - ts;
-  if (diff < 60) return "just now";
-  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-  return `${Math.floor(diff / 86400)}d ago`;
+  if (diff < 60) return t("memory.justNow");
+  if (diff < 3600) return t("memory.minutesAgo", { count: Math.floor(diff / 60) });
+  if (diff < 86400) return t("memory.hoursAgo", { count: Math.floor(diff / 3600) });
+  return t("memory.daysAgo", { count: Math.floor(diff / 86400) });
 }
 
 function CapacityBar({
   used,
   limit,
   label,
+  t,
 }: {
   used: number;
   limit: number;
   label: string;
+  t: (key: string, opts?: Record<string, unknown>) => string;
 }): React.JSX.Element {
   const pct = Math.min(100, Math.round((used / limit) * 100));
   const color =
@@ -54,7 +56,7 @@ function CapacityBar({
       <div className="memory-capacity-header">
         <span className="memory-capacity-label">{label}</span>
         <span className="memory-capacity-value">
-          {used.toLocaleString()} / {limit.toLocaleString()} chars ({pct}%)
+          {t("memory.capacityUsage", { used: used.toLocaleString(), limit: limit.toLocaleString(), pct })}
         </span>
       </div>
       <div className="memory-capacity-track">
@@ -234,11 +236,13 @@ function Memory({ profile }: { profile?: string }): React.JSX.Element {
           used={data.memory.charCount}
           limit={data.memory.charLimit}
           label={t("memory.agentMemory")}
+          t={t}
         />
         <CapacityBar
           used={data.user.charCount}
           limit={data.user.charLimit}
           label={t("memory.userProfile")}
+          t={t}
         />
       </div>
 
@@ -251,7 +255,7 @@ function Memory({ profile }: { profile?: string }): React.JSX.Element {
           {t("memory.agentMemory")}
           {data.memory.lastModified && (
             <span className="memory-tab-time">
-              {timeAgo(data.memory.lastModified)}
+              {timeAgo(data.memory.lastModified, t)}
             </span>
           )}
         </button>
@@ -262,7 +266,7 @@ function Memory({ profile }: { profile?: string }): React.JSX.Element {
           {t("memory.userProfile")}
           {data.user.lastModified && (
             <span className="memory-tab-time">
-              {timeAgo(data.user.lastModified)}
+              {timeAgo(data.user.lastModified, t)}
             </span>
           )}
         </button>
@@ -307,7 +311,7 @@ function Memory({ profile }: { profile?: string }): React.JSX.Element {
               />
               <div className="memory-entry-form-actions">
                 <span className="memory-entry-chars">
-                  {newEntry.length} chars
+                  {t("memory.chars", { count: newEntry.length })}
                 </span>
                 <button
                   className="btn btn-secondary btn-sm"
@@ -316,14 +320,14 @@ function Memory({ profile }: { profile?: string }): React.JSX.Element {
                     setNewEntry("");
                   }}
                 >
-                  Cancel
+                  {t("memory.cancel")}
                 </button>
                 <button
                   className="btn btn-primary btn-sm"
                   onClick={handleAddEntry}
                   disabled={!newEntry.trim()}
                 >
-                  Save
+                  {t("memory.save")}
                 </button>
               </div>
             </div>

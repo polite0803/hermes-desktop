@@ -25,4 +25,5 @@ export default {
   apiKeyHint:
     "Stored as an environment variable. Picks the matching env key based on the URL, or CUSTOM_API_KEY otherwise.",
   autoDetected: "auto-detected from base URL",
+  alreadyExists: "Model already exists for this provider",
 } as const;

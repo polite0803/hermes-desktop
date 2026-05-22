@@ -27,4 +27,8 @@ export default {
     "Claw3D adalah lingkungan visualisasi 3D untuk agent Hermes Anda. Ini memungkinkan Anda melihat agent bekerja di ruang office interaktif.",
   setupDesc2:
     "Klik di bawah untuk mengunduh dan menyiapkan Claw3D otomatis. Ini akan meng-clone repository dan menginstal semua dependency.",
+  preparing: "Mempersiapkan...",
+  loadFailed:
+    "Gagal memuat Claw3D. Server pengembangan mungkin masih dalam proses dimulai.",
+  installStep: "Langkah {{step}}/{{totalSteps}}: {{title}}",
 } as const;

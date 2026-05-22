@@ -43,6 +43,15 @@ export default {
   deactivate: "Deactivate",
   activating: "Activating...",
   activate: "Activate",
+  justNow: "just now",
+  minutesAgo: "{{count}}m ago",
+  hoursAgo: "{{count}}h ago",
+  daysAgo: "{{count}}d ago",
+  capacityUsage: "{{used}} / {{limit}} chars ({{pct}}%)",
+  limitReached: "Memory limit reached",
+  fileNotFound: "Memory file not found",
+  indexOutOfRange: "Index out of range",
+  profileLimitReached: "Profile limit reached",
   providers: {
     honcho:
       "AI-native cross-session user modeling with dialectic Q&A and semantic search",

@@ -26,4 +26,7 @@ export default {
     "Claw3D 是你的 Hermes Agent 的 3D 視覺化環境。它讓你可以看到 Agent 在互動式辦公空間中工作。",
   setupDesc2:
     "點擊下方自動下載並設定 Claw3D。這將複製儲存庫並安裝所有相依套件。",
+  preparing: "準備中...",
+  loadFailed: "載入 Claw3D 失敗。開發伺服器可能仍在啟動中。",
+  installStep: "步驟 {{step}}/{{totalSteps}}：{{title}}",
 } as const;

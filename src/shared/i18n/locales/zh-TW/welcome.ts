@@ -20,4 +20,25 @@ export default {
   connect: "連線",
   remoteHint:
     "如果伺服器接受未驗證的請求（如透過 SSH 隧道到 localhost），請留空金鑰。",
+  connectViaSsh: "透過 SSH 連線",
+  sshSubtitle:
+    "透過 SSH 隧道連線到遠端 Hermes — 無需暴露連接埠或 API 金鑰。",
+  sshHost: "SSH 主機",
+  sshPort: "SSH 連接埠",
+  username: "使用者名稱",
+  privateKeyPath: "私鑰路徑",
+  privateKeyPathOptional: "（選填 — 預設為 ~/.ssh/id_rsa）",
+  remoteHermesPort: "遠端 Hermes 連接埠",
+  remoteHermesPortDefault: "（預設為 8642）",
+  testingSsh: "正在測試 SSH 連線…",
+  sshHint:
+    '使用系統 SSH。請確保你可以無密碼提示地執行 <code style="font-family:monospace;font-size:12px">ssh {user}@{host}</code>。',
+  errorUrlRequired: "請輸入 URL。",
+  errorRemoteUnreachable:
+    "無法透過此 URL 連線到 Hermes。請檢查 URL 和 API 金鑰。\n\n如果伺服器接受未驗證的請求（如透過 SSH 隧道到 localhost），請留空金鑰。",
+  errorConnectionFailed: "連線測試失敗。",
+  errorHostRequired: "需要主機名稱和使用者名稱。",
+  errorSshUnreachable:
+    "無法透過 SSH 連線或無法存取遠端 Hermes。請確保：\n• SSH 金鑰正確（或預設的 ~/.ssh/id_rsa 可用）\n• 遠端 Hermes 閘道正在執行\n• 遠端連接埠正確（預設為 8642）",
+  errorSshFailed: "SSH 連線測試失敗：{error}",
 } as const;

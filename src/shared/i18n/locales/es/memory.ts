@@ -45,6 +45,11 @@ export default {
   deactivate: "Desactivar",
   activating: "Activando...",
   activate: "Activar",
+  justNow: "justo ahora",
+  minutesAgo: "hace {{count}}m",
+  hoursAgo: "hace {{count}}h",
+  daysAgo: "hace {{count}}d",
+  capacityUsage: "{{used}} / {{limit}} caracteres ({{pct}}%)",
   providers: {
     honcho:
       "Modelado de usuarios nativo para IA entre sesiones con preguntas y respuestas dialécticas y búsqueda semántica",

@@ -22,4 +22,9 @@ export default {
   installedBadge: "Terinstal",
   installing: "Menginstal...",
   install: "Instal",
+  hubTab: "Skill Hub",
+  searchHubPlaceholder: "Cari di agentskills.io...",
+  searchHub: "Cari",
+  hubSkillInfo: "oleh {{author}} · {{downloads}} unduhan",
+  hubInstalled: "✓ Terinstal",
 } as const;

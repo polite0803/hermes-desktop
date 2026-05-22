@@ -21,4 +21,25 @@ export default {
   connect: "Connect",
   remoteHint:
     "Leave the key empty if the server accepts unauthenticated requests (e.g. via SSH tunnel to localhost).",
+  connectViaSsh: "Connect via SSH",
+  sshSubtitle:
+    "Tunnel to a remote Hermes over SSH — no exposed ports or API keys needed.",
+  sshHost: "SSH Host",
+  sshPort: "SSH Port",
+  username: "Username",
+  privateKeyPath: "Private Key Path",
+  privateKeyPathOptional: "(optional — defaults to ~/.ssh/id_rsa)",
+  remoteHermesPort: "Remote Hermes Port",
+  remoteHermesPortDefault: "(default 8642)",
+  testingSsh: "Testing SSH connection…",
+  sshHint:
+    'Uses your system SSH. Make sure you can already run <code style="font-family:monospace;font-size:12px">ssh {user}@{host}</code> without a password prompt.',
+  errorUrlRequired: "Please enter a URL.",
+  errorRemoteUnreachable:
+    "Could not reach Hermes at this URL. Check the URL and API key.\n\nLeave the key empty if the server accepts unauthenticated requests (e.g. via SSH tunnel to localhost).",
+  errorConnectionFailed: "Connection test failed.",
+  errorHostRequired: "Host and username are required.",
+  errorSshUnreachable:
+    "Could not connect via SSH or reach Hermes on the remote. Make sure:\n• SSH key is correct (or default ~/.ssh/id_rsa works)\n• Hermes gateway is running on the remote\n• The remote port is correct (default 8642)",
+  errorSshFailed: "SSH connection test failed: {error}",
 } as const;

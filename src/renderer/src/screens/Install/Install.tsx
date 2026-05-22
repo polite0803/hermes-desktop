@@ -66,7 +66,7 @@ function Install({ onComplete, onFailed }: InstallProps): React.JSX.Element {
   }, [progress.log]);
 
   function handleCopyLogs(): void {
-    const text = `Installation Error:\n${failed}\n\n--- Full Log ---\n${progress.log}`;
+    const text = `${t("install.installationError")}\n${failed}\n\n--- ${t("install.copyLogs")} ---\n${progress.log}`;
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -133,7 +133,7 @@ function Install({ onComplete, onFailed }: InstallProps): React.JSX.Element {
               title={TELEGRAM_COMMUNITY_URL}
             >
               <Send size={13} />
-              Join Community
+              {t("install.joinCommunity")}
             </button>
           </div>
         </div>
@@ -145,10 +145,10 @@ function Install({ onComplete, onFailed }: InstallProps): React.JSX.Element {
             {t("install.stepLabel", {
               step: progress.step,
               total: progress.totalSteps,
-              title: progress.title,
+              title: t(progress.titleKey),
             })}
           </div>
-          <div className="install-step-detail">{progress.detail}</div>
+          <div className="install-step-detail">{t(progress.detailKey)}</div>
         </div>
       )}
 

@@ -46,4 +46,8 @@ export default {
   errorMessage: "Ocurrió un error inesperado.",
   tryAgain: "Intentar de nuevo",
   copied: "¡Copiado!",
+  remoteNotice: {
+    title: "Conectado a Hermes remoto",
+    desc: "{{feature}} no está disponible en modo remoto. Estos datos residen en el servidor y aún no son accesibles a través de la API.",
+  },
 } as const;

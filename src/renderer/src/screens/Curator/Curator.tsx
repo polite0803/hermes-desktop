@@ -23,18 +23,18 @@ export default function Curator(): React.JSX.Element {
     setLoading(false);
   }
 
-  if (loading) return <div className="settings-container"><h1 className="settings-header">Curator</h1><div className="loading-spinner" /></div>;
+  if (loading) return <div className="settings-container"><h1 className="settings-header">{t("curator.title")}</h1><div className="loading-spinner" /></div>;
 
   return (
     <div className="settings-container">
       <div className="models-header">
         <div>
-          <h1 className="settings-header models-title-tight">Curator</h1>
-          <p className="models-subtitle">Autonomous skill library maintenance — grades, prunes, and consolidates your skills</p>
+          <h1 className="settings-header models-title-tight">{t("curator.title")}</h1>
+          <p className="models-subtitle">{t("curator.subtitle")}</p>
         </div>
         <div style={{ display: "flex", gap: 8 }}>
-          <button className="btn btn-sm" onClick={load}><RefreshCw size={14} /> Refresh</button>
-          <button className="btn btn-primary btn-sm" onClick={trigger}><Play size={14} /> Run Curator</button>
+          <button className="btn btn-sm" onClick={load}><RefreshCw size={14} /> {t("curator.refresh")}</button>
+          <button className="btn btn-primary btn-sm" onClick={trigger}><Play size={14} /> {t("curator.runCurator")}</button>
         </div>
       </div>
 

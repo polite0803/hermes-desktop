@@ -94,7 +94,7 @@ function CodeBlock({
     <div className="chat-code-block">
       <div className="chat-code-header">
         <span className="chat-code-lang">
-          {isDiff ? "diff" : language || "code"}
+          {isDiff ? "diff" : language || t("chat.codeBlock")}
         </span>
         <button className="chat-code-copy" onClick={handleCopy}>
           {copied ? t("common.copied") : <Copy size={13} />}

@@ -13,4 +13,5 @@ export default {
   emptyHint: "チャットを始めて最初のセッションを作りましょう",
   messages: "件",
   messageSingular: "件",
+  msgCount: "{{count, plural, other {件}}}",
 } as const;

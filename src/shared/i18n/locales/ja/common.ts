@@ -45,4 +45,8 @@ export default {
   errorMessage: "予期しないエラーが発生しました。",
   tryAgain: "再試行",
   copied: "コピーしました！",
+  remoteNotice: {
+    title: "リモート Hermes に接続済み",
+    desc: "{{feature}} はリモートモードでは利用できません。このデータはサーバーにあり、まだ API からアクセスできません。",
+  },
 } as const;

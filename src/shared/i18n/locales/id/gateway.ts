@@ -7,4 +7,5 @@ export default {
   stopped: "Berhenti",
   gatewayHint:
     "Menghubungkan Hermes ke Telegram, Discord, Slack, dan platform lainnya",
+  startProxy: "Mulai Proxy",
 } as const;

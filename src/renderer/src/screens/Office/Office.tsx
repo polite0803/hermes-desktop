@@ -40,7 +40,7 @@ function Office({
   const [progress, setProgress] = useState<SetupProgress>({
     step: 0,
     totalSteps: 2,
-    title: "Preparing...",
+    title: t("office.preparing"),
     detail: "",
     log: "",
   });
@@ -149,7 +149,7 @@ function Office({
       if (e?.errorCode === -3) return; // Aborted — ignore (happens on reload)
       setWebviewError(
         e?.errorDescription ||
-          "Failed to load Claw3D. The dev server may still be starting up.",
+          t("office.loadFailed"),
       );
     };
 
@@ -178,12 +178,12 @@ function Office({
       if (result.success) {
         setState("ready");
       } else {
-        setError(result.error || "Setup failed");
+        setError(result.error || t("office.setupFailed"));
         setState("error");
       }
     } catch (err) {
       cleanup();
-      setError((err as Error).message || "Setup failed");
+      setError((err as Error).message || t("office.setupFailed"));
       setState("error");
     }
   }
@@ -201,7 +201,7 @@ function Office({
       setStarting(true);
       const result = await hermesAPI.claw3dStartAll(profile);
       if (!result.success) {
-        setError(result.error || "Failed to start Claw3D");
+        setError(result.error || t("office.startFailed"));
         setStarting(false);
       } else {
         // Give processes a moment to actually start, polling will confirm
@@ -313,9 +313,9 @@ function Office({
           </div>
           <div className="install-step-info">
             <div className="install-step-title">
-              Step {progress.step}/{progress.totalSteps}: {progress.title}
+              {t("office.installStep", { step: progress.step, totalSteps: progress.totalSteps, title: t(progress.titleKey) })}
             </div>
-            <div className="install-step-detail">{progress.detail}</div>
+            <div className="install-step-detail">{t(progress.detailKey)}</div>
           </div>
           <div className="install-log" ref={logRef}>
             {progress.log || t("office.waitingToStart")}

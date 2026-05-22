@@ -13,4 +13,5 @@ export default {
   emptyHint: "Mulai chat untuk membuat sesi pertama Anda",
   messages: "pesan",
   messageSingular: "pesan",
+  msgCount: "{{count, plural, other {pesan}}}",
 } as const;

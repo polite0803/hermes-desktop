@@ -273,7 +273,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
   async function handleTestConnection(): Promise<void> {
     if (connMode === "ssh") {
       if (!sshHost.trim() || !sshUser.trim()) {
-        setConnStatus("Host and username are required");
+        setConnStatus(t("settings.hostRequired"));
         return;
       }
       setConnTesting(true);
@@ -286,11 +286,11 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
         parseInt(sshRemotePort, 10) || 8642,
       );
       setConnTesting(false);
-      setConnStatus(ok ? "SSH tunnel connected!" : "Could not connect via SSH");
+      setConnStatus(ok ? t("settings.sshTunnelConnected") : t("settings.sshConnectionFailed"));
     } else {
       const url = connRemoteUrl.trim();
       if (!url) {
-        setConnStatus("Please enter a URL");
+        setConnStatus(t("settings.enterURL"));
         return;
       }
       setConnTesting(true);
@@ -300,7 +300,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
         getConnectionApiKeyForSave(),
       );
       setConnTesting(false);
-      setConnStatus(ok ? "Connected successfully!" : "Could not reach server");
+      setConnStatus(ok ? t("settings.connectionSuccess") : t("settings.connectionFailed"));
     }
   }
 
@@ -605,7 +605,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
             {connMode === "local"
               ? t("settings.modeLocalHint")
               : connMode === "ssh"
-                ? "Tunnel to a remote Hermes over SSH — no exposed ports or API keys needed."
+                ? t("settings.modeSSHTunnelHint")
                 : t("settings.modeRemoteHint")}
           </div>
         </div>

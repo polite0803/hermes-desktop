@@ -35,6 +35,7 @@ pub enum SshTunnelState {
 pub struct SshConnectionResult {
     pub success: bool,
     pub message: String,
+    pub message_key: String,
 }
 
 // ─── Build SSH Args ─────────────────────────────────────
@@ -164,7 +165,7 @@ pub fn ssh_exec(config: &SshConfig, command: &str, stdin: Option<&str>, timeout_
                 if start.elapsed() > timeout {
                     let _ = child.kill();
                     let _ = child.wait();
-                    return Err("SSH command timed out".into());
+                    return Err("ssh.commandTimedOut".into());
                 }
                 std::thread::sleep(Duration::from_millis(50));
             }
@@ -582,7 +583,7 @@ fn wait_for_port(port: u16, timeout_ms: u64) -> Result<(), String> {
     loop {
         if check_port(port) { return Ok(()); }
         if start.elapsed() > timeout {
-            return Err(format!("Timeout waiting for port {}", port));
+            return Err("ssh.portTimeout".into());
         }
         std::thread::sleep(Duration::from_millis(200));
     }
@@ -593,7 +594,7 @@ pub fn test_ssh_connection() -> Result<SshConnectionResult, String> {
     let conn = config::get_connection_config()?;
     let cfg = &conn.ssh;
     if cfg.host.is_empty() {
-        return Ok(SshConnectionResult { success: false, message: "No SSH configuration found".into() });
+        return Ok(SshConnectionResult { success: false, message: "No SSH configuration found".into(), message_key: "ssh.noConfig".into() });
     }
 
     let local_port = find_free_port(19642);
@@ -634,9 +635,9 @@ pub fn test_ssh_connection() -> Result<SshConnectionResult, String> {
     let _ = child.wait();
 
     if connected {
-        Ok(SshConnectionResult { success: true, message: format!("Connected to {}@{}:{}", cfg.username, cfg.host, cfg.port) })
+        Ok(SshConnectionResult { success: true, message: format!("Connected to {}@{}:{}", cfg.username, cfg.host, cfg.port), message_key: "ssh.connected".into() })
     } else {
-        Ok(SshConnectionResult { success: false, message: "SSH connection failed or timed out".into() })
+        Ok(SshConnectionResult { success: false, message: "SSH connection failed or timed out".into(), message_key: "ssh.connectionFailed".into() })
     }
 }
 
@@ -647,7 +648,7 @@ pub fn start_ssh_tunnel(
     let conn = config::get_connection_config()?;
     let cfg = &conn.ssh;
     if cfg.host.is_empty() {
-        return Err("No SSH configuration found".into());
+        return Err("ssh.noConfig".into());
     }
 
     // Stop any existing tunnel first

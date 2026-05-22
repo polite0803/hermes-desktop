@@ -20,4 +20,24 @@ export default {
   connect: "连接",
   remoteHint:
     "如果服务器接受未认证的请求（如通过 SSH 隧道到 localhost），请留空密钥。",
+  connectViaSsh: "通过 SSH 连接",
+  sshSubtitle: "通过 SSH 隧道连接远程 Hermes — 无需暴露端口或 API 密钥。",
+  sshHost: "SSH 主机",
+  sshPort: "SSH 端口",
+  username: "用户名",
+  privateKeyPath: "私钥路径",
+  privateKeyPathOptional: "（可选 — 默认为 ~/.ssh/id_rsa）",
+  remoteHermesPort: "远程 Hermes 端口",
+  remoteHermesPortDefault: "（默认为 8642）",
+  testingSsh: "正在测试 SSH 连接…",
+  sshHint:
+    '使用系统 SSH。请确保你可以无密码提示地运行 <code style="font-family:monospace;font-size:12px">ssh {user}@{host}</code>。',
+  errorUrlRequired: "请输入 URL。",
+  errorRemoteUnreachable:
+    "无法通过此 URL 连接到 Hermes。请检查 URL 和 API 密钥。\n\n如果服务器接受未认证的请求（如通过 SSH 隧道到 localhost），请留空密钥。",
+  errorConnectionFailed: "连接测试失败。",
+  errorHostRequired: "需要主机名和用户名。",
+  errorSshUnreachable:
+    "无法通过 SSH 连接或无法访问远程 Hermes。请确保：\n• SSH 密钥正确（或默认的 ~/.ssh/id_rsa 可用）\n• 远程 Hermes 网关正在运行\n• 远程端口正确（默认为 8642）",
+  errorSshFailed: "SSH 连接测试失败：{error}",
 } as const;

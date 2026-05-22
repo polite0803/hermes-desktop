@@ -27,4 +27,8 @@ export default {
     "Claw3D は Hermes エージェント用の 3D 可視化環境です。インタラクティブなオフィス空間でエージェントの動きが見られます。",
   setupDesc2:
     "下のボタンで Claw3D を自動ダウンロード・セットアップします。リポジトリをクローンし、依存関係をすべてインストールします。",
+  preparing: "準備中...",
+  loadFailed:
+    "Claw3D の読み込みに失敗しました。開発サーバーがまだ起動中の可能性があります。",
+  installStep: "ステップ {{step}}/{{totalSteps}}：{{title}}",
 } as const;

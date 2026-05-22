@@ -197,7 +197,7 @@ function Providers({
       ...existing,
       {
         key: poolNewKey.trim(),
-        label: poolNewLabel.trim() || `Key ${existing.length + 1}`,
+        label: poolNewLabel.trim() || t("providers.keyLabel", { n: existing.length + 1 }),
       },
     ];
     await hermesAPI.setCredentialPool(poolProvider, entries);

@@ -46,6 +46,11 @@ export default {
   deactivate: "Nonaktifkan",
   activating: "Mengaktifkan...",
   activate: "Aktifkan",
+  justNow: "baru saja",
+  minutesAgo: "{{count}}m lalu",
+  hoursAgo: "{{count}}j lalu",
+  daysAgo: "{{count}}h lalu",
+  capacityUsage: "{{used}} / {{limit}} karakter ({{pct}}%)",
   providers: {
     honcho:
       "Pemodelan pengguna lintas sesi berbasis AI dengan Q&A dialektik dan pencarian semantik",

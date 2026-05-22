@@ -32,7 +32,7 @@ pub struct InstallStatus { pub installed: bool, pub configured: bool, pub has_ap
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
-pub struct InstallProgress { pub step: u32, pub total_steps: u32, pub title: String, pub detail: String, pub log: Option<String> }
+pub struct InstallProgress { pub step: u32, pub total_steps: u32, pub title_key: String, pub detail_key: String, pub log: Option<String> }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -129,7 +129,7 @@ fn spawn_and_stream<F>(
     let mut child = match cmd.spawn() {
         Ok(c) => c,
         Err(e) => {
-            let _ = app.emit("install-progress", InstallProgress { step, total_steps: total, title: title.clone(), detail: format!("Failed: {}", e), log: None });
+            let _ = app.emit("install-progress", InstallProgress { step, total_steps: total, title_key: title.clone(), detail_key: "install.failedStep".into(), log: None });
             on_done(false, format!("{}", e));
             return;
         }
@@ -147,7 +147,7 @@ fn spawn_and_stream<F>(
                 let stripped = strip_ansi(&line);
                 log.push_str(&stripped); log.push('\n');
                 let detail: String = stripped.chars().take(120).collect();
-                let _ = app.emit("install-progress", InstallProgress { step, total_steps: total, title: t.clone(), detail, log: Some(log.clone()) });
+                let _ = app.emit("install-progress", InstallProgress { step, total_steps: total, title_key: t.clone(), detail_key: detail.clone(), log: Some(log.clone()) });
             }
         }
         if let Some(err) = stderr {
@@ -155,7 +155,7 @@ fn spawn_and_stream<F>(
                 let stripped = strip_ansi(&line);
                 log.push_str(&stripped); log.push('\n');
                 let detail: String = stripped.chars().take(120).collect();
-                let _ = app.emit("install-progress", InstallProgress { step, total_steps: total, title: t.clone(), detail, log: Some(log.clone()) });
+                let _ = app.emit("install-progress", InstallProgress { step, total_steps: total, title_key: t.clone(), detail_key: detail, log: Some(log.clone()) });
             }
         }
 
@@ -187,7 +187,7 @@ pub fn check_install() -> Result<InstallStatus, String> {
 #[tauri::command]
 pub async fn start_pypi_install(app: AppHandle) -> Result<InstallResult, String> {
     let total = 4u32;
-    let _ = app.emit("install-progress", InstallProgress { step: 1, total_steps: total, title: "PyPI Install".into(), detail: "Creating virtual environment...".into(), log: None });
+    let _ = app.emit("install-progress", InstallProgress { step: 1, total_steps: total, title_key: "install.stepPypiInstall".into(), detail_key: "install.detailCreatingVenv".into(), log: None });
 
     let hermes_home = hermes_home();
     let venv = hermes_venv();
@@ -203,22 +203,22 @@ pub async fn start_pypi_install(app: AppHandle) -> Result<InstallResult, String>
     }
 
     // Install hermes-agent via pip
-    let _ = app.emit("install-progress", InstallProgress { step: 2, total_steps: total, title: "Installing hermes-agent".into(), detail: "pip install hermes-agent...".into(), log: None });
+    let _ = app.emit("install-progress", InstallProgress { step: 2, total_steps: total, title_key: "install.stepInstallingAgent".into(), detail_key: "install.detailPipInstall".into(), log: None });
     let pip = if cfg!(windows) { venv.join("Scripts/pip.exe") } else { venv.join("bin/pip") };
     let (tx, rx) = std::sync::mpsc::channel();
     let app2 = app.clone();
     let mut pip_cmd = std::process::Command::new(&pip);
     pip_cmd.args(&["install", "hermes-agent"]).env("PIP_REQUIRE_VIRTUALENV", "false");
-    spawn_and_stream(app2, &mut pip_cmd, 2, total, "Installing hermes-agent".into(), move |ok, log| { let _ = tx.send((ok, log)); });
+    spawn_and_stream(app2, &mut pip_cmd, 2, total, "install.stepInstallingAgent".into(), move |ok, log| { let _ = tx.send((ok, log)); });
     let (ok, log) = rx.recv().map_err(|e| format!("{}", e))?;
 
-    let _ = app.emit("install-progress", InstallProgress { step: 3, total_steps: total, title: "Finalizing".into(), detail: "Writing config...".into(), log: None });
+    let _ = app.emit("install-progress", InstallProgress { step: 3, total_steps: total, title_key: "install.stepFinalizing".into(), detail_key: "install.detailWritingConfig".into(), log: None });
     let config = hermes_home.join("config.yaml");
     if !config.exists() {
         let _ = fs::write(&config, "model:\n  provider: auto\n");
     }
 
-    let _ = app.emit("install-progress", InstallProgress { step: 4, total_steps: total, title: "Installation complete".into(), detail: if ok { "hermes-agent installed via PyPI" } else { "Finished with warnings" }.into(), log: Some(log.clone()) });
+    let _ = app.emit("install-progress", InstallProgress { step: 4, total_steps: total, title_key: "install.stepInstallationComplete".into(), detail_key: if ok { "install.detailInstalledViaPypi" } else { "install.detailFinishedWithWarnings" }.into(), log: Some(log.clone()) });
     Ok(InstallResult { success: ok, error: if ok { None } else { Some(log) } })
 }
 
@@ -239,7 +239,7 @@ pub fn verify_install() -> Result<bool, String> {
 #[tauri::command]
 pub async fn start_install(app: AppHandle) -> Result<InstallResult, String> {
     let total = 7u32;
-    let _ = app.emit("install-progress", InstallProgress { step: 1, total_steps: total, title: "Starting installation".into(), detail: "Preparing...".into(), log: None });
+    let _ = app.emit("install-progress", InstallProgress { step: 1, total_steps: total, title_key: "install.stepStartingInstall".into(), detail_key: "install.detailPreparing".into(), log: None });
 
     if cfg!(windows) {
         run_install_windows_async(app, total).await
@@ -252,7 +252,7 @@ async fn run_install_unix_async(app: AppHandle, total: u32) -> Result<InstallRes
     let home = dirs_next::home_dir().unwrap_or_default();
     let base_path = get_enhanced_path();
 
-    let _ = app.emit("install-progress", InstallProgress { step: 2, total_steps: total, title: "Checking prerequisites".into(), detail: "Running installer...".into(), log: None });
+    let _ = app.emit("install-progress", InstallProgress { step: 2, total_steps: total, title_key: "install.stepCheckingPrerequisites".into(), detail_key: "install.detailRunningInstaller".into(), log: None });
 
     let (tx, rx) = std::sync::mpsc::channel();
     let home_path = home.to_string_lossy().to_string();
@@ -261,12 +261,12 @@ async fn run_install_unix_async(app: AppHandle, total: u32) -> Result<InstallRes
     let mut cmd = Command::new("bash");
     cmd.arg("-c").arg("curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.sh | bash -s -- --skip-setup")
         .current_dir(&home_path).env("PATH", &bp).env("HOME", &home_path).env("TERM", "dumb");
-    spawn_and_stream(app2, &mut cmd, 2, total, "Installing Hermes Agent".into(),
+    spawn_and_stream(app2, &mut cmd, 2, total, "install.stepInstallingAgent".into(),
         move |ok, log| { let _ = tx.send((ok, log)); }
     );
 
     let (ok, log) = rx.recv().map_err(|e| format!("{}", e))?;
-    let _ = app.emit("install-progress", InstallProgress { step: 7, total_steps: total, title: "Installation complete".into(), detail: if ok { "Hermes is ready" } else { "Finished with warnings" }.into(), log: Some(log.clone()) });
+    let _ = app.emit("install-progress", InstallProgress { step: 7, total_steps: total, title_key: "install.stepInstallationComplete".into(), detail_key: if ok { "install.detailHermesReady" } else { "install.detailFinishedWithWarnings" }.into(), log: Some(log.clone()) });
     Ok(InstallResult { success: ok, error: if ok { None } else { Some(log) } })
 }
 
@@ -277,7 +277,7 @@ async fn run_install_windows_async(app: AppHandle, total: u32) -> Result<Install
     let install_dir = hermes_repo().to_string_lossy().to_string();
     let home_path = home.to_string_lossy().to_string();
 
-    let _ = app.emit("install-progress", InstallProgress { step: 2, total_steps: total, title: "Downloading installer".into(), detail: "Fetching install script...".into(), log: None });
+    let _ = app.emit("install-progress", InstallProgress { step: 2, total_steps: total, title_key: "install.stepDownloadingInstaller".into(), detail_key: "install.detailFetchingScript".into(), log: None });
 
     let ps_quote = |s: &str| -> String { format!("'{}'", s.replace('\'', "''")) };
     let wrapper = format!(
@@ -299,7 +299,7 @@ async fn run_install_windows_async(app: AppHandle, total: u32) -> Result<Install
     let tmp = std::env::temp_dir().join(format!("hermes-install-{}.ps1", uuid::Uuid::new_v4()));
     fs::write(&tmp, &wrapper).map_err(|e| format!("Failed to stage installer: {}", e))?;
 
-    let _ = app.emit("install-progress", InstallProgress { step: 3, total_steps: total, title: "Running installer".into(), detail: "Executing install.ps1...".into(), log: None });
+    let _ = app.emit("install-progress", InstallProgress { step: 3, total_steps: total, title_key: "install.stepRunningInstaller".into(), detail_key: "install.detailExecutingPs1".into(), log: None });
 
     let ps = if cfg!(windows) { "powershell.exe" } else { "pwsh" };
     let tmp_path = tmp.to_string_lossy().to_string();
@@ -312,12 +312,12 @@ async fn run_install_windows_async(app: AppHandle, total: u32) -> Result<Install
     let mut ps_cmd = Command::new(ps);
     ps_cmd.args(&["-ExecutionPolicy","Bypass","-NoProfile","-NonInteractive","-File", &tmp_path])
         .current_dir(&home_path).env("PATH", &bp2).env("HERMES_HOME", &hh2).env("NO_COLOR", "1");
-    spawn_and_stream(app2, &mut ps_cmd, 3, total, "Installing Hermes Agent".into(),
+    spawn_and_stream(app2, &mut ps_cmd, 3, total, "install.stepInstallingAgent".into(),
         move |ok, log| { let _ = fs::remove_file(&tmp2); let _ = tx.send((ok, log)); }
     );
 
     let (ok, log) = rx.recv().map_err(|e| format!("{}", e))?;
-    let _ = app.emit("install-progress", InstallProgress { step: 7, total_steps: total, title: "Installation complete".into(), detail: if ok { "Hermes is ready" } else { "Finished with warnings" }.into(), log: Some(log.clone()) });
+    let _ = app.emit("install-progress", InstallProgress { step: 7, total_steps: total, title_key: "install.stepInstallationComplete".into(), detail_key: if ok { "install.detailHermesReady" } else { "install.detailFinishedWithWarnings" }.into(), log: Some(log.clone()) });
     Ok(InstallResult { success: ok, error: if ok { None } else { Some(log) } })
 }
 
@@ -342,8 +342,8 @@ pub fn get_hermes_version() -> Result<Option<String>, String> {
 
 #[tauri::command]
 pub async fn run_hermes_update(app: AppHandle) -> Result<InstallResult, String> {
-    if !hermes_python().exists() { return Err("Hermes is not installed".into()); }
-    let _ = app.emit("install-progress", InstallProgress { step: 1, total_steps: 1, title: "Updating Hermes Agent".into(), detail: "Running hermes update...".into(), log: None });
+    if !hermes_python().exists() { return Err("install.hermesNotInstalled".into()); }
+    let _ = app.emit("install-progress", InstallProgress { step: 1, total_steps: 1, title_key: "install.stepUpdatingAgent".into(), detail_key: "install.detailRunningUpdate".into(), log: None });
 
     let (tx, rx) = std::sync::mpsc::channel();
     let app2 = app.clone();
@@ -352,7 +352,7 @@ pub async fn run_hermes_update(app: AppHandle) -> Result<InstallResult, String> 
     let bp = get_enhanced_path();
     let mut update_cmd = Command::new(hermes_python());
     update_cmd.arg(hermes_script()).args(&["update"]).current_dir(&repo).env("PATH", &bp).env("HERMES_HOME", &hh);
-    spawn_and_stream(app2, &mut update_cmd, 1, 1, "Updating Hermes Agent".into(),
+    spawn_and_stream(app2, &mut update_cmd, 1, 1, "install.stepUpdatingAgent".into(),
         move |ok, log| { let _ = tx.send((ok, log)); }
     );
 
@@ -374,8 +374,8 @@ pub fn check_openclaw() -> Result<OpenClawStatus, String> {
 
 #[tauri::command]
 pub async fn run_hermes_migrate(app: AppHandle) -> Result<InstallResult, String> {
-    if !hermes_python().exists() { return Err("Hermes is not installed".into()); }
-    let _ = app.emit("install-progress", InstallProgress { step: 1, total_steps: 1, title: "Migrating from OpenClaw".into(), detail: "Running migration...".into(), log: None });
+    if !hermes_python().exists() { return Err("install.hermesNotInstalled".into()); }
+    let _ = app.emit("install-progress", InstallProgress { step: 1, total_steps: 1, title_key: "install.stepMigratingOpenClaw".into(), detail_key: "install.detailRunningMigration".into(), log: None });
 
     let (tx, rx) = std::sync::mpsc::channel();
     let app2 = app.clone();
@@ -384,7 +384,7 @@ pub async fn run_hermes_migrate(app: AppHandle) -> Result<InstallResult, String>
     let bp = get_enhanced_path();
     let mut migrate_cmd = Command::new(hermes_python());
     migrate_cmd.arg(hermes_script()).args(&["claw","migrate","--preset","full"]).current_dir(&repo).env("PATH", &bp).env("HERMES_HOME", &hh);
-    spawn_and_stream(app2, &mut migrate_cmd, 1, 1, "Migrating from OpenClaw".into(),
+    spawn_and_stream(app2, &mut migrate_cmd, 1, 1, "install.stepMigratingOpenClaw".into(),
         move |ok, log| { let _ = tx.send((ok, log)); }
     );
 
@@ -465,12 +465,16 @@ const KNOWN_MEMORY_PROVIDERS: &[(&str, &str, &[&str])] = &[
 pub async fn claw3d_setup(app: AppHandle) -> Result<InstallResult, String> {
     let claw3d_dir = hermes_home().join("claw3d");
 
-    let _ = app.emit("claw3d-setup-progress", InstallProgress { step: 1, total_steps: 3, title: "Setting up Claw3D".into(), detail: "Checking directory...".into(), log: None });
+    let _ = app.emit("claw3d-setup-progress", InstallProgress { step: 1, total_steps: 3, title_key: "install.stepSettingUpClaw3d".into(), detail_key: "install.detailCheckingDirectory".into(), log: None });
 
     if !claw3d_dir.exists() {
-        let _ = app.emit("claw3d-setup-progress", InstallProgress { step: 2, total_steps: 3, title: "Cloning Claw3D".into(), detail: "Cloning repository...".into(), log: None });
-        let bundled_git = hermes_home().join("git").join("cmd").join("git.exe");
-        let git_path = if bundled_git.exists() { bundled_git } else { std::path::PathBuf::from("git") };
+        let _ = app.emit("claw3d-setup-progress", InstallProgress { step: 2, total_steps: 3, title_key: "install.stepCloningClaw3d".into(), detail_key: "install.detailCloningRepo".into(), log: None });
+        let bundled_git = {
+            let h = hermes_home().join("git");
+            let candidates = [h.join("bin").join("git.exe"), h.join("cmd").join("git.exe"), h.join("usr").join("bin").join("git.exe")];
+            candidates.iter().find(|p| p.exists()).cloned().unwrap_or_else(|| std::path::PathBuf::from("git"))
+        };
+        let git_path = bundled_git;
         let mut git_cmd = Command::new(git_path);
         git_cmd.args(&["clone","https://github.com/iamlukethedev/Claw3D"]).arg(&claw3d_dir)
             .env("PATH", get_enhanced_path());
@@ -485,11 +489,15 @@ pub async fn claw3d_setup(app: AppHandle) -> Result<InstallResult, String> {
     let (tx, rx) = std::sync::mpsc::channel();
     let app2 = app.clone();
     let dir = claw3d_dir.to_string_lossy().to_string();
-    let bundled_npm = hermes_home().join("node").join("npm.cmd");
-    let npm_path = if bundled_npm.exists() { bundled_npm } else { std::path::PathBuf::from("npm") };
+    let bundled_npm = {
+        let n = hermes_home().join("node");
+        let candidates = [n.join("npm.cmd"), n.join("npm"), n.join("node_modules").join(".bin").join("npm.cmd")];
+        candidates.iter().find(|p| p.exists()).cloned().unwrap_or_else(|| std::path::PathBuf::from("npm"))
+    };
+    let npm_path = bundled_npm;
     let mut npm_cmd = Command::new(npm_path);
     npm_cmd.arg("install").current_dir(&dir).env("PATH", get_enhanced_path());
-    spawn_and_stream(app2, &mut npm_cmd, 3, 3, "Installing dependencies".into(),
+    spawn_and_stream(app2, &mut npm_cmd, 3, 3, "install.stepInstallingDeps".into(),
         move |ok, log| { let _ = tx.send((ok, log)); }
     );
 

@@ -7,4 +7,5 @@ export default {
   stopped: "Parado",
   gatewayHint:
     "Conecta o Hermes ao Telegram, Discord, Slack e outras plataformas",
+  startProxy: "Iniciar Proxy",
 } as const;

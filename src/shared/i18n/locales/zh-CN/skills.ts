@@ -20,4 +20,9 @@ export default {
   installedBadge: "已安装",
   installing: "安装中...",
   install: "安装",
+  hubTab: "技能中心",
+  searchHubPlaceholder: "搜索 agentskills.io...",
+  searchHub: "搜索",
+  hubSkillInfo: "作者 {{author}} · {{downloads}} 次下载",
+  hubInstalled: "✓ 已安装",
 } as const;

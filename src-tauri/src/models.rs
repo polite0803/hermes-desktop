@@ -30,7 +30,7 @@ pub fn list_models() -> Result<Vec<SavedModel>, String> {
 pub fn add_model(name: String, provider: String, model: String, base_url: String) -> Result<SavedModel, String> {
     let mut models = read_models_raw(None);
     if models.iter().any(|m| m.model == model && m.provider == provider) {
-        return Err(format!("Model '{}' already exists for provider '{}'", model, provider));
+        return Err("models.alreadyExists".into());
     }
     let ts = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map(|d| d.as_secs()).unwrap_or(0);
     let saved = SavedModel { id: uuid::Uuid::new_v4().to_string(), name, provider, model, base_url, created_at: ts };

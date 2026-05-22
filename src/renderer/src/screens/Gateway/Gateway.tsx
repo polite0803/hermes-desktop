@@ -131,7 +131,7 @@ function Gateway({ profile }: { profile?: string }): React.JSX.Element {
                 {gatewayRunning ? t("common.stop") : t("common.start")}
               </button>
               <button className="btn btn-sm" onClick={async () => { try { await hermesAPI.startProxy(); } catch(e) { alert(String(e)); } }}>
-                Start Proxy
+                {t("gateway.startProxy")}
               </button>
             </div>
           </div>

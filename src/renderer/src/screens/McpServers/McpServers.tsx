@@ -75,7 +75,7 @@ export default function McpServers(): React.JSX.Element {
             try { await hermesAPI.installComputerUseMcp(); await loadServers(); }
             catch (e) { alert(String(e)); }
           }}>
-            <Download size={14} /> Install Computer-Use
+            <Download size={14} /> {t("mcp.installComputerUse")}
           </button>
         </div>
       </div>

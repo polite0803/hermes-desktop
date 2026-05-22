@@ -243,7 +243,7 @@ function Skills({ profile }: SkillsProps): React.JSX.Element {
           className={`skills-tab ${tab === "hub" ? "active" : ""}`}
           onClick={() => setTab("hub")}
         >
-          Skills Hub
+          {t("skills.hubTab")}
         </button>
       </div>
 
@@ -343,11 +343,11 @@ function Skills({ profile }: SkillsProps): React.JSX.Element {
           <div style={{ marginTop: 12 }}>
             <div className="skills-search">
               <Search size={15} />
-              <input className="skills-search-input" type="text" placeholder="Search agentskills.io..." value={hubSearch}
+              <input className="skills-search-input" type="text" placeholder={t("skills.searchHubPlaceholder")} value={hubSearch}
                 onChange={(e) => setHubSearch(e.target.value)}
                 onKeyDown={(e) => { if (e.key === "Enter") searchHub(); }} />
               <button className="btn btn-primary btn-sm" onClick={searchHub} disabled={hubLoading}>
-                {hubLoading ? <Refresh size={13} /> : <Search size={13} />} Search
+                {hubLoading ? <Refresh size={13} /> : <Search size={13} />} {t("skills.searchHub")}
               </button>
             </div>
             <div className="skills-grid" style={{ marginTop: 12 }}>
@@ -360,13 +360,13 @@ function Skills({ profile }: SkillsProps): React.JSX.Element {
                       <span className="skills-card-category" style={{ fontSize: 11, background: "var(--bg-tertiary)", padding: "2px 8px", borderRadius: 10 }}>{skill.category}</span>
                     </div>
                     <div className="skills-card-desc" style={{ fontSize: 12, marginTop: 4 }}>{skill.description}</div>
-                    <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 4 }}>by {skill.author} · {skill.downloads} downloads</div>
+                    <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 4 }}>{t("skills.hubSkillInfo", { author: skill.author, downloads: skill.downloads })}</div>
                     <div style={{ marginTop: 8 }}>
                       {alreadyInstalled ? (
-                        <span style={{ fontSize: 12, color: "var(--accent)" }}>✓ Installed</span>
+                        <span style={{ fontSize: 12, color: "var(--accent)" }}>{t("skills.hubInstalled")}</span>
                       ) : (
                         <button className="btn btn-primary btn-sm" onClick={() => installFromHub(skill.name)} disabled={actionInProgress === skill.name}>
-                          <Download size={12} /> {actionInProgress === skill.name ? "Installing..." : "Install"}
+                          <Download size={12} /> {actionInProgress === skill.name ? t("skills.installing") : t("skills.install")}
                         </button>
                       )}
                     </div>

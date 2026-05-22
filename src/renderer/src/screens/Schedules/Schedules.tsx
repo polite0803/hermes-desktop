@@ -13,22 +13,22 @@ import { useI18n } from "../../components/useI18n";
 import { hermesAPI } from "@shared/hermes-api";
 
 const DELIVER_TARGETS = [
-  { value: "local", label: "Local" },
-  { value: "origin", label: "Origin" },
-  { value: "telegram", label: "Telegram" },
-  { value: "discord", label: "Discord" },
-  { value: "slack", label: "Slack" },
-  { value: "whatsapp", label: "WhatsApp" },
-  { value: "signal", label: "Signal" },
-  { value: "matrix", label: "Matrix" },
-  { value: "mattermost", label: "Mattermost" },
-  { value: "email", label: "Email" },
-  { value: "webhook", label: "Webhook" },
-  { value: "sms", label: "SMS" },
-  { value: "homeassistant", label: "Home Assistant" },
-  { value: "dingtalk", label: "DingTalk" },
-  { value: "feishu", label: "Feishu" },
-  { value: "wecom", label: "WeCom" },
+  { value: "local", labelKey: "schedules.deliverLocal" },
+  { value: "origin", labelKey: "schedules.deliverOrigin" },
+  { value: "telegram", labelKey: "schedules.deliverTelegram" },
+  { value: "discord", labelKey: "schedules.deliverDiscord" },
+  { value: "slack", labelKey: "schedules.deliverSlack" },
+  { value: "whatsapp", labelKey: "schedules.deliverWhatsApp" },
+  { value: "signal", labelKey: "schedules.deliverSignal" },
+  { value: "matrix", labelKey: "schedules.deliverMatrix" },
+  { value: "mattermost", labelKey: "schedules.deliverMattermost" },
+  { value: "email", labelKey: "schedules.deliverEmail" },
+  { value: "webhook", labelKey: "schedules.deliverWebhook" },
+  { value: "sms", labelKey: "schedules.deliverSMS" },
+  { value: "homeassistant", labelKey: "schedules.deliverHomeAssistant" },
+  { value: "dingtalk", labelKey: "schedules.deliverDingTalk" },
+  { value: "feishu", labelKey: "schedules.deliverFeishu" },
+  { value: "wecom", labelKey: "schedules.deliverWeCom" },
 ];
 
 interface CronJob {
@@ -165,10 +165,10 @@ function Schedules({ profile }: SchedulesProps): React.JSX.Element {
         closeCreateModal();
         await loadJobs();
       } else {
-        setError(result.error || "Failed to create job");
+        setError(result.error || t("schedules.createFailed"));
       }
     } catch {
-      setError("Failed to create job");
+      setError(t("schedules.createFailed"));
     } finally {
       setActionInProgress(null);
     }
@@ -183,10 +183,10 @@ function Schedules({ profile }: SchedulesProps): React.JSX.Element {
       if (result.success) {
         await loadJobs();
       } else {
-        setError(result.error || "Failed to remove job");
+        setError(result.error || t("schedules.removeFailed"));
       }
     } catch {
-      setError("Failed to remove job");
+      setError(t("schedules.removeFailed"));
     } finally {
       setActionInProgress(null);
     }
@@ -203,10 +203,10 @@ function Schedules({ profile }: SchedulesProps): React.JSX.Element {
       if (result.success) {
         await loadJobs();
       } else {
-        setError(result.error || "Failed to update job");
+        setError(result.error || t("schedules.updateFailed"));
       }
     } catch {
-      setError("Failed to update job");
+      setError(t("schedules.updateFailed"));
     } finally {
       setActionInProgress(null);
     }
@@ -220,10 +220,10 @@ function Schedules({ profile }: SchedulesProps): React.JSX.Element {
       if (result.success) {
         await loadJobs();
       } else {
-        setError(result.error || "Failed to trigger job");
+        setError(result.error || t("schedules.triggerFailed"));
       }
     } catch {
-      setError("Failed to trigger job");
+      setError(t("schedules.triggerFailed"));
     } finally {
       setActionInProgress(null);
     }
@@ -437,9 +437,9 @@ function Schedules({ profile }: SchedulesProps): React.JSX.Element {
                   value={newDeliver}
                   onChange={(e) => setNewDeliver(e.target.value)}
                 >
-                  {DELIVER_TARGETS.map((t) => (
-                    <option key={t.value} value={t.value}>
-                      {t.label}
+                  {DELIVER_TARGETS.map((dt) => (
+                    <option key={dt.value} value={dt.value}>
+                      {t(dt.labelKey)}
                     </option>
                   ))}
                 </select>

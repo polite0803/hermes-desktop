@@ -32,6 +32,7 @@ import soulEn from "./locales/en/soul";
 import memoryEn from "./locales/en/memory";
 import installEn from "./locales/en/install";
 import constantsEn from "./locales/en/constants";
+import kanbanEn from "./locales/en/kanban";
 import commonEs from "./locales/es/common";
 import navigationEs from "./locales/es/navigation";
 import welcomeEs from "./locales/es/welcome";
@@ -52,6 +53,7 @@ import soulEs from "./locales/es/soul";
 import memoryEs from "./locales/es/memory";
 import installEs from "./locales/es/install";
 import constantsEs from "./locales/es/constants";
+import kanbanEs from "./locales/es/kanban";
 import commonId from "./locales/id/common";
 import navigationId from "./locales/id/navigation";
 import welcomeId from "./locales/id/welcome";
@@ -72,6 +74,7 @@ import soulId from "./locales/id/soul";
 import memoryId from "./locales/id/memory";
 import installId from "./locales/id/install";
 import constantsId from "./locales/id/constants";
+import kanbanId from "./locales/id/kanban";
 import commonZh from "./locales/zh-CN/common";
 import navigationZh from "./locales/zh-CN/navigation";
 import welcomeZh from "./locales/zh-CN/welcome";
@@ -92,6 +95,7 @@ import soulZh from "./locales/zh-CN/soul";
 import memoryZh from "./locales/zh-CN/memory";
 import installZh from "./locales/zh-CN/install";
 import constantsZh from "./locales/zh-CN/constants";
+import kanbanZh from "./locales/zh-CN/kanban";
 import commonZhTw from "./locales/zh-TW/common";
 import navigationZhTw from "./locales/zh-TW/navigation";
 import welcomeZhTw from "./locales/zh-TW/welcome";
@@ -112,6 +116,7 @@ import soulZhTw from "./locales/zh-TW/soul";
 import memoryZhTw from "./locales/zh-TW/memory";
 import installZhTw from "./locales/zh-TW/install";
 import constantsZhTw from "./locales/zh-TW/constants";
+import kanbanZhTw from "./locales/zh-TW/kanban";
 import commonJa from "./locales/ja/common";
 import navigationJa from "./locales/ja/navigation";
 import welcomeJa from "./locales/ja/welcome";
@@ -132,6 +137,7 @@ import soulJa from "./locales/ja/soul";
 import memoryJa from "./locales/ja/memory";
 import installJa from "./locales/ja/install";
 import constantsJa from "./locales/ja/constants";
+import kanbanJa from "./locales/ja/kanban";
 import commonPt from "./locales/pt-BR/common";
 import navigationPt from "./locales/pt-BR/navigation";
 import welcomePt from "./locales/pt-BR/welcome";
@@ -152,6 +158,7 @@ import soulPt from "./locales/pt-BR/soul";
 import memoryPt from "./locales/pt-BR/memory";
 import installPt from "./locales/pt-BR/install";
 import constantsPt from "./locales/pt-BR/constants";
+import kanbanPt from "./locales/pt-BR/kanban";
 import commonPtPt from "./locales/pt-PT/common";
 import navigationPtPt from "./locales/pt-PT/navigation";
 import welcomePtPt from "./locales/pt-PT/welcome";
@@ -172,6 +179,7 @@ import soulPtPt from "./locales/pt-PT/soul";
 import memoryPtPt from "./locales/pt-PT/memory";
 import installPtPt from "./locales/pt-PT/install";
 import constantsPtPt from "./locales/pt-PT/constants";
+import kanbanPtPt from "./locales/pt-PT/kanban";
 
 export const resources = {
   en: {
@@ -202,6 +210,7 @@ export const resources = {
       memory: memoryEn,
       install: installEn,
       constants: constantsEn,
+      kanban: kanbanEn,
     },
   },
   es: {
@@ -232,6 +241,7 @@ export const resources = {
       memory: memoryEs,
       install: installEs,
       constants: constantsEs,
+      kanban: kanbanEs,
     },
   },
   id: {
@@ -262,6 +272,7 @@ export const resources = {
       memory: memoryId,
       install: installId,
       constants: constantsId,
+      kanban: kanbanId,
     },
   },
   "zh-CN": {
@@ -292,6 +303,7 @@ export const resources = {
       memory: memoryZh,
       install: installZh,
       constants: constantsZh,
+      kanban: kanbanZh,
     },
   },
   "zh-TW": {
@@ -322,6 +334,7 @@ export const resources = {
       memory: memoryZhTw,
       install: installZhTw,
       constants: constantsZhTw,
+      kanban: kanbanZhTw,
     },
   },
   "pt-BR": {
@@ -352,6 +365,7 @@ export const resources = {
       memory: memoryPt,
       install: installPt,
       constants: constantsPt,
+      kanban: kanbanPt,
     },
   },
   "pt-PT": {
@@ -382,6 +396,7 @@ export const resources = {
       memory: memoryPtPt,
       install: installPtPt,
       constants: constantsPtPt,
+      kanban: kanbanPtPt,
     },
   },
   ja: {
@@ -412,6 +427,7 @@ export const resources = {
       memory: memoryJa,
       install: installJa,
       constants: constantsJa,
+      kanban: kanbanJa,
     },
   },
 } satisfies Resource;

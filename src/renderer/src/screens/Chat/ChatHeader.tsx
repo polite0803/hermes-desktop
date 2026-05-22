@@ -14,14 +14,15 @@ interface ChatHeaderProps {
 }
 
 function UsageBadge({ usage }: { usage: UsageState }): React.JSX.Element {
+  const { t } = useI18n();
   const tooltip =
-    `Prompt: ${usage.promptTokens.toLocaleString()} | ` +
-    `Completion: ${usage.completionTokens.toLocaleString()}` +
-    (usage.cost != null ? ` | Cost: $${usage.cost.toFixed(4)}` : "");
+    `${t("chat.promptTokens")}: ${usage.promptTokens.toLocaleString()} | ` +
+    `${t("chat.completionTokens")}: ${usage.completionTokens.toLocaleString()}` +
+    (usage.cost != null ? ` | ${t("chat.cost")}: $${usage.cost.toFixed(4)}` : "");
 
   return (
     <span className="chat-token-counter" title={tooltip}>
-      {usage.totalTokens.toLocaleString()} tokens
+      {t("chat.tokenCount", { count: usage.totalTokens.toLocaleString() })}
       {usage.cost != null && (
         <span className="chat-cost"> · ${usage.cost.toFixed(4)}</span>
       )}

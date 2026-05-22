@@ -237,7 +237,7 @@ fn kill_process(pid: u32) {
 pub fn claw3d_start_dev(app: AppHandle) -> Result<bool, String> {
     let office = office_dir();
     if !office.join("package.json").exists() {
-        return Err("Claw3D not cloned. Run setup first.".into());
+        return Err("claw3d.notCloned".into());
     }
     if let Some(pid) = read_pid_file(DEV_PID_FILE) {
         if is_process_alive(pid) { return Ok(true); }
@@ -275,7 +275,7 @@ pub fn claw3d_stop_dev() -> Result<bool, String> {
 pub fn claw3d_start_adapter(app: AppHandle) -> Result<bool, String> {
     let office = office_dir();
     if !office.join("package.json").exists() {
-        return Err("Claw3D not cloned. Run setup first.".into());
+        return Err("claw3d.notCloned".into());
     }
     if let Some(pid) = read_pid_file(ADAPTER_PID_FILE) {
         if is_process_alive(pid) { return Ok(true); }

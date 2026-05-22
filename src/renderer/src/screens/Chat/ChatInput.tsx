@@ -359,7 +359,7 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(
                 >
                   <span className="slash-menu-item-name">{cmd.name}</span>
                   <span className="slash-menu-item-desc">
-                    {cmd.description}
+                    {t(cmd.descriptionKey)}
                   </span>
                 </button>
               ))}

@@ -13,4 +13,5 @@ export default {
   emptyHint: "开始聊天以创建第一条会话",
   messages: "条消息",
   messageSingular: "条消息",
+  msgCount: "{{count, plural, one {条消息} other {条消息}}}",
 } as const;

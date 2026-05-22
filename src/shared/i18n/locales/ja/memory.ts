@@ -43,6 +43,11 @@ export default {
   deactivate: "無効化",
   activating: "有効化中...",
   activate: "有効化",
+  justNow: "たった今",
+  minutesAgo: "{{count}}分前",
+  hoursAgo: "{{count}}時間前",
+  daysAgo: "{{count}}日前",
+  capacityUsage: "{{used}} / {{limit}} 文字（{{pct}}%）",
   providers: {
     honcho:
       "弁証法的 Q&A と意味検索を備えた AI ネイティブのセッション横断ユーザーモデリング",

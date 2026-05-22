@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { hermesAPI } from "@shared/hermes-api";
+import { useI18n } from "../../components/useI18n";
 import {
   Plus,
   Refresh,
@@ -90,13 +91,13 @@ interface KanbanTaskDetail {
   latest_summary: string | null;
 }
 
-const COLUMNS: { key: string; label: string }[] = [
-  { key: "triage", label: "Triage" },
-  { key: "todo", label: "To-do" },
-  { key: "ready", label: "Ready" },
-  { key: "running", label: "Running" },
-  { key: "blocked", label: "Blocked" },
-  { key: "done", label: "Done" },
+const COLUMNS: { key: string; labelKey: string }[] = [
+  { key: "triage", labelKey: "kanban.columns.triage" },
+  { key: "todo", labelKey: "kanban.columns.todo" },
+  { key: "ready", labelKey: "kanban.columns.ready" },
+  { key: "running", labelKey: "kanban.columns.running" },
+  { key: "blocked", labelKey: "kanban.columns.blocked" },
+  { key: "done", labelKey: "kanban.columns.done" },
 ];
 
 const POLL_INTERVAL_MS = 6000;
@@ -118,6 +119,7 @@ function ageLabel(createdAt: number | null): string {
 }
 
 function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
+  const { t } = useI18n();
   const [boards, setBoards] = useState<KanbanBoard[]>([]);
   const [tasks, setTasks] = useState<KanbanTask[]>([]);
   const [loading, setLoading] = useState(true);
@@ -170,11 +172,11 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
             setRemoteUnsupported(true);
             return;
           }
-          setError(boardsRes.error || "Failed to load boards");
+          setError(boardsRes.error || t("kanban.errorCreateTask"));
           return;
         }
         if (!tasksRes.success) {
-          setError(tasksRes.error || "Failed to load tasks");
+          setError(tasksRes.error || t("kanban.errorCreateTask"));
           return;
         }
         setRemoteUnsupported(false);
@@ -267,7 +269,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
     let workspaceArg: string | undefined;
     if (newWorkspace === "dir") {
       if (!newWorkspaceDir) {
-        setError("Pick a workspace folder first.");
+        setError(t("kanban.errorPickFolder"));
         return;
       }
       workspaceArg = `dir:${newWorkspaceDir}`;
@@ -288,7 +290,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
     );
     setActionBusy(null);
     if (!res.success) {
-      setError(res.error || "Failed to create task");
+      setError(res.error || t("kanban.errorCreateTask"));
       return;
     }
     setShowCreate(false);
@@ -302,7 +304,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
     const res = await hermesAPI.kanbanSwitchBoard(slug, profile);
     setActionBusy(null);
     if (!res.success) {
-      setError(res.error || "Failed to switch board");
+      setError(res.error || t("kanban.errorSwitchBoard"));
       return;
     }
     loadAll();
@@ -319,7 +321,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
     );
     setActionBusy(null);
     if (!res.success) {
-      setError(res.error || "Failed to create board");
+      setError(res.error || t("kanban.errorCreateBoard"));
       return;
     }
     setShowNewBoard(false);
@@ -339,7 +341,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
         profile,
       );
     } else if (target === "blocked") {
-      const reason = window.prompt("Reason for blocking?") || "";
+      const reason = window.prompt(t("kanban.blockReasonPrompt")) || "";
       res = await hermesAPI.kanbanBlockTask(
         task.id,
         reason || undefined,
@@ -350,13 +352,13 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
     } else {
       setActionBusy(null);
       setError(
-        `Cannot move ${task.status} → ${target} from the desktop. Use the agent or CLI.`,
+        t("kanban.errorMoveTask", { from: task.status, to: target }),
       );
       return;
     }
     setActionBusy(null);
     if (!res.success) {
-      setError(res.error || "Failed to move task");
+      setError(res.error || t("kanban.errorMoveTask", { from: task.status, to: target }));
       return;
     }
     loadAll(true);
@@ -367,7 +369,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
     const res = await hermesAPI.kanbanSpecifyTask(task.id, profile);
     setActionBusy(null);
     if (!res.success) {
-      setError(res.error || "Failed to specify task");
+      setError(res.error || t("kanban.errorSpecifyTask"));
       return;
     }
     loadAll(true);
@@ -388,18 +390,18 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
   async function handleDrop(task: KanbanTask, target: string): Promise<void> {
     if (!isValidDragTransition(task.status, target)) return;
     if (target === "done") {
-      if (!window.confirm(`Mark "${task.title}" as done?`)) return;
+      if (!window.confirm(t("kanban.confirmMarkDone", { title: task.title }))) return;
     }
     await handleMove(task, target);
   }
 
   async function handleArchive(task: KanbanTask): Promise<void> {
-    if (!window.confirm(`Archive "${task.title}"?`)) return;
+    if (!window.confirm(t("kanban.confirmArchive", { title: task.title }))) return;
     setActionBusy(task.id);
     const res = await hermesAPI.kanbanArchiveTask(task.id, profile);
     setActionBusy(null);
     if (!res.success) {
-      setError(res.error || "Failed to archive task");
+      setError(res.error || t("kanban.errorArchiveTask"));
       return;
     }
     if (detailTaskId === task.id) setDetailTaskId(null);
@@ -410,11 +412,11 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
     setActionBusy(task.id);
     const res = await hermesAPI.kanbanReclaimTask(
       task.id,
-      "reclaimed from desktop",
+      t("kanban.reclaimedFromDesktop"),
       profile,
     );
     setActionBusy(null);
-    if (!res.success) setError(res.error || "Failed to reclaim");
+    if (!res.success) setError(res.error || t("kanban.errorReclaim"));
     else loadAll(true);
   }
 
@@ -423,7 +425,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
     const res = await hermesAPI.kanbanDispatchOnce(false, profile);
     setActionBusy(null);
     if (!res.success) {
-      setError(res.error || "Dispatch failed");
+      setError(res.error || t("kanban.errorDispatch"));
       return;
     }
     loadAll(true);
@@ -434,12 +436,10 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
       <div className="kanban-container">
         <div className="kanban-empty">
           <p className="schedules-empty-text">
-            Kanban requires a local Hermes install or SSH tunnel mode.
+            {t("kanban.remoteUnsupported")}
           </p>
           <p className="schedules-empty-hint">
-            Plain remote (HTTP + API key) mode does not yet expose the kanban
-            API. Switch to local or SSH tunnel mode in Settings to manage the
-            board.
+            {t("kanban.remoteUnsupportedHint")}
           </p>
         </div>
       </div>
@@ -460,10 +460,9 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
     <div className="kanban-container">
       <div className="kanban-header">
         <div>
-          <h2 className="schedules-title">Kanban</h2>
+          <h2 className="schedules-title">{t("kanban.title")}</h2>
           <p className="schedules-subtitle">
-            Durable multi-agent board for tasks the agent can pick up and finish
-            on its own.
+            {t("kanban.subtitle")}
           </p>
         </div>
         <div className="schedules-header-actions">
@@ -473,23 +472,23 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
             disabled={actionBusy !== null}
           >
             <Refresh size={14} />
-            Refresh
+            {t("kanban.refresh")}
           </button>
           <button
             className="btn btn-secondary"
             onClick={handleDispatch}
             disabled={actionBusy !== null}
-            data-tooltip="Run one dispatcher pass — promote ready tasks and spawn workers"
+            data-tooltip={t("kanban.dispatchTooltip")}
           >
             <Zap size={14} />
-            Dispatch
+            {t("kanban.dispatch")}
           </button>
           <button
             className="btn btn-primary"
             onClick={() => setShowCreate(true)}
           >
             <Plus size={14} />
-            New task
+            {t("kanban.newTask")}
           </button>
         </div>
       </div>
@@ -516,7 +515,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
             onClick={() => setShowNewBoard(true)}
           >
             <Plus size={12} />
-            New board
+            {t("kanban.newBoard")}
           </button>
         </div>
       )}
@@ -565,7 +564,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
               }}
             >
               <div className="kanban-column-header">
-                <span className="kanban-column-title">{col.label}</span>
+                <span className="kanban-column-title">{t(col.labelKey)}</span>
                 <span className="kanban-column-count">{colTasks.length}</span>
               </div>
               <div className="kanban-column-body">
@@ -614,7 +613,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
                         {task.status === "triage" && (
                           <button
                             className="btn-ghost kanban-card-action"
-                            data-tooltip="Specify (expand spec → to-do)"
+                            data-tooltip={t("kanban.specifyTooltip")}
                             onClick={(e) => {
                               e.stopPropagation();
                               handleSpecify(task);
@@ -627,7 +626,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
                         {task.status === "ready" && (
                           <button
                             className="btn-ghost kanban-card-action"
-                            data-tooltip="Mark done"
+                            data-tooltip={t("kanban.markDoneTooltip")}
                             onClick={(e) => {
                               e.stopPropagation();
                               handleMove(task, "done");
@@ -640,7 +639,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
                         {task.status === "running" && (
                           <button
                             className="btn-ghost kanban-card-action"
-                            data-tooltip="Reclaim worker"
+                            data-tooltip={t("kanban.reclaimTooltip")}
                             onClick={(e) => {
                               e.stopPropagation();
                               handleReclaim(task);
@@ -653,7 +652,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
                         {task.status === "blocked" && (
                           <button
                             className="btn-ghost kanban-card-action"
-                            data-tooltip="Unblock"
+                            data-tooltip={t("kanban.unblockTooltip")}
                             onClick={(e) => {
                               e.stopPropagation();
                               handleMove(task, "ready");
@@ -667,7 +666,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
                           task.status === "ready") && (
                           <button
                             className="btn-ghost kanban-card-action"
-                            data-tooltip="Block"
+                            data-tooltip={t("kanban.blockTooltip")}
                             onClick={(e) => {
                               e.stopPropagation();
                               handleMove(task, "blocked");
@@ -679,7 +678,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
                         )}
                         <button
                           className="btn-ghost kanban-card-action kanban-card-action-danger"
-                          data-tooltip="Archive"
+                          data-tooltip={t("kanban.archiveTooltip")}
                           onClick={(e) => {
                             e.stopPropagation();
                             handleArchive(task);
@@ -705,7 +704,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
         >
           <div className="schedules-modal" onClick={(e) => e.stopPropagation()}>
             <div className="schedules-modal-header">
-              <span>New kanban task</span>
+              <span>{t("kanban.createTask")}</span>
               <button
                 className="btn-ghost"
                 onClick={() => setShowCreate(false)}
@@ -715,36 +714,36 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
             </div>
             <div className="schedules-modal-body">
               <div className="schedules-field">
-                <label className="schedules-field-label">Title</label>
+                <label className="schedules-field-label">{t("kanban.titleLabel")}</label>
                 <input
                   className="input"
                   type="text"
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
-                  placeholder="What needs to be done?"
+                  placeholder={t("kanban.titlePlaceholder")}
                   autoFocus
                 />
               </div>
               <div className="schedules-field">
-                <label className="schedules-field-label">Body (optional)</label>
+                <label className="schedules-field-label">{t("kanban.bodyLabel")}</label>
                 <textarea
                   className="input schedules-textarea"
                   rows={4}
                   value={newBody}
                   onChange={(e) => setNewBody(e.target.value)}
-                  placeholder="Context, acceptance criteria, links…"
+                  placeholder={t("kanban.bodyPlaceholder")}
                 />
               </div>
               <div className="schedules-field">
                 <label className="schedules-field-label">
-                  Assignee profile
+                  {t("kanban.assigneeLabel")}
                 </label>
                 <select
                   className="input"
                   value={newAssignee}
                   onChange={(e) => setNewAssignee(e.target.value)}
                 >
-                  <option value="">— Triage (no assignee)</option>
+                  <option value="">{t("kanban.assigneeNone")}</option>
                   {profileOptions.map((name) => (
                     <option key={name} value={name}>
                       {name}
@@ -753,28 +752,28 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
                 </select>
               </div>
               <div className="schedules-field">
-                <label className="schedules-field-label">Priority</label>
+                <label className="schedules-field-label">{t("kanban.priorityLabel")}</label>
                 <select
                   className="input"
                   value={newPriority}
                   onChange={(e) => setNewPriority(e.target.value)}
                 >
-                  <option value="0">Normal (0)</option>
-                  <option value="1">Low (P2)</option>
-                  <option value="5">High (P1)</option>
-                  <option value="10">Urgent (P0)</option>
+                  <option value="0">{t("kanban.priorityNormal")}</option>
+                  <option value="1">{t("kanban.priorityLow")}</option>
+                  <option value="5">{t("kanban.priorityHigh")}</option>
+                  <option value="10">{t("kanban.priorityUrgent")}</option>
                 </select>
               </div>
               <div className="schedules-field">
-                <label className="schedules-field-label">Workspace</label>
+                <label className="schedules-field-label">{t("kanban.workspaceLabel")}</label>
                 <select
                   className="input"
                   value={newWorkspace}
                   onChange={(e) => setNewWorkspace(e.target.value)}
                 >
-                  <option value="scratch">Scratch (temp dir)</option>
-                  <option value="worktree">Worktree (current repo)</option>
-                  <option value="dir">Choose folder…</option>
+                  <option value="scratch">{t("kanban.workspaceScratch")}</option>
+                  <option value="worktree">{t("kanban.workspaceWorktree")}</option>
+                  <option value="dir">{t("kanban.workspaceDir")}</option>
                 </select>
                 {newWorkspace === "dir" && (
                   <div className="kanban-folder-picker">
@@ -783,7 +782,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
                       type="text"
                       value={newWorkspaceDir}
                       onChange={(e) => setNewWorkspaceDir(e.target.value)}
-                      placeholder="No folder selected"
+                      placeholder={t("kanban.workspaceNoFolder")}
                       readOnly
                     />
                     <button
@@ -791,7 +790,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
                       className="btn btn-secondary"
                       onClick={handlePickWorkspaceFolder}
                     >
-                      Browse…
+                      {t("kanban.workspaceBrowse")}
                     </button>
                   </div>
                 )}
@@ -804,8 +803,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
                     onChange={(e) => setNewTriage(e.target.checked)}
                   />
                   <span>
-                    Park in triage (a specifier expands the spec before
-                    promoting to to-do)
+                    {t("kanban.triageCheckbox")}
                   </span>
                 </label>
               </div>
@@ -815,14 +813,14 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
                 className="btn btn-secondary"
                 onClick={() => setShowCreate(false)}
               >
-                Cancel
+                {t("kanban.cancel")}
               </button>
               <button
                 className="btn btn-primary"
                 onClick={handleCreate}
                 disabled={!newTitle.trim() || actionBusy === "create"}
               >
-                {actionBusy === "create" ? "Creating…" : "Create task"}
+                {actionBusy === "create" ? t("kanban.creating") : t("kanban.createTaskBtn")}
               </button>
             </div>
           </div>
@@ -836,7 +834,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
         >
           <div className="schedules-modal" onClick={(e) => e.stopPropagation()}>
             <div className="schedules-modal-header">
-              <span>New board</span>
+              <span>{t("kanban.createBoardTitle")}</span>
               <button
                 className="btn-ghost"
                 onClick={() => setShowNewBoard(false)}
@@ -846,26 +844,26 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
             </div>
             <div className="schedules-modal-body">
               <div className="schedules-field">
-                <label className="schedules-field-label">Slug</label>
+                <label className="schedules-field-label">{t("kanban.slugLabel")}</label>
                 <input
                   className="input"
                   type="text"
                   value={newBoardSlug}
                   onChange={(e) => setNewBoardSlug(e.target.value)}
-                  placeholder="kebab-case, e.g. atm10-server"
+                  placeholder={t("kanban.slugPlaceholder")}
                   autoFocus
                 />
               </div>
               <div className="schedules-field">
                 <label className="schedules-field-label">
-                  Display name (optional)
+                  {t("kanban.displayNameLabel")}
                 </label>
                 <input
                   className="input"
                   type="text"
                   value={newBoardName}
                   onChange={(e) => setNewBoardName(e.target.value)}
-                  placeholder="ATM10 Server"
+                  placeholder={t("kanban.displayNamePlaceholder")}
                 />
               </div>
             </div>
@@ -874,14 +872,14 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
                 className="btn btn-secondary"
                 onClick={() => setShowNewBoard(false)}
               >
-                Cancel
+                {t("kanban.cancel")}
               </button>
               <button
                 className="btn btn-primary"
                 onClick={handleCreateBoard}
                 disabled={!newBoardSlug.trim() || actionBusy === "board-create"}
               >
-                {actionBusy === "board-create" ? "Creating…" : "Create board"}
+                {actionBusy === "board-create" ? t("kanban.creating") : t("kanban.createBoardBtn")}
               </button>
             </div>
           </div>
@@ -898,7 +896,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="schedules-modal-header">
-              <span>{detail?.task.title || "Task"}</span>
+              <span>{detail?.task.title || t("kanban.taskDetail")}</span>
               <button
                 className="btn-ghost"
                 onClick={() => setDetailTaskId(null)}
@@ -926,7 +924,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
                   </div>
                   {detail.task.body && (
                     <div className="kanban-detail-section">
-                      <label>Body</label>
+                      <label>{t("kanban.bodySection")}</label>
                       <pre className="kanban-detail-pre">
                         {detail.task.body}
                       </pre>
@@ -934,7 +932,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
                   )}
                   {detail.latest_summary && (
                     <div className="kanban-detail-section">
-                      <label>Latest run summary</label>
+                      <label>{t("kanban.latestRunSummary")}</label>
                       <pre className="kanban-detail-pre">
                         {detail.latest_summary}
                       </pre>
@@ -942,7 +940,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
                   )}
                   {detail.task.result && (
                     <div className="kanban-detail-section">
-                      <label>Result</label>
+                      <label>{t("kanban.result")}</label>
                       <pre className="kanban-detail-pre">
                         {detail.task.result}
                       </pre>
@@ -950,7 +948,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
                   )}
                   {detail.comments.length > 0 && (
                     <div className="kanban-detail-section">
-                      <label>Comments ({detail.comments.length})</label>
+                      <label>{t("kanban.comments", { count: detail.comments.length })}</label>
                       {detail.comments.map((c) => (
                         <div key={c.id} className="kanban-comment">
                           <div className="kanban-comment-author">
@@ -963,7 +961,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
                   )}
                   {detail.events.length > 0 && (
                     <div className="kanban-detail-section">
-                      <label>Events ({detail.events.length})</label>
+                      <label>{t("kanban.events", { count: detail.events.length })}</label>
                       <div className="kanban-events">
                         {detail.events
                           .slice(-12)

@@ -71,7 +71,7 @@ pub fn list_personalities(_profile: Option<String>) -> Result<Vec<serde_json::Va
 #[tauri::command]
 pub fn apply_personality(name: String, profile: Option<String>) -> Result<(), String> {
     let preset_path = hermes_cli::resolve_hermes_home().join("personalities").join(format!("{}.yaml", name));
-    if !preset_path.exists() { return Err(format!("Personality '{}' not found", name)); }
+    if !preset_path.exists() { return Err("soul.personalityNotFound".into()); }
     let content = fs::read_to_string(&preset_path).map_err(|e| format!("Failed: {}", e))?;
     write_soul(content, profile)
 }

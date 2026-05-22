@@ -12,4 +12,6 @@ export default {
   stepLabel: "Passo {{step}}/{{total}}: {{title}}",
   waitingToStart: "A aguardar para iniciar...",
   continueToSetup: "Continuar para a Configuração",
+  joinCommunity: "Entrar na Comunidade",
+  installationError: "Erro de Instalação",
 } as const;

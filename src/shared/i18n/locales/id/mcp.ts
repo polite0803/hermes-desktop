@@ -11,4 +11,5 @@ export default {
   test: "Test",
   testSuccess: "Server started successfully",
   testFailed: "Server failed to start",
+  installComputerUse: "Instal Computer-Use",
 } as const;

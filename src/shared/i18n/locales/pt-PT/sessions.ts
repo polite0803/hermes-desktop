@@ -13,4 +13,5 @@ export default {
   emptyHint: "Comece a conversar para criar a sua primeira sessão",
   messages: "msg",
   messageSingular: "msg",
+  msgCount: "{{count, plural, one {msg} other {msgs}}}",
 } as const;

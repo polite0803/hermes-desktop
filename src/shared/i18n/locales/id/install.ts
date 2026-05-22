@@ -12,4 +12,6 @@ export default {
   stepLabel: "Langkah {{step}}/{{total}}: {{title}}",
   waitingToStart: "Menunggu untuk mulai...",
   continueToSetup: "Lanjut ke Setup",
+  joinCommunity: "Bergabung ke Komunitas",
+  installationError: "Kesalahan Instalasi",
 } as const;

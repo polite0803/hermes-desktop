@@ -12,4 +12,6 @@ export default {
   stepLabel: "ステップ {{step}}/{{total}}：{{title}}",
   waitingToStart: "開始待機中...",
   continueToSetup: "セットアップへ進む",
+  joinCommunity: "コミュニティに参加",
+  installationError: "インストールエラー",
 } as const;

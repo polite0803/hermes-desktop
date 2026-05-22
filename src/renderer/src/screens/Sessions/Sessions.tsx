@@ -117,6 +117,7 @@ const SessionCard = memo(function SessionCard({
   showFullDate: boolean;
   onClick: () => void;
 }) {
+  const { t } = useI18n();
   return (
     <button
       className={`sessions-card ${isActive ? "sessions-card--active" : ""}`}
@@ -124,7 +125,7 @@ const SessionCard = memo(function SessionCard({
     >
       <div className="sessions-card-main">
         <span className="sessions-card-title">
-          {session.title || "New conversation"}
+          {session.title || t("sessions.newConversation")}
         </span>
         <span className="sessions-card-time">
           {showFullDate
@@ -137,7 +138,7 @@ const SessionCard = memo(function SessionCard({
           {session.source}
         </span>
         <span className="sessions-tag">
-          {session.messageCount} msg{session.messageCount !== 1 ? "s" : ""}
+          {session.messageCount} {t("sessions.msgCount", { count: session.messageCount })}
         </span>
         {session.model && (
           <span className="sessions-tag sessions-tag--model">

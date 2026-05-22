@@ -39,6 +39,11 @@ export default {
   deactivate: "停用",
   activating: "啟用中...",
   activate: "啟用",
+  justNow: "剛剛",
+  minutesAgo: "{{count}} 分鐘前",
+  hoursAgo: "{{count}} 小時前",
+  daysAgo: "{{count}} 天前",
+  capacityUsage: "{{used}} / {{limit}} 字元（{{pct}}%）",
   providers: {
     honcho: "基於 AI 的跨工作階段使用者畫像建模，支援對話式問答和語義搜尋",
     hindsight: "長期記憶，具有知識圖譜和多策略檢索功能",

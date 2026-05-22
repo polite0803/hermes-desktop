@@ -34,8 +34,8 @@ export interface InstallStatus {
 export interface InstallProgress {
   step: number;
   totalSteps: number;
-  title: string;
-  detail: string;
+  titleKey: string;
+  detailKey: string;
   log: string;
 }
 

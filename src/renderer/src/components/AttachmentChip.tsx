@@ -1,5 +1,6 @@
 import { FileText, X } from "lucide-react";
 import type { Attachment } from "../../../shared/attachments";
+import { useI18n } from "./useI18n";
 
 interface AttachmentChipProps {
   attachment: Attachment;
@@ -14,6 +15,7 @@ export function AttachmentChip({
   onRemove,
   onPreview,
 }: AttachmentChipProps): React.JSX.Element {
+  const { t } = useI18n();
   const isImage = attachment.kind === "image";
 
   return (
@@ -41,7 +43,7 @@ export function AttachmentChip({
           type="button"
           className="attachment-chip-remove"
           onClick={onRemove}
-          aria-label={`Remove ${attachment.name}`}
+          aria-label={t("chat.removeAttachment", { name: attachment.name })}
         >
           <X size={12} />
         </button>

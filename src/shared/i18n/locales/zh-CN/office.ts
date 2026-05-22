@@ -25,4 +25,7 @@ export default {
   setupDesc1:
     "Claw3D 是你的 Hermes 代理的 3D 可视化环境。它让你可以看到代理在交互式办公空间中工作。",
   setupDesc2: "点击下方自动下载并设置 Claw3D。这将克隆仓库并安装所有依赖。",
+  preparing: "准备中...",
+  loadFailed: "加载 Claw3D 失败。开发服务器可能仍在启动中。",
+  installStep: "步骤 {{step}}/{{totalSteps}}：{{title}}",
 } as const;

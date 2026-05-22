@@ -409,10 +409,10 @@ pub fn get_env_all(profile: Option<String>) -> Result<HashMap<String, String>, S
 #[tauri::command]
 pub fn set_env(key: String, value: String, profile: Option<String>) -> Result<bool, String> {
     if !EnvKeyRe::test(&key) {
-        return Err("Invalid environment variable name. Use letters, numbers, and underscores.".into());
+        return Err("config.invalidEnvKeyName".into());
     }
     if value.contains('\0') || value.contains('\r') || value.contains('\n') {
-        return Err("Environment variable values must be single-line strings.".into());
+        return Err("config.envValueMustBeSingleLine".into());
     }
 
     cache_invalidate(&format!("env:{}", profile.as_deref().unwrap_or("default")));

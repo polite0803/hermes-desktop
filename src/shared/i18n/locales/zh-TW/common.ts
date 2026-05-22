@@ -46,4 +46,8 @@ export default {
   errorMessage: "發生未預期的錯誤。",
   tryAgain: "重試",
   copied: "已複製！",
+  remoteNotice: {
+    title: "已連線到遠端 Hermes",
+    desc: "{{feature}} 在遠端模式下無法使用。此資料存放在伺服器上，尚無法透過 API 存取。",
+  },
 } as const;

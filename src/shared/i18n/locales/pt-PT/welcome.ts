@@ -22,4 +22,25 @@ export default {
   connect: "Ligar",
   remoteHint:
     "Deixe a chave em branco se o servidor aceitar pedidos não autenticados (ex: via túnel SSH para o localhost).",
+  connectViaSsh: "Ligar via SSH",
+  sshSubtitle:
+    "Ligue a um Hermes remoto via SSH — sem necessidade de expor portas ou chaves de API.",
+  sshHost: "Host SSH",
+  sshPort: "Porta SSH",
+  username: "Nome de utilizador",
+  privateKeyPath: "Caminho da Chave Privada",
+  privateKeyPathOptional: "(opcional — predefinição ~/.ssh/id_rsa)",
+  remoteHermesPort: "Porta do Hermes Remoto",
+  remoteHermesPortDefault: "(predefinição 8642)",
+  testingSsh: "A testar ligação SSH…",
+  sshHint:
+    'Utiliza o SSH do seu sistema. Certifique-se de que já consegue executar <code style="font-family:monospace;font-size:12px">ssh {user}@{host}</code> sem pedido de senha.',
+  errorUrlRequired: "Por favor, introduza um URL.",
+  errorRemoteUnreachable:
+    "Não foi possível aceder ao Hermes neste URL. Verifique o URL e a chave da API.\n\nDeixe a chave em branco se o servidor aceitar pedidos não autenticados (ex: via túnel SSH para o localhost).",
+  errorConnectionFailed: "O teste de ligação falhou.",
+  errorHostRequired: "O host e o nome de utilizador são obrigatórios.",
+  errorSshUnreachable:
+    "Não foi possível ligar via SSH ou aceder ao Hermes no remoto. Certifique-se de que:\n• A chave SSH está correta (ou a predefinição ~/.ssh/id_rsa funciona)\n• O gateway do Hermes está em execução no remoto\n• A porta remota está correta (predefinição 8642)",
+  errorSshFailed: "O teste de ligação SSH falhou: {error}",
 } as const;

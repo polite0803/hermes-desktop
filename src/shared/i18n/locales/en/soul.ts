@@ -8,4 +8,5 @@ export default {
     "Reset to the default persona? Your current content will be lost.",
   placeholder: "Write your agent's persona instructions here...",
   hint: "This file is loaded fresh for every conversation. Use it to define your agent's personality, communication style, and any standing instructions.",
+  personalityNotFound: "Personality not found",
 } as const;

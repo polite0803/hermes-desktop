@@ -7,4 +7,5 @@ export default {
   stopped: "停止中",
   gatewayHint:
     "Hermes を Telegram・Discord・Slack などのプラットフォームに接続します",
+  startProxy: "プロキシを開始",
 } as const;

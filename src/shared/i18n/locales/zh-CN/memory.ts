@@ -39,6 +39,11 @@ export default {
   deactivate: "停用",
   activating: "激活中...",
   activate: "激活",
+  justNow: "刚刚",
+  minutesAgo: "{{count}}分钟前",
+  hoursAgo: "{{count}}小时前",
+  daysAgo: "{{count}}天前",
+  capacityUsage: "{{used}} / {{limit}} 字符 ({{pct}}%)",
   providers: {
     honcho: "基于 AI 的跨会话用户画像建模，支持辩证问答和语义搜索",
     hindsight: "长期记忆，具有知识图谱和多策略检索功能",

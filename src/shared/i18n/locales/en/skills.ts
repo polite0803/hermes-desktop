@@ -21,4 +21,9 @@ export default {
   installedBadge: "Installed",
   installing: "Installing...",
   install: "Install",
+  hubTab: "Skills Hub",
+  searchHubPlaceholder: "Search agentskills.io...",
+  searchHub: "Search",
+  hubSkillInfo: "by {{author}} · {{downloads}} downloads",
+  hubInstalled: "✓ Installed",
 } as const;

@@ -40,7 +40,7 @@ pub struct MemoryInfo {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
-pub struct MemoryResult { pub success: bool, pub error: Option<String> }
+pub struct MemoryResult { pub success: bool, pub error: Option<String>, pub error_key: Option<String> }
 
 fn memory_path(profile: Option<&str>) -> PathBuf { hermes_cli::resolve_profile_home(profile).join("memories").join("MEMORY.md") }
 fn user_path(profile: Option<&str>) -> PathBuf { hermes_cli::resolve_profile_home(profile).join("memories").join("USER.md") }
@@ -90,28 +90,28 @@ pub fn add_memory_entry(content: String, profile: Option<String>) -> Result<Memo
     if let Some(p) = path.parent() { let _ = fs::create_dir_all(p); }
     let mut existing = if path.exists() { fs::read_to_string(&path).unwrap_or_default() } else { String::new() };
     if existing.len() + content.len() > MEMORY_CHAR_LIMIT {
-        return Ok(MemoryResult { success: false, error: Some(format!("Memory limit reached ({} chars)", MEMORY_CHAR_LIMIT)) });
+        return Ok(MemoryResult { success: false, error: Some(format!("Memory limit reached ({} chars)", MEMORY_CHAR_LIMIT)), error_key: Some("memory.limitReached".into()) });
     }
     if !existing.is_empty() && !existing.ends_with('\n') { existing.push('\n'); }
     existing.push_str(&content);
     fs::write(&path, &existing).map_err(|e| e.to_string())?;
-    Ok(MemoryResult { success: true, error: None })
+    Ok(MemoryResult { success: true, error: None, error_key: None })
 }
 
 #[tauri::command]
 pub fn update_memory_entry(index: u32, content: String, profile: Option<String>) -> Result<MemoryResult, String> {
     let path = memory_path(profile.as_deref());
-    if !path.exists() { return Ok(MemoryResult { success: false, error: Some("Memory file not found".into()) }); }
+    if !path.exists() { return Ok(MemoryResult { success: false, error: Some("Memory file not found".into()), error_key: Some("memory.fileNotFound".into()) }); }
     let raw = fs::read_to_string(&path).unwrap_or_default();
     let mut entries: Vec<&str> = raw.split(ENTRY_DELIMITER).collect();
-    if (index as usize) >= entries.len() { return Ok(MemoryResult { success: false, error: Some("Index out of range".into()) }); }
+    if (index as usize) >= entries.len() { return Ok(MemoryResult { success: false, error: Some("Index out of range".into()), error_key: Some("memory.indexOutOfRange".into()) }); }
     entries[index as usize] = &content;
     let new_content = entries.join(ENTRY_DELIMITER);
     if new_content.len() > MEMORY_CHAR_LIMIT {
-        return Ok(MemoryResult { success: false, error: Some(format!("Memory limit reached ({} chars)", MEMORY_CHAR_LIMIT)) });
+        return Ok(MemoryResult { success: false, error: Some(format!("Memory limit reached ({} chars)", MEMORY_CHAR_LIMIT)), error_key: Some("memory.limitReached".into()) });
     }
     fs::write(&path, &new_content).map_err(|e| e.to_string())?;
-    Ok(MemoryResult { success: true, error: None })
+    Ok(MemoryResult { success: true, error: None, error_key: None })
 }
 
 #[tauri::command]
@@ -129,12 +129,12 @@ pub fn remove_memory_entry(index: u32, profile: Option<String>) -> Result<bool, 
 #[tauri::command]
 pub fn write_user_profile(content: String, profile: Option<String>) -> Result<MemoryResult, String> {
     if content.len() > USER_PROFILE_CHAR_LIMIT {
-        return Ok(MemoryResult { success: false, error: Some(format!("Profile limit reached ({} chars)", USER_PROFILE_CHAR_LIMIT)) });
+        return Ok(MemoryResult { success: false, error: Some(format!("Profile limit reached ({} chars)", USER_PROFILE_CHAR_LIMIT)), error_key: Some("memory.profileLimitReached".into()) });
     }
     let path = user_path(profile.as_deref());
     if let Some(p) = path.parent() { let _ = fs::create_dir_all(p); }
     fs::write(&path, &content).map_err(|e| e.to_string())?;
-    Ok(MemoryResult { success: true, error: None })
+    Ok(MemoryResult { success: true, error: None, error_key: None })
 }
 
 #[cfg(test)] mod tests {

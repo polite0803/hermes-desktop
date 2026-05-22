@@ -19,7 +19,7 @@ fn state_db_path() -> std::path::PathBuf { hermes_cli::resolve_hermes_home().joi
 
 fn open_db() -> Result<Connection, String> {
     let path = state_db_path();
-    if !path.exists() { return Err("state.db not found".into()); }
+    if !path.exists() { return Err("sessions.dbNotFound".into()); }
     Connection::open(&path).map_err(|e| e.to_string())
 }
 
