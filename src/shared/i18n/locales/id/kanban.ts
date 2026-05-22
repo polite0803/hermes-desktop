@@ -69,4 +69,8 @@ export default {
   confirmArchive: 'Arsipkan "{{title}}"?',
   blockReasonPrompt: "Alasan pemblokiran?",
   reclaimedFromDesktop: "diklaim kembali dari desktop",
+  ageSeconds: "{{count}}d",
+  ageMinutes: "{{count}}m",
+  ageHours: "{{count}}j",
+  ageDays: "{{count}}h",
 } as const;

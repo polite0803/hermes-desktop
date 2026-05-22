@@ -6,9 +6,9 @@ function RemoteNotice({ feature }: { feature: string }): React.JSX.Element {
   return (
     <div className="remote-notice">
       <Signal size={28} className="remote-notice-icon" />
-      <p className="remote-notice-title">{t("remoteNotice.title")}</p>
+      <p className="remote-notice-title">{t("common:remoteNotice.title")}</p>
       <p className="remote-notice-desc">
-        {t("remoteNotice.desc", { feature })}
+        {t("common:remoteNotice.desc", { feature })}
       </p>
     </div>
   );

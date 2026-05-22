@@ -115,7 +115,7 @@ export default {
   connectionMode: "模式",
   switchedToLocal: "已切換到本機模式",
   python: "Python",
-  openaiSDK: "OpenAI SDK",
+  openaiSdk: "OpenAI SDK",
   sandboxBackend: "沙箱後端",
   sandboxBackendHint: "選擇終端機命令的執行位置。",
   sandboxLocal: "本機",
@@ -125,4 +125,9 @@ export default {
   sandboxDaytona: "Daytona",
   sandboxVercel: "Vercel Sandbox",
   autoDetected: "從 base URL 自動偵測",
+  logFile: {
+    gateway: "閘道",
+    agent: "代理",
+    errors: "錯誤",
+  },
 } as const;

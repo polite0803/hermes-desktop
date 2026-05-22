@@ -21,6 +21,8 @@ export default {
   back: "返回",
   open: "打开",
   install: "安装",
+  enable: "启用",
+  disable: "禁用",
   start: "启动",
   stop: "停止",
   refresh: "刷新",

@@ -69,4 +69,8 @@ export default {
   confirmArchive: 'Archive "{{title}}"?',
   blockReasonPrompt: "Reason for blocking?",
   reclaimedFromDesktop: "reclaimed from desktop",
+  ageSeconds: "{{count}}s",
+  ageMinutes: "{{count}}m",
+  ageHours: "{{count}}h",
+  ageDays: "{{count}}d",
 } as const;

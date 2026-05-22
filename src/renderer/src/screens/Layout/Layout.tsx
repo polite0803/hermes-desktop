@@ -157,11 +157,11 @@ function Layout({ verifyWarning, onReinstall, onDismissVerifyWarning }: LayoutPr
         </div>
 
         {visitedViews.has("sessions") && <div style={paneStyle("sessions")}>
-          {remoteMode ? <RemoteNotice feature="Sessions" /> : <Sessions onResumeSession={handleResumeSession} onNewChat={() => { hermesAPI.abortChat(); setMessages([]); setCurrentSessionId(null); goTo("chat"); }} currentSessionId={currentSessionId} visible={view === "sessions"} />}
+          {remoteMode ? <RemoteNotice feature={t("navigation.sessions")} /> : <Sessions onResumeSession={handleResumeSession} onNewChat={() => { hermesAPI.abortChat(); setMessages([]); setCurrentSessionId(null); goTo("chat"); }} currentSessionId={currentSessionId} visible={view === "sessions"} />}
         </div>}
 
         {visitedViews.has("profiles") && <div style={paneStyle("profiles")}>
-          {remoteMode ? <RemoteNotice feature="Profiles" /> : <Agents activeProfile={activeProfile} onSelectProfile={(n) => { setActiveProfile(n); setMessages([]); setCurrentSessionId(null); }} onChatWith={(n) => { setActiveProfile(n); goTo("chat"); }} />}
+          {remoteMode ? <RemoteNotice feature={t("navigation.profiles")} /> : <Agents activeProfile={activeProfile} onSelectProfile={(n) => { setActiveProfile(n); setMessages([]); setCurrentSessionId(null); }} onChatWith={(n) => { setActiveProfile(n); goTo("chat"); }} />}
         </div>}
 
         {visitedViews.has("aiStudio") && <div style={paneStyle("aiStudio")}>
@@ -174,11 +174,11 @@ function Layout({ verifyWarning, onReinstall, onDismissVerifyWarning }: LayoutPr
             {(tab) => {
               switch (tab) {
                 case "models": return <Models visible />;
-                case "providers": return remoteMode ? <RemoteNotice feature="Providers" /> : <Providers profile={activeProfile} visible />;
-                case "skills": return remoteMode ? <RemoteNotice feature="Skills" /> : <Skills profile={activeProfile} />;
-                case "persona": return remoteMode ? <RemoteNotice feature="Persona" /> : <Soul profile={activeProfile} />;
-                case "tools": return remoteMode ? <RemoteNotice feature="Tools" /> : <Tools profile={activeProfile} />;
-                case "memory": return remoteMode ? <RemoteNotice feature="Memory" /> : <Memory profile={activeProfile} />;
+                case "providers": return remoteMode ? <RemoteNotice feature={t("navigation.providers")} /> : <Providers profile={activeProfile} visible />;
+                case "skills": return remoteMode ? <RemoteNotice feature={t("navigation.skills")} /> : <Skills profile={activeProfile} />;
+                case "persona": return remoteMode ? <RemoteNotice feature={t("navigation.persona")} /> : <Soul profile={activeProfile} />;
+                case "tools": return remoteMode ? <RemoteNotice feature={t("navigation.tools")} /> : <Tools profile={activeProfile} />;
+                case "memory": return remoteMode ? <RemoteNotice feature={t("navigation.memory")} /> : <Memory profile={activeProfile} />;
                 case "context": return <ContextFiles />;
                 default: return null;
               }
@@ -193,7 +193,7 @@ function Layout({ verifyWarning, onReinstall, onDismissVerifyWarning }: LayoutPr
           ]}>
             {(tab) => {
               switch (tab) {
-                case "kanban": return remoteMode ? <RemoteNotice feature="Kanban" /> : <Kanban profile={activeProfile} visible />;
+                case "kanban": return remoteMode ? <RemoteNotice feature={t("navigation.kanban")} /> : <Kanban profile={activeProfile} visible />;
                 case "office": return <Office profile={activeProfile} visible />;
                 default: return null;
               }

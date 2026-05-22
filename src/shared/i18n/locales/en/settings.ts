@@ -129,7 +129,7 @@ export default {
   connectionMode: "Mode",
   switchedToLocal: "Switched to local mode",
   python: "Python",
-  openaiSDK: "OpenAI SDK",
+  openaiSdk: "OpenAI SDK",
   sandboxBackend: "Sandbox Backend",
   sandboxBackendHint: "Choose where terminal commands execute.",
   sandboxLocal: "Local",
@@ -140,4 +140,9 @@ export default {
   sandboxVercel: "Vercel Sandbox",
   savedButton: "✓ Saved",
   autoDetected: "auto-detected from base URL",
+  logFile: {
+    gateway: "Gateway",
+    agent: "Agent",
+    errors: "Errors",
+  },
 } as const;

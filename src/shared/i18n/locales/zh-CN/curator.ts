@@ -1,6 +1,3 @@
 export default {
-  subtitle: "Autonomous skill library maintenance",
-  title: "Curator",
-  refresh: "刷新",
-  runCurator: "运行 Curator",
+  noReportsYet: "暂无 curator 报告",
 } as const;

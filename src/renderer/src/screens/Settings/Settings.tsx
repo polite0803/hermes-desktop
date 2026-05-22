@@ -112,8 +112,10 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
   // Backup / Import state
   const [backingUp, setBackingUp] = useState(false);
   const [backupResult, setBackupResult] = useState<string | null>(null);
+  const [backupResultType, setBackupResultType] = useState<"success" | "error" | null>(null);
   const [importing, setImporting] = useState(false);
   const [importResult, setImportResult] = useState<string | null>(null);
+  const [importResultType, setImportResultType] = useState<"success" | "error" | null>(null);
 
   // Log viewer state
   const [logContent, setLogContent] = useState("");
@@ -266,7 +268,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
         }
       }
     }
-    setConnStatus("Saved");
+    setConnStatus(t("settings.saved"));
     setTimeout(() => setConnStatus(null), 2000);
   }
 
@@ -318,12 +320,15 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
   async function handleBackup(): Promise<void> {
     setBackingUp(true);
     setBackupResult(null);
+    setBackupResultType(null);
     const result = await hermesAPI.runHermesBackup(profile);
     setBackingUp(false);
     if (result.success) {
       setBackupResult(t("settings.backupCreated", { path: result.path || "success" }));
+      setBackupResultType("success");
     } else {
       setBackupResult(result.error || t("settings.backupFailed"));
+      setBackupResultType("error");
     }
   }
 
@@ -336,13 +341,16 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
       if (!file) return;
       setImporting(true);
       setImportResult(null);
+      setImportResultType(null);
       const filePath = (file as File & { path: string }).path;
       const result = await hermesAPI.runHermesImport(filePath, profile);
       setImporting(false);
       if (result.success) {
         setImportResult(t("settings.migrationComplete"));
+        setImportResultType("success");
       } else {
         setImportResult(result.error || t("settings.migrationFailed"));
+        setImportResultType("error");
       }
     };
     input.click();
@@ -453,7 +461,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
               )}
             </div>
             <div className="settings-hermes-detail">
-              <span className="settings-hermes-label">Python</span>
+              <span className="settings-hermes-label">{t("settings.python")}</span>
               {hermesVersion === null ? (
                 <span className="skeleton skeleton-sm" />
               ) : (
@@ -463,7 +471,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
               )}
             </div>
             <div className="settings-hermes-detail">
-              <span className="settings-hermes-label">OpenAI SDK</span>
+              <span className="settings-hermes-label">{t("settings.openaiSdk")}</span>
               {hermesVersion === null ? (
                 <span className="skeleton skeleton-sm" />
               ) : (
@@ -949,7 +957,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
           </div>
           {backupResult && (
             <div
-              className={`settings-hermes-result ${backupResult.includes("created") || backupResult.includes("success") ? "success" : "error"}`}
+              className={`settings-hermes-result ${backupResultType === "success" ? "success" : "error"}`}
               style={{ marginTop: 8 }}
             >
               {backupResult}
@@ -957,7 +965,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
           )}
           {importResult && (
             <div
-              className={`settings-hermes-result ${importResult.includes("complete") ? "success" : "error"}`}
+              className={`settings-hermes-result ${importResultType === "success" ? "success" : "error"}`}
               style={{ marginTop: 8 }}
             >
               {importResult}
@@ -998,7 +1006,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
                     });
                   }}
                 >
-                  {f.replace(".log", "")}
+                  {t(`settings.logFile.${f.replace(".log", "")}`)}
                 </button>
               ))}
               <button className="btn btn-sm btn-secondary" onClick={loadLogs}>

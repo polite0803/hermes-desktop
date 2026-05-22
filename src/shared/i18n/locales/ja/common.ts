@@ -21,6 +21,8 @@ export default {
   back: "戻る",
   open: "開く",
   install: "インストール",
+  enable: "有効化",
+  disable: "無効化",
   start: "開始",
   stop: "停止",
   refresh: "更新",

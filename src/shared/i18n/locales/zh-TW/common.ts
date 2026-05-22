@@ -21,6 +21,8 @@ export default {
   back: "返回",
   open: "開啟",
   install: "安裝",
+  enable: "啟用",
+  disable: "禁用",
   start: "啟動",
   stop: "停止",
   refresh: "重新整理",

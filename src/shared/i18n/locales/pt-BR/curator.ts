@@ -1,6 +1,3 @@
 export default {
-  title: "Curator",
-  subtitle: "Autonomous skill library maintenance",
-  refresh: "Atualizar",
-  runCurator: "Executar Curator",
+  noReportsYet: "Ainda não há relatórios do curator",
 } as const;

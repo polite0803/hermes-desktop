@@ -14,7 +14,7 @@ pub fn curator_trigger() -> Result<String, String> {
 #[tauri::command]
 pub fn curator_report() -> Result<String, String> {
     let log_dir = hermes_cli::resolve_hermes_home().join("logs").join("curator");
-    if !log_dir.exists() { return Ok("No curator reports yet".into()); }
+    if !log_dir.exists() { return Ok("curator.noReportsYet".into()); }
     let report = log_dir.join("REPORT.md");
     if report.exists() {
         std::fs::read_to_string(&report).map_err(|e| format!("{}", e))

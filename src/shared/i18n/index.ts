@@ -38,6 +38,7 @@ import hermesI18nEn from "./locales/en/hermes";
 import configI18nEn from "./locales/en/config";
 import claw3dI18nEn from "./locales/en/claw3d";
 import commonEs from "./locales/es/common";
+import curatorEs from "./locales/es/curator";
 import navigationEs from "./locales/es/navigation";
 import welcomeEs from "./locales/es/welcome";
 import setupEs from "./locales/es/setup";
@@ -63,6 +64,7 @@ import hermesI18nEs from "./locales/es/hermes";
 import configI18nEs from "./locales/es/config";
 import claw3dI18nEs from "./locales/es/claw3d";
 import commonId from "./locales/id/common";
+import curatorId from "./locales/id/curator";
 import navigationId from "./locales/id/navigation";
 import welcomeId from "./locales/id/welcome";
 import setupId from "./locales/id/setup";
@@ -88,6 +90,7 @@ import hermesI18nId from "./locales/id/hermes";
 import configI18nId from "./locales/id/config";
 import claw3dI18nId from "./locales/id/claw3d";
 import commonZh from "./locales/zh-CN/common";
+import curatorZh from "./locales/zh-CN/curator";
 import navigationZh from "./locales/zh-CN/navigation";
 import welcomeZh from "./locales/zh-CN/welcome";
 import setupZh from "./locales/zh-CN/setup";
@@ -113,6 +116,7 @@ import hermesI18nZh from "./locales/zh-CN/hermes";
 import configI18nZh from "./locales/zh-CN/config";
 import claw3dI18nZh from "./locales/zh-CN/claw3d";
 import commonZhTw from "./locales/zh-TW/common";
+import curatorZhTw from "./locales/zh-TW/curator";
 import navigationZhTw from "./locales/zh-TW/navigation";
 import welcomeZhTw from "./locales/zh-TW/welcome";
 import setupZhTw from "./locales/zh-TW/setup";
@@ -138,6 +142,7 @@ import hermesI18nZhTw from "./locales/zh-TW/hermes";
 import configI18nZhTw from "./locales/zh-TW/config";
 import claw3dI18nZhTw from "./locales/zh-TW/claw3d";
 import commonJa from "./locales/ja/common";
+import curatorJa from "./locales/ja/curator";
 import navigationJa from "./locales/ja/navigation";
 import welcomeJa from "./locales/ja/welcome";
 import setupJa from "./locales/ja/setup";
@@ -163,6 +168,7 @@ import hermesI18nJa from "./locales/ja/hermes";
 import configI18nJa from "./locales/ja/config";
 import claw3dI18nJa from "./locales/ja/claw3d";
 import commonPt from "./locales/pt-BR/common";
+import curatorPt from "./locales/pt-BR/curator";
 import navigationPt from "./locales/pt-BR/navigation";
 import welcomePt from "./locales/pt-BR/welcome";
 import setupPt from "./locales/pt-BR/setup";
@@ -188,6 +194,7 @@ import hermesI18nPt from "./locales/pt-BR/hermes";
 import configI18nPt from "./locales/pt-BR/config";
 import claw3dI18nPt from "./locales/pt-BR/claw3d";
 import commonPtPt from "./locales/pt-PT/common";
+import curatorPtPt from "./locales/pt-PT/curator";
 import navigationPtPt from "./locales/pt-PT/navigation";
 import welcomePtPt from "./locales/pt-PT/welcome";
 import setupPtPt from "./locales/pt-PT/setup";
@@ -252,12 +259,7 @@ export const resources = {
   es: {
     translation: {
       common: commonEs,
-
-
-
-
-
-
+      curator: curatorEs,
       navigation: navigationEs,
       welcome: welcomeEs,
       setup: setupEs,
@@ -287,12 +289,7 @@ export const resources = {
   id: {
     translation: {
       common: commonId,
-
-
-
-
-
-
+      curator: curatorId,
       navigation: navigationId,
       welcome: welcomeId,
       setup: setupId,
@@ -322,12 +319,7 @@ export const resources = {
   "zh-CN": {
     translation: {
       common: commonZh,
-
-
-
-
-
-
+      curator: curatorZh,
       navigation: navigationZh,
       welcome: welcomeZh,
       setup: setupZh,
@@ -357,12 +349,7 @@ export const resources = {
   "zh-TW": {
     translation: {
       common: commonZhTw,
-
-
-
-
-
-
+      curator: curatorZhTw,
       navigation: navigationZhTw,
       welcome: welcomeZhTw,
       setup: setupZhTw,
@@ -392,12 +379,7 @@ export const resources = {
   "pt-BR": {
     translation: {
       common: commonPt,
-
-
-
-
-
-
+      curator: curatorPt,
       navigation: navigationPt,
       welcome: welcomePt,
       setup: setupPt,
@@ -427,12 +409,7 @@ export const resources = {
   "pt-PT": {
     translation: {
       common: commonPtPt,
-
-
-
-
-
-
+      curator: curatorPtPt,
       navigation: navigationPtPt,
       welcome: welcomePtPt,
       setup: setupPtPt,
@@ -462,12 +439,7 @@ export const resources = {
   ja: {
     translation: {
       common: commonJa,
-
-
-
-
-
-
+      curator: curatorJa,
       navigation: navigationJa,
       welcome: welcomeJa,
       setup: setupJa,

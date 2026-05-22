@@ -123,7 +123,7 @@ export default {
   connectionMode: "模式",
   switchedToLocal: "已切换到本地模式",
   python: "Python",
-  openaiSDK: "OpenAI SDK",
+  openaiSdk: "OpenAI SDK",
   sandboxBackend: "沙箱后端",
   sandboxBackendHint: "选择终端命令的执行位置。",
   sandboxLocal: "本地",
@@ -134,4 +134,9 @@ export default {
   sandboxVercel: "Vercel Sandbox",
   savedButton: "✓ 已保存",
   autoDetected: "根据基础 URL 自动检测",
+  logFile: {
+    gateway: "网关",
+    agent: "代理",
+    errors: "错误",
+  },
 } as const;

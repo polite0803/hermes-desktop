@@ -21,6 +21,8 @@ export default {
   back: "Atrás",
   open: "Abrir",
   install: "Instalar",
+  enable: "Habilitar",
+  disable: "Deshabilitar",
   start: "Iniciar",
   stop: "Detener",
   refresh: "Actualizar",

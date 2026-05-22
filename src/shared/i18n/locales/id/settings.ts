@@ -125,7 +125,7 @@ export default {
   connectionMode: "Mode",
   switchedToLocal: "Beralih ke mode lokal",
   python: "Python",
-  openaiSDK: "OpenAI SDK",
+  openaiSdk: "OpenAI SDK",
   sandboxBackend: "Backend Sandbox",
   sandboxBackendHint: "Pilih di mana perintah terminal dijalankan.",
   sandboxLocal: "Lokal",
@@ -135,4 +135,9 @@ export default {
   sandboxDaytona: "Daytona",
   sandboxVercel: "Vercel Sandbox",
   autoDetected: "terdeteksi otomatis dari URL dasar",
+  logFile: {
+    gateway: "Gateway",
+    agent: "Agen",
+    errors: "Kesalahan",
+  },
 } as const;

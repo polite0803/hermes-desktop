@@ -109,13 +109,13 @@ function priorityLabel(p: number): string {
   return "";
 }
 
-function ageLabel(createdAt: number | null): string {
+function ageLabel(createdAt: number | null, t: (key: string, opts?: Record<string, unknown>) => string): string {
   if (!createdAt) return "";
   const seconds = Math.max(0, Math.floor(Date.now() / 1000 - createdAt));
-  if (seconds < 60) return `${seconds}s`;
-  if (seconds < 3600) return `${Math.floor(seconds / 60)}m`;
-  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h`;
-  return `${Math.floor(seconds / 86400)}d`;
+  if (seconds < 60) return t("kanban.ageSeconds", { count: seconds });
+  if (seconds < 3600) return t("kanban.ageMinutes", { count: Math.floor(seconds / 60) });
+  if (seconds < 86400) return t("kanban.ageHours", { count: Math.floor(seconds / 3600) });
+  return t("kanban.ageDays", { count: Math.floor(seconds / 86400) });
 }
 
 function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
@@ -573,7 +573,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
                 )}
                 {colTasks.map((task) => {
                   const prio = priorityLabel(task.priority);
-                  const age = ageLabel(task.created_at);
+                  const age = ageLabel(task.created_at, t);
                   return (
                     <div
                       key={task.id}
@@ -970,7 +970,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
                             <div key={ev.id} className="kanban-event">
                               <span className="kanban-pill">{ev.kind}</span>
                               <span className="kanban-event-time">
-                                {ageLabel(ev.created_at)}
+                                {ageLabel(ev.created_at, t)}
                               </span>
                             </div>
                           ))}

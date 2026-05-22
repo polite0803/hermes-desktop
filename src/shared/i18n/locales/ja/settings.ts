@@ -126,4 +126,11 @@ export default {
     "リモート Hermes サーバに接続中です。モデル選択、プロバイダ API キー、認証情報はサーバ側の <code>~/.hermes/.env</code> と <code>config.yaml</code> で管理されます。ホスト側で編集（例：<code>docker exec -it hermes vi /opt/data/.env</code>）してコンテナを再起動してください。",
   connectionMode: "モード",
   switchedToLocal: "ローカルモードに切り替えました",
+  python: "Python",
+  openaiSdk: "OpenAI SDK",
+  logFile: {
+    gateway: "ゲートウェイ",
+    agent: "エージェント",
+    errors: "エラー",
+  },
 } as const;

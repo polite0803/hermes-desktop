@@ -69,4 +69,8 @@ export default {
   confirmArchive: '归档 "{{title}}"？',
   blockReasonPrompt: "阻塞原因？",
   reclaimedFromDesktop: "从桌面端回收",
+  ageSeconds: "{{count}}秒",
+  ageMinutes: "{{count}}分",
+  ageHours: "{{count}}时",
+  ageDays: "{{count}}天",
 } as const;

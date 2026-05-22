@@ -69,4 +69,8 @@ export default {
   confirmArchive: 'Arquivar "{{title}}"?',
   blockReasonPrompt: "Motivo do bloqueio?",
   reclaimedFromDesktop: "recuperado do ambiente de trabalho",
+  ageSeconds: "{{count}}s",
+  ageMinutes: "{{count}}m",
+  ageHours: "{{count}}h",
+  ageDays: "{{count}}d",
 } as const;

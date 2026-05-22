@@ -69,4 +69,8 @@ export default {
   confirmArchive: '"{{title}}" をアーカイブしますか？',
   blockReasonPrompt: "ブロックの理由は？",
   reclaimedFromDesktop: "デスクトップから再取得",
+  ageSeconds: "{{count}}秒",
+  ageMinutes: "{{count}}分",
+  ageHours: "{{count}}時間",
+  ageDays: "{{count}}日",
 } as const;

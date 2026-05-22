@@ -21,6 +21,8 @@ export default {
   back: "Kembali",
   open: "Buka",
   install: "Instal",
+  enable: "Aktifkan",
+  disable: "Nonaktifkan",
   start: "Mulai",
   stop: "Hentikan",
   refresh: "Muat ulang",
