@@ -469,11 +469,13 @@ pub async fn claw3d_setup(app: AppHandle) -> Result<InstallResult, String> {
 
     if !claw3d_dir.exists() {
         let _ = app.emit("claw3d-setup-progress", InstallProgress { step: 2, total_steps: 3, title: "Cloning Claw3D".into(), detail: "Cloning repository...".into(), log: None });
-        let mut git_cmd = Command::new("git");
+        let bundled_git = hermes_home().join("git").join("cmd").join("git.exe");
+        let git_path = if bundled_git.exists() { bundled_git } else { std::path::PathBuf::from("git") };
+        let mut git_cmd = Command::new(git_path);
         git_cmd.args(&["clone","https://github.com/iamlukethedev/Claw3D"]).arg(&claw3d_dir)
             .env("PATH", get_enhanced_path());
         hermes_cli::hide_window(&mut git_cmd);
-        let out = git_cmd.output().map_err(|e| format!("git not found: {}", e))?;
+        let out = git_cmd.output().map_err(|e| format!("git error: {}", e))?;
         if !out.status.success() {
             let err = String::from_utf8_lossy(&out.stderr).trim().to_string();
             return Ok(InstallResult { success: false, error: Some(err) });
@@ -483,7 +485,9 @@ pub async fn claw3d_setup(app: AppHandle) -> Result<InstallResult, String> {
     let (tx, rx) = std::sync::mpsc::channel();
     let app2 = app.clone();
     let dir = claw3d_dir.to_string_lossy().to_string();
-    let mut npm_cmd = Command::new("npm");
+    let bundled_npm = hermes_home().join("node").join("npm.cmd");
+    let npm_path = if bundled_npm.exists() { bundled_npm } else { std::path::PathBuf::from("npm") };
+    let mut npm_cmd = Command::new(npm_path);
     npm_cmd.arg("install").current_dir(&dir).env("PATH", get_enhanced_path());
     spawn_and_stream(app2, &mut npm_cmd, 3, 3, "Installing dependencies".into(),
         move |ok, log| { let _ = tx.send((ok, log)); }
