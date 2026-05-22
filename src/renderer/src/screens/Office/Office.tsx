@@ -183,7 +183,7 @@ function Office({
       }
     } catch (err) {
       cleanup();
-      setError((err as Error).message || t("office.setupFailed"));
+      setError(t((err as Error).message) || t("office.setupFailed"));
       setState("error");
     }
   }

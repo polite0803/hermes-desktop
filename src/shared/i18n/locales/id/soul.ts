@@ -7,4 +7,5 @@ export default {
   resetConfirm: "Reset ke persona default? Konten Anda saat ini akan hilang.",
   placeholder: "Tulis instruksi persona agent Anda di sini...",
   hint: "File ini dimuat ulang untuk setiap percakapan. Gunakan untuk menentukan kepribadian agent, gaya komunikasi, dan instruksi tetap.",
+  personalityNotFound: "Kepribadian tidak ditemukan",
 } as const;

@@ -144,7 +144,7 @@ function Memory({ profile }: { profile?: string }): React.JSX.Element {
       setShowAdd(false);
       await loadData();
     } else {
-      setError(result.error || t("memory.addFailed"));
+      setError(result.errorKey ? t(result.errorKey) : (result.error || t("memory.addFailed")));
     }
   }
 
@@ -161,7 +161,7 @@ function Memory({ profile }: { profile?: string }): React.JSX.Element {
       setEditContent("");
       await loadData();
     } else {
-      setError(result.error || t("memory.updateFailed"));
+      setError(result.errorKey ? t(result.errorKey) : (result.error || t("memory.updateFailed")));
     }
   }
 
@@ -183,7 +183,7 @@ function Memory({ profile }: { profile?: string }): React.JSX.Element {
       setTimeout(() => setUserSaved(false), 2000);
       await loadData();
     } else {
-      setError(result.error || t("memory.saveFailed"));
+      setError(result.errorKey ? t(result.errorKey) : (result.error || t("memory.saveFailed")));
     }
   }
 

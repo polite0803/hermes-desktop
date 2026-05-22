@@ -44,6 +44,10 @@ export default {
   hoursAgo: "{{count}} 小時前",
   daysAgo: "{{count}} 天前",
   capacityUsage: "{{used}} / {{limit}} 字元（{{pct}}%）",
+  limitReached: "記憶體已達上限",
+  fileNotFound: "記憶體檔案未找到",
+  indexOutOfRange: "索引超出範圍",
+  profileLimitReached: "使用者設定檔已達上限",
   providers: {
     honcho: "基於 AI 的跨工作階段使用者畫像建模，支援對話式問答和語義搜尋",
     hindsight: "長期記憶，具有知識圖譜和多策略檢索功能",

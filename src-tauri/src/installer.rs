@@ -469,12 +469,7 @@ pub async fn claw3d_setup(app: AppHandle) -> Result<InstallResult, String> {
 
     if !claw3d_dir.exists() {
         let _ = app.emit("claw3d-setup-progress", InstallProgress { step: 2, total_steps: 3, title_key: "install.stepCloningClaw3d".into(), detail_key: "install.detailCloningRepo".into(), log: None });
-        let bundled_git = {
-            let h = hermes_home().join("git");
-            let candidates = [h.join("bin").join("git.exe"), h.join("cmd").join("git.exe"), h.join("usr").join("bin").join("git.exe")];
-            candidates.iter().find(|p| p.exists()).cloned().unwrap_or_else(|| std::path::PathBuf::from("git"))
-        };
-        let git_path = bundled_git;
+        let git_path = crate::tool_paths::resolve_git_path();
         let mut git_cmd = Command::new(git_path);
         git_cmd.args(&["clone","https://github.com/iamlukethedev/Claw3D"]).arg(&claw3d_dir)
             .env("PATH", get_enhanced_path());
@@ -489,12 +484,7 @@ pub async fn claw3d_setup(app: AppHandle) -> Result<InstallResult, String> {
     let (tx, rx) = std::sync::mpsc::channel();
     let app2 = app.clone();
     let dir = claw3d_dir.to_string_lossy().to_string();
-    let bundled_npm = {
-        let n = hermes_home().join("node");
-        let candidates = [n.join("npm.cmd"), n.join("npm"), n.join("node_modules").join(".bin").join("npm.cmd")];
-        candidates.iter().find(|p| p.exists()).cloned().unwrap_or_else(|| std::path::PathBuf::from("npm"))
-    };
-    let npm_path = bundled_npm;
+    let npm_path = crate::tool_paths::resolve_npm_path();
     let mut npm_cmd = Command::new(npm_path);
     npm_cmd.arg("install").current_dir(&dir).env("PATH", get_enhanced_path());
     spawn_and_stream(app2, &mut npm_cmd, 3, 3, "install.stepInstallingDeps".into(),

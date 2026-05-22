@@ -12,4 +12,7 @@ export default {
   testSuccess: "Server started successfully",
   testFailed: "Server failed to start",
   installComputerUse: "Computer-Use をインストール",
+  serverExists: "サーバーは既に存在します",
+  computerUseLinuxOnly: "Computer-use MCPはLinuxのみサポートされています",
+  cloneFailed: "リポジトリのクローンに失敗しました",
 } as const;

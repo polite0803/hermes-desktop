@@ -44,6 +44,10 @@ export default {
   hoursAgo: "{{count}}小时前",
   daysAgo: "{{count}}天前",
   capacityUsage: "{{used}} / {{limit}} 字符 ({{pct}}%)",
+  limitReached: "内存已达上限",
+  fileNotFound: "内存文件未找到",
+  indexOutOfRange: "索引超出范围",
+  profileLimitReached: "用户配置已达上限",
   providers: {
     honcho: "基于 AI 的跨会话用户画像建模，支持辩证问答和语义搜索",
     hindsight: "长期记忆，具有知识图谱和多策略检索功能",

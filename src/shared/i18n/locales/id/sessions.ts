@@ -14,4 +14,5 @@ export default {
   messages: "pesan",
   messageSingular: "pesan",
   msgCount: "{{count, plural, other {pesan}}}",
+  dbNotFound: "state.db tidak ditemukan",
 } as const;

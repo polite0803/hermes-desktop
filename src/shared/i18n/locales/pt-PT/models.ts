@@ -26,4 +26,5 @@ export default {
   apiKeyHint:
     "Armazenada como uma variável de ambiente. Escolhe a chave correspondente com base no URL ou CUSTOM_API_KEY caso contrário.",
   autoDetected: "detectado automaticamente a partir do URL base",
+  alreadyExists: "O modelo já existe para este fornecedor",
 } as const;

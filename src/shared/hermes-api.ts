@@ -361,13 +361,13 @@ export const hermesAPI = {
   // ── Memory ────────────────────────────────────────────
   readMemory: (profile?: string): Promise<MemoryInfo> =>
     invoke("read_memory", { profile }),
-  addMemoryEntry: (content: string, profile?: string): Promise<{ success: boolean; error?: string }> =>
+  addMemoryEntry: (content: string, profile?: string): Promise<{ success: boolean; error?: string; errorKey?: string }> =>
     invoke("add_memory_entry", { content, profile }),
-  updateMemoryEntry: (index: number, content: string, profile?: string): Promise<{ success: boolean; error?: string }> =>
+  updateMemoryEntry: (index: number, content: string, profile?: string): Promise<{ success: boolean; error?: string; errorKey?: string }> =>
     invoke("update_memory_entry", { index, content, profile }),
   removeMemoryEntry: (index: number, profile?: string): Promise<boolean> =>
     invoke("remove_memory_entry", { index, profile }),
-  writeUserProfile: (content: string, profile?: string): Promise<{ success: boolean; error?: string }> =>
+  writeUserProfile: (content: string, profile?: string): Promise<{ success: boolean; error?: string; errorKey?: string }> =>
     invoke("write_user_profile", { content, profile }),
 
   // ── Soul ──────────────────────────────────────────────

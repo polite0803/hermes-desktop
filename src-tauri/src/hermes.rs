@@ -514,10 +514,10 @@ async fn send_via_api(
     })?;
 
     if !response.status().is_success() {
-        let status = response.status();
+        let _status = response.status();
         let err_body = response.text().await.unwrap_or_default();
         if let Ok(err) = serde_json::from_str::<serde_json::Value>(&err_body) {
-            let msg = err["error"]["message"].as_str().unwrap_or(&err_body);
+            let _msg = err["error"]["message"].as_str().unwrap_or(&err_body);
             return Err("hermes.apiError".into());
         }
         return Err("hermes.apiServerError".into());
@@ -558,7 +558,7 @@ async fn send_via_api(
                     );
                 }
             }
-            Err(e) => {
+            Err(_) => {
                 return Err("hermes.streamError".into());
             }
         }

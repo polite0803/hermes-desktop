@@ -8,4 +8,5 @@ export default {
     "Redefinir para a persona padrão? Seu conteúdo atual será perdido.",
   placeholder: "Escreva as instruções da persona do seu agente aqui...",
   hint: "Este arquivo é carregado novamente a cada conversa. Use-o para definir a personalidade do seu agente, o estilo de comunicação e quaisquer instruções permanentes.",
+  personalityNotFound: "Personalidade não encontrada",
 } as const;

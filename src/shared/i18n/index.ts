@@ -33,6 +33,10 @@ import memoryEn from "./locales/en/memory";
 import installEn from "./locales/en/install";
 import constantsEn from "./locales/en/constants";
 import kanbanEn from "./locales/en/kanban";
+import sshEn from "./locales/en/ssh";
+import hermesI18nEn from "./locales/en/hermes";
+import configI18nEn from "./locales/en/config";
+import claw3dI18nEn from "./locales/en/claw3d";
 import commonEs from "./locales/es/common";
 import navigationEs from "./locales/es/navigation";
 import welcomeEs from "./locales/es/welcome";
@@ -54,6 +58,10 @@ import memoryEs from "./locales/es/memory";
 import installEs from "./locales/es/install";
 import constantsEs from "./locales/es/constants";
 import kanbanEs from "./locales/es/kanban";
+import sshEs from "./locales/es/ssh";
+import hermesI18nEs from "./locales/es/hermes";
+import configI18nEs from "./locales/es/config";
+import claw3dI18nEs from "./locales/es/claw3d";
 import commonId from "./locales/id/common";
 import navigationId from "./locales/id/navigation";
 import welcomeId from "./locales/id/welcome";
@@ -75,6 +83,10 @@ import memoryId from "./locales/id/memory";
 import installId from "./locales/id/install";
 import constantsId from "./locales/id/constants";
 import kanbanId from "./locales/id/kanban";
+import sshId from "./locales/id/ssh";
+import hermesI18nId from "./locales/id/hermes";
+import configI18nId from "./locales/id/config";
+import claw3dI18nId from "./locales/id/claw3d";
 import commonZh from "./locales/zh-CN/common";
 import navigationZh from "./locales/zh-CN/navigation";
 import welcomeZh from "./locales/zh-CN/welcome";
@@ -96,6 +108,10 @@ import memoryZh from "./locales/zh-CN/memory";
 import installZh from "./locales/zh-CN/install";
 import constantsZh from "./locales/zh-CN/constants";
 import kanbanZh from "./locales/zh-CN/kanban";
+import sshZh from "./locales/zh-CN/ssh";
+import hermesI18nZh from "./locales/zh-CN/hermes";
+import configI18nZh from "./locales/zh-CN/config";
+import claw3dI18nZh from "./locales/zh-CN/claw3d";
 import commonZhTw from "./locales/zh-TW/common";
 import navigationZhTw from "./locales/zh-TW/navigation";
 import welcomeZhTw from "./locales/zh-TW/welcome";
@@ -117,6 +133,10 @@ import memoryZhTw from "./locales/zh-TW/memory";
 import installZhTw from "./locales/zh-TW/install";
 import constantsZhTw from "./locales/zh-TW/constants";
 import kanbanZhTw from "./locales/zh-TW/kanban";
+import sshZhTw from "./locales/zh-TW/ssh";
+import hermesI18nZhTw from "./locales/zh-TW/hermes";
+import configI18nZhTw from "./locales/zh-TW/config";
+import claw3dI18nZhTw from "./locales/zh-TW/claw3d";
 import commonJa from "./locales/ja/common";
 import navigationJa from "./locales/ja/navigation";
 import welcomeJa from "./locales/ja/welcome";
@@ -138,6 +158,10 @@ import memoryJa from "./locales/ja/memory";
 import installJa from "./locales/ja/install";
 import constantsJa from "./locales/ja/constants";
 import kanbanJa from "./locales/ja/kanban";
+import sshJa from "./locales/ja/ssh";
+import hermesI18nJa from "./locales/ja/hermes";
+import configI18nJa from "./locales/ja/config";
+import claw3dI18nJa from "./locales/ja/claw3d";
 import commonPt from "./locales/pt-BR/common";
 import navigationPt from "./locales/pt-BR/navigation";
 import welcomePt from "./locales/pt-BR/welcome";
@@ -159,6 +183,10 @@ import memoryPt from "./locales/pt-BR/memory";
 import installPt from "./locales/pt-BR/install";
 import constantsPt from "./locales/pt-BR/constants";
 import kanbanPt from "./locales/pt-BR/kanban";
+import sshPt from "./locales/pt-BR/ssh";
+import hermesI18nPt from "./locales/pt-BR/hermes";
+import configI18nPt from "./locales/pt-BR/config";
+import claw3dI18nPt from "./locales/pt-BR/claw3d";
 import commonPtPt from "./locales/pt-PT/common";
 import navigationPtPt from "./locales/pt-PT/navigation";
 import welcomePtPt from "./locales/pt-PT/welcome";
@@ -180,6 +208,10 @@ import memoryPtPt from "./locales/pt-PT/memory";
 import installPtPt from "./locales/pt-PT/install";
 import constantsPtPt from "./locales/pt-PT/constants";
 import kanbanPtPt from "./locales/pt-PT/kanban";
+import sshPtPt from "./locales/pt-PT/ssh";
+import hermesI18nPtPt from "./locales/pt-PT/hermes";
+import configI18nPtPt from "./locales/pt-PT/config";
+import claw3dI18nPtPt from "./locales/pt-PT/claw3d";
 
 export const resources = {
   en: {
@@ -211,6 +243,10 @@ export const resources = {
       install: installEn,
       constants: constantsEn,
       kanban: kanbanEn,
+      ssh: sshEn,
+      hermes: hermesI18nEn,
+      config: configI18nEn,
+      claw3d: claw3dI18nEn,
     },
   },
   es: {
@@ -242,6 +278,10 @@ export const resources = {
       install: installEs,
       constants: constantsEs,
       kanban: kanbanEs,
+      ssh: sshEs,
+      hermes: hermesI18nEs,
+      config: configI18nEs,
+      claw3d: claw3dI18nEs,
     },
   },
   id: {
@@ -273,6 +313,10 @@ export const resources = {
       install: installId,
       constants: constantsId,
       kanban: kanbanId,
+      ssh: sshId,
+      hermes: hermesI18nId,
+      config: configI18nId,
+      claw3d: claw3dI18nId,
     },
   },
   "zh-CN": {
@@ -304,6 +348,10 @@ export const resources = {
       install: installZh,
       constants: constantsZh,
       kanban: kanbanZh,
+      ssh: sshZh,
+      hermes: hermesI18nZh,
+      config: configI18nZh,
+      claw3d: claw3dI18nZh,
     },
   },
   "zh-TW": {
@@ -335,6 +383,10 @@ export const resources = {
       install: installZhTw,
       constants: constantsZhTw,
       kanban: kanbanZhTw,
+      ssh: sshZhTw,
+      hermes: hermesI18nZhTw,
+      config: configI18nZhTw,
+      claw3d: claw3dI18nZhTw,
     },
   },
   "pt-BR": {
@@ -366,6 +418,10 @@ export const resources = {
       install: installPt,
       constants: constantsPt,
       kanban: kanbanPt,
+      ssh: sshPt,
+      hermes: hermesI18nPt,
+      config: configI18nPt,
+      claw3d: claw3dI18nPt,
     },
   },
   "pt-PT": {
@@ -397,6 +453,10 @@ export const resources = {
       install: installPtPt,
       constants: constantsPtPt,
       kanban: kanbanPtPt,
+      ssh: sshPtPt,
+      hermes: hermesI18nPtPt,
+      config: configI18nPtPt,
+      claw3d: claw3dI18nPtPt,
     },
   },
   ja: {
@@ -428,6 +488,10 @@ export const resources = {
       install: installJa,
       constants: constantsJa,
       kanban: kanbanJa,
+      ssh: sshJa,
+      hermes: hermesI18nJa,
+      config: configI18nJa,
+      claw3d: claw3dI18nJa,
     },
   },
 } satisfies Resource;

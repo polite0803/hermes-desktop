@@ -12,4 +12,7 @@ export default {
   testSuccess: "Server started successfully",
   testFailed: "Server failed to start",
   installComputerUse: "Instal Computer-Use",
+  serverExists: "Server sudah ada",
+  computerUseLinuxOnly: "Computer-use MCP hanya didukung di Linux",
+  cloneFailed: "Gagal mengkloning repositori",
 } as const;

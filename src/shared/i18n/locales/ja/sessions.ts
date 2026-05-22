@@ -14,4 +14,5 @@ export default {
   messages: "件",
   messageSingular: "件",
   msgCount: "{{count, plural, other {件}}}",
+  dbNotFound: "state.dbが見つかりません",
 } as const;

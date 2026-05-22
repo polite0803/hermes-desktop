@@ -8,4 +8,5 @@ export default {
     "¿Restablecer la personalidad predeterminada? Se perderá tu contenido actual.",
   placeholder: "Escribe aquí las instrucciones de personalidad de tu agente...",
   hint: "Este archivo se carga de nuevo en cada conversación. Úsalo para definir la personalidad de tu agente, su estilo de comunicación y cualquier instrucción permanente.",
+  personalityNotFound: "Personalidad no encontrada",
 } as const;

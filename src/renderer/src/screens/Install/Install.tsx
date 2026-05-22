@@ -50,7 +50,7 @@ function Install({ onComplete, onFailed }: InstallProps): React.JSX.Element {
       })
       .catch((err) => {
         if (!isMounted) return;
-        setFailed(err.message || t("install.installationFailedHint"));
+        setFailed(t(err.message) || t("install.installationFailedHint"));
       });
 
     return () => {

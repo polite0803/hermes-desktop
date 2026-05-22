@@ -48,6 +48,10 @@ export default {
   hoursAgo: "{{count}}時間前",
   daysAgo: "{{count}}日前",
   capacityUsage: "{{used}} / {{limit}} 文字（{{pct}}%）",
+  limitReached: "メモリ上限に達しました",
+  fileNotFound: "メモリファイルが見つかりません",
+  indexOutOfRange: "インデックスが範囲外です",
+  profileLimitReached: "プロフィール上限に達しました",
   providers: {
     honcho:
       "弁証法的 Q&A と意味検索を備えた AI ネイティブのセッション横断ユーザーモデリング",

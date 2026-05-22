@@ -12,4 +12,7 @@ export default {
   testSuccess: "Server started successfully",
   testFailed: "Server failed to start",
   installComputerUse: "Instalar Computer-Use",
+  serverExists: "El servidor ya existe",
+  computerUseLinuxOnly: "Computer-use MCP solo es compatible con Linux",
+  cloneFailed: "Error al clonar el repositorio",
 } as const;

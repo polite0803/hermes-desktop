@@ -29,6 +29,7 @@ mod plugins;
 mod usage;
 mod context_files;
 mod sandbox;
+mod tool_paths;
 mod curator;
 
 use std::collections::HashMap;
@@ -242,6 +243,7 @@ pub fn run() {
             config::get_platform_enabled_all, config::set_platform_enabled,
             config::get_credential_pool, config::set_credential_pool,
             sandbox::get_terminal_backend, sandbox::set_terminal_backend,
+            tool_paths::get_tool_paths, tool_paths::set_tool_paths,
             locale::get_locale, locale::set_locale,
             hermes::send_message, hermes::abort_chat,
             hermes::start_gateway, hermes::stop_gateway, hermes::gateway_status,

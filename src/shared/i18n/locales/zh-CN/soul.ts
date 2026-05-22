@@ -6,4 +6,5 @@ export default {
   resetConfirm: "要恢复为默认人格吗？当前内容会丢失。",
   placeholder: "在这里编写你的代理人格指令...",
   hint: "每次对话都会重新加载这个文件。你可以在这里定义代理的人格、表达风格以及长期生效的指令。",
+  personalityNotFound: "未找到该人格预设",
 } as const;

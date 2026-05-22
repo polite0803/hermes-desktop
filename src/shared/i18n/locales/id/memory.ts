@@ -51,6 +51,10 @@ export default {
   hoursAgo: "{{count}}j lalu",
   daysAgo: "{{count}}h lalu",
   capacityUsage: "{{used}} / {{limit}} karakter ({{pct}}%)",
+  limitReached: "Batas memori tercapai",
+  fileNotFound: "File memori tidak ditemukan",
+  indexOutOfRange: "Indeks di luar jangkauan",
+  profileLimitReached: "Batas profil tercapai",
   providers: {
     honcho:
       "Pemodelan pengguna lintas sesi berbasis AI dengan Q&A dialektik dan pencarian semantik",

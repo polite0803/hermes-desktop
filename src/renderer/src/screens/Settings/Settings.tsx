@@ -212,7 +212,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
     } catch (err) {
       cleanup();
       setMigrationResult(
-        (err as Error).message || t("settings.migrationFailed"),
+        t((err as Error).message) || t("settings.migrationFailed"),
       );
       setMigrationResultType("error");
     }

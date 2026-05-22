@@ -50,6 +50,10 @@ export default {
   hoursAgo: "hace {{count}}h",
   daysAgo: "hace {{count}}d",
   capacityUsage: "{{used}} / {{limit}} caracteres ({{pct}}%)",
+  limitReached: "Límite de memoria alcanzado",
+  fileNotFound: "Archivo de memoria no encontrado",
+  indexOutOfRange: "Índice fuera de rango",
+  profileLimitReached: "Límite de perfil alcanzado",
   providers: {
     honcho:
       "Modelado de usuarios nativo para IA entre sesiones con preguntas y respuestas dialécticas y búsqueda semántica",

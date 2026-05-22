@@ -12,4 +12,7 @@ export default {
   testSuccess: "Server started successfully",
   testFailed: "Server failed to start",
   installComputerUse: "安装 Computer-Use",
+  serverExists: "服务器已存在",
+  computerUseLinuxOnly: "Computer-use MCP 仅支持 Linux",
+  cloneFailed: "克隆仓库失败",
 } as const;

@@ -104,7 +104,7 @@ function Welcome({
         setSshError(t("welcome.errorSshUnreachable"));
       }
     } catch (e) {
-      setSshError(t("welcome.errorSshFailed", { error: (e as Error).message }));
+      setSshError(t("welcome.errorSshFailed", { error: t((e as Error).message) }));
     } finally {
       setSshTesting(false);
     }
