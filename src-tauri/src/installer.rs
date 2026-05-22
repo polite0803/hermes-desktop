@@ -194,7 +194,10 @@ pub async fn start_pypi_install(app: AppHandle) -> Result<InstallResult, String>
 
     // Create venv
     let python = if cfg!(windows) { "python" } else { "python3" };
-    let venv_out = std::process::Command::new(python).args(&["-m", "venv", &venv.to_string_lossy()]).output().map_err(|e| format!("{}", e))?;
+    let mut venv_cmd = std::process::Command::new(python);
+    venv_cmd.args(&["-m", "venv", &venv.to_string_lossy()]);
+    hermes_cli::hide_window(&mut venv_cmd);
+    let venv_out = venv_cmd.output().map_err(|e| format!("{}", e))?;
     if !venv_out.status.success() && !venv.join(if cfg!(windows) { "Scripts/python.exe" } else { "bin/python3" }).exists() {
         return Ok(InstallResult { success: false, error: Some(String::from_utf8_lossy(&venv_out.stderr).to_string()) });
     }
@@ -323,9 +326,11 @@ async fn run_install_windows_async(app: AppHandle, total: u32) -> Result<Install
 #[tauri::command]
 pub fn get_hermes_version() -> Result<Option<String>, String> {
     if !hermes_python().exists() { return Ok(None); }
-    Command::new(hermes_python()).arg(hermes_script()).arg("--version")
-        .env("HERMES_HOME", hermes_home().to_string_lossy().as_ref())
-        .output().ok().map(|o| {
+    let mut cmd = Command::new(hermes_python());
+    cmd.arg(hermes_script()).arg("--version")
+        .env("HERMES_HOME", hermes_home().to_string_lossy().as_ref());
+    hermes_cli::hide_window(&mut cmd);
+    cmd.output().ok().map(|o| {
             let v = String::from_utf8_lossy(&o.stdout).trim().to_string();
             if v.is_empty() { None } else { Some(v) }
         }).ok_or("Failed".into())
@@ -464,8 +469,11 @@ pub async fn claw3d_setup(app: AppHandle) -> Result<InstallResult, String> {
 
     if !claw3d_dir.exists() {
         let _ = app.emit("claw3d-setup-progress", InstallProgress { step: 2, total_steps: 3, title: "Cloning Claw3D".into(), detail: "Cloning repository...".into(), log: None });
-        let out = Command::new("git").args(&["clone","https://github.com/iamlukethedev/Claw3D"]).arg(&claw3d_dir)
-            .env("PATH", get_enhanced_path()).output().map_err(|e| format!("git not found: {}", e))?;
+        let mut git_cmd = Command::new("git");
+        git_cmd.args(&["clone","https://github.com/iamlukethedev/Claw3D"]).arg(&claw3d_dir)
+            .env("PATH", get_enhanced_path());
+        hermes_cli::hide_window(&mut git_cmd);
+        let out = git_cmd.output().map_err(|e| format!("git not found: {}", e))?;
         if !out.status.success() {
             let err = String::from_utf8_lossy(&out.stderr).trim().to_string();
             return Ok(InstallResult { success: false, error: Some(err) });
@@ -489,7 +497,12 @@ pub async fn claw3d_setup(app: AppHandle) -> Result<InstallResult, String> {
 
 #[tauri::command]
 pub fn open_external(url: String) -> Result<(), String> {
-    #[cfg(target_os="windows")] { let _ = Command::new("cmd").arg("/c").arg("start").arg("").arg(&url).status(); }
+    #[cfg(target_os="windows")] {
+        let mut cmd = Command::new("cmd");
+        cmd.arg("/c").arg("start").arg("").arg(&url);
+        hermes_cli::hide_window(&mut cmd);
+        let _ = cmd.status();
+    }
     #[cfg(target_os="macos")] { let _ = Command::new("open").arg(&url).status(); }
     #[cfg(not(any(target_os="windows",target_os="macos")))] { let _ = Command::new("xdg-open").arg(&url).status(); }
     Ok(())

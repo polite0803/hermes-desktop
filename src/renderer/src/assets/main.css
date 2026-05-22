@@ -2117,7 +2117,8 @@ body {
 .settings-container {
   padding: 24px 32px;
   overflow-y: auto;
-  height: 100%;
+  flex: 1;
+  min-height: 0;
 }
 
 .settings-header {
@@ -5564,4 +5565,4 @@ body {
 .tab-bar-item { padding: 8px 16px; font-size: 13px; font-weight: 500; color: var(--text-muted); background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; transition: all var(--transition); font-family: var(--font-sans); }
 .tab-bar-item:hover { color: var(--text-primary); }
 .tab-bar-item.active { color: var(--accent-text); border-bottom-color: var(--accent); }
-.tab-content { flex: 1; }
+.tab-content { flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; }

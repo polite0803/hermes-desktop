@@ -40,7 +40,7 @@ pub struct SshConnectionResult {
 // ─── Build SSH Args ─────────────────────────────────────
 
 /// Platform-aware SSH control options.
-fn build_ssh_control_options(for_tunnel: bool) -> Vec<String> {
+fn build_ssh_control_options(_for_tunnel: bool) -> Vec<String> {
     #[cfg(target_os = "windows")]
     {
         vec!["-o".into(), "ControlMaster=no".into(),
@@ -265,7 +265,7 @@ fn remote_profile_path(profile: Option<&str>) -> String {
 }
 
 /// Remote: list installed skills
-pub fn ssh_list_installed_skills(config: &SshConfig, profile: Option<&str>) -> Result<Vec<serde_json::Value>, String> {
+pub fn ssh_list_installed_skills(config: &SshConfig, _profile: Option<&str>) -> Result<Vec<serde_json::Value>, String> {
     let cmd = build_remote_hermes_cmd(&["skills", "list", "--json"]);
     let out = ssh_exec(config, &cmd, None, 15000)?;
     Ok(serde_json::from_str(&out).unwrap_or_default())
@@ -318,7 +318,7 @@ pub fn ssh_write_soul(config: &SshConfig, profile: Option<&str>, content: &str) 
 }
 
 /// Remote: get config value
-pub fn ssh_get_config_value(config: &SshConfig, profile: Option<&str>, key: &str) -> Result<Option<String>, String> {
+pub fn ssh_get_config_value(config: &SshConfig, _profile: Option<&str>, key: &str) -> Result<Option<String>, String> {
     let cmd = build_remote_hermes_cmd(&["config", "get", key, "--json"]);
     match ssh_exec(config, &cmd, None, 10000) {
         Ok(out) => {
@@ -330,13 +330,13 @@ pub fn ssh_get_config_value(config: &SshConfig, profile: Option<&str>, key: &str
 }
 
 /// Remote: set config value
-pub fn ssh_set_config_value(config: &SshConfig, profile: Option<&str>, key: &str, value: &str) -> Result<(), String> {
+pub fn ssh_set_config_value(config: &SshConfig, _profile: Option<&str>, key: &str, value: &str) -> Result<(), String> {
     let cmd = build_remote_hermes_cmd(&["config", "set", key, value]);
     ssh_exec(config, &cmd, None, 10000).map(|_| ())
 }
 
 /// Remote: get model config
-pub fn ssh_get_model_config(config: &SshConfig, profile: Option<&str>) -> Result<serde_json::Value, String> {
+pub fn ssh_get_model_config(config: &SshConfig, _profile: Option<&str>) -> Result<serde_json::Value, String> {
     let cmd = build_remote_hermes_cmd(&["config", "model", "--json"]);
     let out = ssh_exec(config, &cmd, None, 10000)?;
     Ok(serde_json::from_str(&out).unwrap_or(serde_json::json!({"provider":"auto","model":"","baseUrl":""})))
@@ -365,14 +365,14 @@ pub fn ssh_delete_profile(config: &SshConfig, name: &str) -> Result<(), String> 
 }
 
 /// Remote: get toolsets
-pub fn ssh_get_toolsets(config: &SshConfig, profile: Option<&str>) -> Result<Vec<serde_json::Value>, String> {
+pub fn ssh_get_toolsets(config: &SshConfig, _profile: Option<&str>) -> Result<Vec<serde_json::Value>, String> {
     let cmd = build_remote_hermes_cmd(&["tools", "list", "--enabled", "--json"]);
     let out = ssh_exec(config, &cmd, None, 10000)?;
     Ok(serde_json::from_str(&out).unwrap_or_default())
 }
 
 /// Remote: set toolset enabled
-pub fn ssh_set_toolset_enabled(config: &SshConfig, profile: Option<&str>, name: &str, enabled: bool) -> Result<(), String> {
+pub fn ssh_set_toolset_enabled(config: &SshConfig, _profile: Option<&str>, name: &str, enabled: bool) -> Result<(), String> {
     let action = if enabled { "enable" } else { "disable" };
     let cmd = build_remote_hermes_cmd(&["tools", action, name]);
     ssh_exec(config, &cmd, None, 10000).map(|_| ())
@@ -476,7 +476,7 @@ pub fn ssh_read_logs(config: &SshConfig, log_file: Option<&str>, lines: Option<u
 }
 
 /// Remote: get platform enabled
-pub fn ssh_get_platform_enabled(config: &SshConfig, profile: Option<&str>) -> Result<HashMap<String, bool>, String> {
+pub fn ssh_get_platform_enabled(config: &SshConfig, _profile: Option<&str>) -> Result<HashMap<String, bool>, String> {
     let cmd = build_remote_hermes_cmd(&["platforms", "list", "--json"]);
     let out = ssh_exec(config, &cmd, None, 10000)?;
     Ok(serde_json::from_str(&out).unwrap_or_default())
@@ -498,14 +498,14 @@ pub fn ssh_run_kanban(config: &SshConfig, args: &[&str]) -> Result<String, Strin
 }
 
 /// Remote: discover memory providers
-pub fn ssh_discover_memory_providers(config: &SshConfig, profile: Option<&str>) -> Result<Vec<serde_json::Value>, String> {
+pub fn ssh_discover_memory_providers(config: &SshConfig, _profile: Option<&str>) -> Result<Vec<serde_json::Value>, String> {
     let cmd = build_remote_hermes_cmd(&["memory", "list-providers", "--json"]);
     let out = ssh_exec(config, &cmd, None, 10000)?;
     Ok(serde_json::from_str(&out).unwrap_or_default())
 }
 
 /// Remote: list MCP servers
-pub fn ssh_list_mcp_servers(config: &SshConfig, profile: Option<&str>) -> Result<Vec<serde_json::Value>, String> {
+pub fn ssh_list_mcp_servers(config: &SshConfig, _profile: Option<&str>) -> Result<Vec<serde_json::Value>, String> {
     let cmd = build_remote_hermes_cmd(&["mcp", "list", "--json"]);
     let out = ssh_exec(config, &cmd, None, 10000)?;
     Ok(serde_json::from_str(&out).unwrap_or_default())
@@ -667,7 +667,7 @@ pub fn start_ssh_tunnel(
         cmd.creation_flags(0x08000000);
     }
 
-    let child = cmd.spawn().map_err(|e| format!("SSH tunnel spawn failed: {}", e))?;
+    let _child = cmd.spawn().map_err(|e| format!("SSH tunnel spawn failed: {}", e))?;
 
     // Wait for port to open
     if let Err(e) = wait_for_port(local_port, 12000) {
@@ -738,8 +738,6 @@ pub async fn ensure_ssh_tunnel(state: &tauri::State<'_, crate::AppState>) -> Res
         return Ok(());
     }
 
-    // Need to restart tunnel — drop the lock before calling start
-    drop(state);
-    // start_ssh_tunnel will be called externally
+    // Need to restart tunnel — start_ssh_tunnel will be called externally
     Ok(())
 }

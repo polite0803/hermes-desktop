@@ -79,10 +79,11 @@ fn remove_pid_file(file: &str) {
 fn is_process_alive(pid: u32) -> bool {
     #[cfg(windows)]
     {
-        Command::new("tasklist")
-            .args(&["/FI", &format!("PID eq {}", pid)])
-            .stdout(Stdio::null()).stderr(Stdio::null())
-            .status().map(|s| s.success()).unwrap_or(false)
+        let mut cmd = Command::new("tasklist");
+        cmd.args(&["/FI", &format!("PID eq {}", pid)])
+            .stdout(Stdio::null()).stderr(Stdio::null());
+        hermes_cli::hide_window(&mut cmd);
+        cmd.status().map(|s| s.success()).unwrap_or(false)
     }
     #[cfg(not(windows))]
     {
@@ -223,7 +224,12 @@ pub fn claw3d_set_ws_url(url: String) -> Result<bool, String> {
 // ─── Dev Server ─────────────────────────────────────────
 
 fn kill_process(pid: u32) {
-    #[cfg(windows)] { let _ = Command::new("taskkill").args(&["/PID", &pid.to_string(), "/F"]).output(); }
+    #[cfg(windows)] {
+        let mut cmd = Command::new("taskkill");
+        cmd.args(&["/PID", &pid.to_string(), "/F"]);
+        hermes_cli::hide_window(&mut cmd);
+        let _ = cmd.output();
+    }
     #[cfg(not(windows))] { unsafe { libc::kill(pid as i32, libc::SIGTERM); } }
 }
 
@@ -241,13 +247,15 @@ pub fn claw3d_start_dev(app: AppHandle) -> Result<bool, String> {
     let port = saved_port();
     let ws_url = saved_ws_url();
 
-    let child = Command::new(&npm).args(&["run", "dev"])
+    let mut child_cmd = Command::new(&npm);
+    child_cmd.args(&["run", "dev"])
         .current_dir(&office)
         .env("PORT", port.to_string())
         .env("NEXT_PUBLIC_WS_URL", &ws_url)
         .env("NODE_ENV", "development")
-        .stdout(Stdio::null()).stderr(Stdio::null())
-        .spawn().map_err(|e| format!("Failed: {}", e))?;
+        .stdout(Stdio::null()).stderr(Stdio::null());
+    hermes_cli::hide_window(&mut child_cmd);
+    let child = child_cmd.spawn().map_err(|e| format!("Failed: {}", e))?;
 
     write_pid_file(DEV_PID_FILE, child.id());
     let _ = app.emit("claw3d-dev-started", ());
@@ -276,12 +284,13 @@ pub fn claw3d_start_adapter(app: AppHandle) -> Result<bool, String> {
     let npm = find_npm().ok_or("npm not found")?;
     let ws_url = saved_ws_url();
 
-    let child = Command::new(&npm)
-        .args(&["run", "adapter", "--", &ws_url])
+    let mut adapter_cmd = Command::new(&npm);
+    adapter_cmd.args(&["run", "adapter", "--", &ws_url])
         .current_dir(&office)
         .env("NODE_ENV", "production")
-        .stdout(Stdio::null()).stderr(Stdio::null())
-        .spawn().map_err(|e| format!("Failed: {}", e))?;
+        .stdout(Stdio::null()).stderr(Stdio::null());
+    hermes_cli::hide_window(&mut adapter_cmd);
+    let child = adapter_cmd.spawn().map_err(|e| format!("Failed: {}", e))?;
 
     write_pid_file(ADAPTER_PID_FILE, child.id());
     let _ = app.emit("claw3d-adapter-started", ());

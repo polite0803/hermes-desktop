@@ -1060,43 +1060,44 @@ function LanguageSelect({
   }, [isOpen]);
 
   return (
-    <div className="settings-language-select" ref={ref}>
-      <button
-        type="button"
-        className="settings-language-trigger"
-        onClick={toggle}
-        aria-haspopup="listbox"
-        aria-expanded={isOpen}
-      >
-        <span>{LANGUAGE_NATIVE_NAMES[locale]}</span>
-        <ChevronDown size={14} />
-      </button>
-      {isOpen && (
-        <div className="settings-language-dropdown" style={{ position: "fixed", top: pos.top, left: pos.left, width: pos.width || undefined, zIndex: 9999 }} role="listbox">
-          {APP_LOCALES.map((l) => {
-            const active = l === locale;
-            return (
-              <button
-                key={l}
-                type="button"
-                role="option"
-                aria-selected={active}
-                className={`settings-language-option ${active ? "active" : ""}`}
-                onClick={() => {
-                  onSelect(l);
-                  setIsOpen(false);
-                }}
-              >
-                <span>{LANGUAGE_NATIVE_NAMES[l]}</span>
-                {active && <Check size={14} />}
-              </button>
-            );
-          })}
-        </div>
-      )}
-
+    <>
+      <div className="settings-language-select" ref={ref}>
+        <button
+          type="button"
+          className="settings-language-trigger"
+          onClick={toggle}
+          aria-haspopup="listbox"
+          aria-expanded={isOpen}
+        >
+          <span>{LANGUAGE_NATIVE_NAMES[locale]}</span>
+          <ChevronDown size={14} />
+        </button>
+        {isOpen && (
+          <div className="settings-language-dropdown" style={{ position: "fixed", top: pos.top, left: pos.left, width: pos.width || undefined, zIndex: 9999 }} role="listbox">
+            {APP_LOCALES.map((l) => {
+              const active = l === locale;
+              return (
+                <button
+                  key={l}
+                  type="button"
+                  role="option"
+                  aria-selected={active}
+                  className={`settings-language-option ${active ? "active" : ""}`}
+                  onClick={() => {
+                    onSelect(l);
+                    setIsOpen(false);
+                  }}
+                >
+                  <span>{LANGUAGE_NATIVE_NAMES[l]}</span>
+                  {active && <Check size={14} />}
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
       <SandboxBackendSection />
-    </div>
+    </>
   );
 }
 

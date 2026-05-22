@@ -2,7 +2,7 @@ use std::path::PathBuf;
 use std::process::Command;
 
 /// Apply no-window flag on Windows to prevent console popups
-fn hide_window(cmd: &mut Command) {
+pub fn hide_window(cmd: &mut Command) {
     #[cfg(windows)]
     {
         use std::os::windows::process::CommandExt;

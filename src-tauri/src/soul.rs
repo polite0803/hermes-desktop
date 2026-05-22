@@ -49,7 +49,7 @@ pub fn reset_soul(profile: Option<String>) -> Result<(), String> {
 }
 
 #[tauri::command]
-pub fn list_personalities(profile: Option<String>) -> Result<Vec<serde_json::Value>, String> {
+pub fn list_personalities(_profile: Option<String>) -> Result<Vec<serde_json::Value>, String> {
     let personalities_dir = hermes_cli::resolve_hermes_home().join("personalities");
     if !personalities_dir.exists() { return Ok(Vec::new()); }
 

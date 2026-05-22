@@ -74,9 +74,11 @@ pub fn update_mcp_server(name: String, command: Option<String>, args: Option<Vec
 pub fn test_mcp_server(name: String) -> Result<bool, String> {
     let servers = read_mcp_config();
     let server = servers.iter().find(|s| s.name == name).ok_or("Server not found")?;
-    let mut child = Command::new(&server.command).args(&server.args)
-        .stdout(std::process::Stdio::null()).stderr(std::process::Stdio::null())
-        .spawn().map_err(|e| format!("{}", e))?;
+    let mut cmd = Command::new(&server.command);
+    cmd.args(&server.args)
+        .stdout(std::process::Stdio::null()).stderr(std::process::Stdio::null());
+    hermes_cli::hide_window(&mut cmd);
+    let mut child = cmd.spawn().map_err(|e| format!("{}", e))?;
     std::thread::sleep(std::time::Duration::from_millis(1500));
     let _ = child.kill();
     Ok(true)
