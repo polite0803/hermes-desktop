@@ -8,6 +8,10 @@ pub fn hide_window(cmd: &mut Command) {
         use std::os::windows::process::CommandExt;
         cmd.creation_flags(0x08000000); // CREATE_NO_WINDOW
     }
+    #[cfg(not(windows))]
+    {
+        let _ = cmd;
+    }
 }
 
 /// Resolve HERMES_HOME directory

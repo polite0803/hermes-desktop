@@ -49,7 +49,7 @@ fn build_ssh_control_options(_for_tunnel: bool) -> Vec<String> {
     }
     #[cfg(not(target_os = "windows"))]
     {
-        if for_tunnel {
+        if _for_tunnel {
             vec!["-o".into(), "ControlMaster=no".into(),
                  "-o".into(), "ControlPath=none".into(),
                  "-o".into(), "ControlPersist=no".into()]
