@@ -1,4 +1,4 @@
-// Kanban — 17 commands mapped to hermes-agent v0.14 CLI
+// Kanban — 17 commands mapped to hermes-agent v0.14 CLI (no --json flag)
 use serde::{Deserialize, Serialize};
 use crate::hermes_cli;
 
@@ -10,28 +10,28 @@ pub struct KanbanResult<T> {
 
 #[tauri::command]
 pub fn kanban_list_boards(include_archived: Option<bool>, profile: Option<String>) -> Result<KanbanResult<Vec<serde_json::Value>>, String> {
-    let mut args = vec!["kanban", "boards", "--json"];
+    let mut args = vec!["kanban", "boards"];
     if include_archived.unwrap_or(false) { args.push("--include-archived"); }
-    ok_json(&args, profile.as_deref())
+    ok_text(&args, profile.as_deref()).map(|t| KanbanResult { success: true, data: Some(t), error: None })
+        .unwrap_or_else(|e| Ok(KanbanResult { success: false, data: None, error: Some(e) }))
 }
 
 #[tauri::command]
 pub fn kanban_current_board(profile: Option<String>) -> Result<KanbanResult<serde_json::Value>, String> {
-    ok_value(&["kanban", "boards", "--current", "--json"], profile.as_deref())
+    ok_val(&["kanban", "boards", "--current"], profile.as_deref())
 }
 
 #[tauri::command]
 pub fn kanban_switch_board(slug: String, profile: Option<String>) -> Result<KanbanResult<bool>, String> {
-    let args = vec!["kanban", "boards", "--switch", slug.as_str()];
-    ok_bool(&args, profile.as_deref())
+    ok_bool(&["kanban", "boards", "--switch", slug.as_str()], profile.as_deref())
 }
 
 #[tauri::command]
 pub fn kanban_create_board(slug: String, name: Option<String>, switch_after: Option<bool>, profile: Option<String>) -> Result<KanbanResult<serde_json::Value>, String> {
-    let mut args = vec!["kanban", "create", "--slug", &slug, "--json"];
+    let mut args = vec!["kanban", "create", "--slug", &slug];
     if let Some(n) = &name { args.push("--name"); args.push(n); }
     if switch_after.unwrap_or(false) { args.push("--switch"); }
-    ok_value(&args, profile.as_deref())
+    ok_val(&args, profile.as_deref())
 }
 
 #[tauri::command]
@@ -43,29 +43,30 @@ pub fn kanban_remove_board(slug: String, hard_delete: Option<bool>, profile: Opt
 
 #[tauri::command]
 pub fn kanban_list_tasks(filters: Option<serde_json::Value>, profile: Option<String>) -> Result<KanbanResult<Vec<serde_json::Value>>, String> {
-    let mut args = vec!["kanban", "list", "--json"];
+    let mut args = vec!["kanban", "list"];
     if let Some(f) = &filters {
         if let Some(s) = f.get("status").and_then(|v| v.as_str()) { args.push("--status"); args.push(s); }
         if let Some(a) = f.get("assignee").and_then(|v| v.as_str()) { args.push("--assignee"); args.push(a); }
         if f.get("includeArchived").and_then(|v| v.as_bool()).unwrap_or(false) { args.push("--include-archived"); }
     }
-    ok_json(&args, profile.as_deref())
+    ok_text(&args, profile.as_deref()).map(|t| KanbanResult { success: true, data: Some(t), error: None })
+        .unwrap_or_else(|e| Ok(KanbanResult { success: false, data: None, error: Some(e) }))
 }
 
 #[tauri::command]
 pub fn kanban_get_task(task_id: String, profile: Option<String>) -> Result<KanbanResult<serde_json::Value>, String> {
-    ok_value(&["kanban", "show", &task_id, "--json"], profile.as_deref())
+    ok_val(&["kanban", "show", &task_id], profile.as_deref())
 }
 
 #[tauri::command]
 pub fn kanban_create_task(input: serde_json::Value, profile: Option<String>) -> Result<KanbanResult<serde_json::Value>, String> {
-    let mut args = vec!["kanban", "create", "--json"];
+    let mut args = vec!["kanban", "create"];
     if let Some(t) = input.get("title").and_then(|v| v.as_str()) { args.push("--title"); args.push(t); }
     if let Some(b) = input.get("body").and_then(|v| v.as_str()) { args.push("--body"); args.push(b); }
     if let Some(a) = input.get("assignee").and_then(|v| v.as_str()) { args.push("--assignee"); args.push(a); }
     let prio_str = input.get("priority").and_then(|v| v.as_i64()).map(|p| p.to_string());
     if let Some(ref p) = prio_str { args.push("--priority"); args.push(p); }
-    ok_value(&args, profile.as_deref())
+    ok_val(&args, profile.as_deref())
 }
 
 #[tauri::command]
@@ -113,7 +114,7 @@ pub fn kanban_reclaim_task(task_id: String, reason: Option<String>, profile: Opt
 
 #[tauri::command]
 pub fn kanban_comment_task(task_id: String, body: String, profile: Option<String>) -> Result<KanbanResult<serde_json::Value>, String> {
-    ok_value(&["kanban", "comment", &task_id, "--body", &body, "--json"], profile.as_deref())
+    ok_val(&["kanban", "comment", &task_id, "--body", &body], profile.as_deref())
 }
 
 #[tauri::command]
@@ -125,20 +126,18 @@ pub fn kanban_dispatch_once(dry_run: Option<bool>, profile: Option<String>) -> R
 
 // ── helpers ──
 
-fn ok_json(args: &[&str], profile: Option<&str>) -> Result<KanbanResult<Vec<serde_json::Value>>, String> {
-    match hermes_cli::run_hermes_cli(args, profile) {
-        Ok(json) => {
-            let data: Vec<serde_json::Value> = serde_json::from_str(&json).unwrap_or_default();
-            Ok(KanbanResult { success: true, data: Some(data), error: None })
-        }
-        Err(e) => Ok(KanbanResult { success: false, data: None, error: Some(e) }),
-    }
+fn ok_text(args: &[&str], profile: Option<&str>) -> Result<Vec<serde_json::Value>, String> {
+    let out = hermes_cli::run_hermes_cli(args, profile)?;
+    // Try JSON parse, fall back to plain text lines
+    serde_json::from_str(&out).or_else(|_| {
+        Ok(out.lines().map(|l| serde_json::Value::String(l.to_string())).collect())
+    })
 }
 
-fn ok_value(args: &[&str], profile: Option<&str>) -> Result<KanbanResult<serde_json::Value>, String> {
+fn ok_val(args: &[&str], profile: Option<&str>) -> Result<KanbanResult<serde_json::Value>, String> {
     match hermes_cli::run_hermes_cli(args, profile) {
-        Ok(json) => {
-            let data = serde_json::from_str(&json).unwrap_or(serde_json::Value::Null);
+        Ok(out) => {
+            let data = serde_json::from_str(&out).unwrap_or(serde_json::Value::String(out));
             Ok(KanbanResult { success: true, data: Some(data), error: None })
         }
         Err(e) => Ok(KanbanResult { success: false, data: None, error: Some(e) }),
