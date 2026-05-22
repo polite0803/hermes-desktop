@@ -19,9 +19,22 @@ pub struct MemoryStats { pub total_sessions: i64, pub total_messages: i64 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
+pub struct UserProfile {
+    pub content: String,
+    pub exists: bool,
+    #[serde(rename = "lastModified")]
+    pub last_modified: Option<u64>,
+    #[serde(rename = "charCount")]
+    pub char_count: usize,
+    #[serde(rename = "charLimit")]
+    pub char_limit: usize,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(rename_all = "camelCase")]
 pub struct MemoryInfo {
     pub memory: Vec<MemoryEntry>,
-    pub user: Option<String>,
+    pub user: UserProfile,
     pub stats: MemoryStats,
 }
 
@@ -57,9 +70,16 @@ pub fn read_memory(profile: Option<String>) -> Result<MemoryInfo, String> {
     let usr = user_path(profile.as_deref());
     let mem_content = if mem.exists() { fs::read_to_string(&mem).unwrap_or_default() } else { String::new() };
     let user_content = if usr.exists() { fs::read_to_string(&usr).unwrap_or_default() } else { String::new() };
+    let user_len = user_content.len();
     Ok(MemoryInfo {
         memory: parse_memory_entries(&mem_content),
-        user: if user_content.is_empty() { None } else { Some(user_content) },
+        user: UserProfile {
+            content: user_content.clone(),
+            exists: !user_content.is_empty(),
+            last_modified: None,
+            char_count: user_len,
+            char_limit: USER_PROFILE_CHAR_LIMIT,
+        },
         stats: get_session_stats(),
     })
 }
