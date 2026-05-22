@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { createPortal } from "react-dom";
 import { useTheme } from "../../components/ThemeProvider";
 import { THEME_OPTIONS } from "../../constants";
 import { useI18n } from "../../components/useI18n";
@@ -1039,6 +1038,20 @@ function LanguageSelect({
 }): React.JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const dropRef = useRef<HTMLDivElement>(null);
+
+  function open(): void {
+    setIsOpen(true);
+    requestAnimationFrame(() => {
+      if (ref.current && dropRef.current) {
+        const r = ref.current.getBoundingClientRect();
+        dropRef.current.style.position = "fixed";
+        dropRef.current.style.top = `${r.bottom + 4}px`;
+        dropRef.current.style.left = `${r.left}px`;
+        dropRef.current.style.width = `${r.width}px`;
+      }
+    });
+  }
 
   useEffect(() => {
     if (!isOpen) return;
@@ -1056,15 +1069,15 @@ function LanguageSelect({
       <button
         type="button"
         className="settings-language-trigger"
-        onClick={() => setIsOpen((v) => !v)}
+        onClick={() => (isOpen ? setIsOpen(false) : open())}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
       >
         <span>{LANGUAGE_NATIVE_NAMES[locale]}</span>
         <ChevronDown size={14} />
       </button>
-      {isOpen && createPortal(
-        <div className="settings-language-dropdown" style={{ position: "fixed", top: (ref.current?.getBoundingClientRect().bottom ?? 0) + 4, left: ref.current?.getBoundingClientRect().left ?? 0, width: ref.current?.getBoundingClientRect().width, zIndex: 9999 }} role="listbox">
+      {isOpen && (
+        <div ref={dropRef} className="settings-language-dropdown" role="listbox">
           {APP_LOCALES.map((l) => {
             const active = l === locale;
             return (
@@ -1084,8 +1097,7 @@ function LanguageSelect({
               </button>
             );
           })}
-        </div>,
-        document.body
+        </div>
       )}
 
       <SandboxBackendSection />
