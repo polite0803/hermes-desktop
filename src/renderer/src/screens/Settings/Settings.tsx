@@ -1038,19 +1038,14 @@ function LanguageSelect({
 }): React.JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const dropRef = useRef<HTMLDivElement>(null);
+  const [pos, setPos] = useState({ top: 0, left: 0, width: 0 });
 
-  function open(): void {
-    setIsOpen(true);
-    requestAnimationFrame(() => {
-      if (ref.current && dropRef.current) {
-        const r = ref.current.getBoundingClientRect();
-        dropRef.current.style.position = "fixed";
-        dropRef.current.style.top = `${r.bottom + 4}px`;
-        dropRef.current.style.left = `${r.left}px`;
-        dropRef.current.style.width = `${r.width}px`;
-      }
-    });
+  function toggle(): void {
+    if (!isOpen && ref.current) {
+      const r = ref.current.getBoundingClientRect();
+      setPos({ top: r.bottom + 4, left: r.left, width: r.width });
+    }
+    setIsOpen((v) => !v);
   }
 
   useEffect(() => {
@@ -1069,7 +1064,7 @@ function LanguageSelect({
       <button
         type="button"
         className="settings-language-trigger"
-        onClick={() => (isOpen ? setIsOpen(false) : open())}
+        onClick={toggle}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
       >
@@ -1077,7 +1072,7 @@ function LanguageSelect({
         <ChevronDown size={14} />
       </button>
       {isOpen && (
-        <div ref={dropRef} className="settings-language-dropdown" role="listbox">
+        <div className="settings-language-dropdown" style={{ position: "fixed", top: pos.top, left: pos.left, width: pos.width || undefined, zIndex: 9999 }} role="listbox">
           {APP_LOCALES.map((l) => {
             const active = l === locale;
             return (
