@@ -49,7 +49,9 @@ function Skills({ profile }: SkillsProps): React.JSX.Element {
     }[]
   >([]);
   const [hubLoading, setHubLoading] = useState(false);
-  const hubSource: "agentskills" | "huggingface" = "agentskills";
+  const [hubSource, setHubSource] = useState<"agentskills" | "huggingface">(
+    "agentskills",
+  );
   const searchRef = useRef<HTMLInputElement>(null);
 
   async function searchHub(): Promise<void> {
@@ -61,8 +63,8 @@ function Skills({ profile }: SkillsProps): React.JSX.Element {
           ? await hermesAPI.searchHuggingfaceSkills(hubSearch.trim())
           : await hermesAPI.searchSkillsHub(hubSearch.trim());
       setHubResults(results);
-    } catch {
-      /* ignore */
+    } catch (e) {
+      setError(String(e));
     }
     setHubLoading(false);
   }
@@ -72,8 +74,8 @@ function Skills({ profile }: SkillsProps): React.JSX.Element {
     try {
       await hermesAPI.installFromHub(name, profile);
       await loadInstalled();
-    } catch {
-      /* ignore */
+    } catch (e) {
+      setError(String(e));
     }
     setActionInProgress(null);
   }
@@ -360,6 +362,32 @@ function Skills({ profile }: SkillsProps): React.JSX.Element {
         <div className="skills-grid">
           {tab === "hub" && (
             <div style={{ marginTop: 12 }}>
+              <div
+                style={{
+                  display: "flex",
+                  gap: 4,
+                  marginBottom: 12,
+                  background: "var(--bg-tertiary)",
+                  borderRadius: 8,
+                  padding: 4,
+                  width: "fit-content",
+                }}
+              >
+                <button
+                  className={`skills-tab ${hubSource === "agentskills" ? "active" : ""}`}
+                  onClick={() => setHubSource("agentskills")}
+                  style={{ fontSize: 12 }}
+                >
+                  AgentSkills
+                </button>
+                <button
+                  className={`skills-tab ${hubSource === "huggingface" ? "active" : ""}`}
+                  onClick={() => setHubSource("huggingface")}
+                  style={{ fontSize: 12 }}
+                >
+                  HuggingFace
+                </button>
+              </div>
               <div className="skills-search">
                 <Search size={15} />
                 <input

@@ -7,6 +7,7 @@ export default function Security(): React.JSX.Element {
   const { t } = useI18n();
   const [loading, setLoading] = useState(true);
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState("");
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState<{
     ok: boolean;
@@ -27,6 +28,7 @@ export default function Security(): React.JSX.Element {
   });
 
   const load = useCallback(async () => {
+    setError("");
     try {
       const conn = await hermesAPI.getConnectionConfig();
       setConfig({
@@ -41,13 +43,13 @@ export default function Security(): React.JSX.Element {
           remotePort: String(conn.ssh?.remotePort || 8642),
         },
       });
-    } catch {
-      /* ignore */
+    } catch (e) {
+      setError(String(e));
     }
     try {
       setTunnelActive(await hermesAPI.isSshTunnelActive());
-    } catch {
-      /* ignore */
+    } catch (e) {
+      setError(String(e));
     }
     setLoading(false);
   }, []);
@@ -103,8 +105,8 @@ export default function Security(): React.JSX.Element {
         await hermesAPI.startSshTunnel();
         setTunnelActive(true);
       }
-    } catch {
-      /* ignore */
+    } catch (e) {
+      setError(String(e));
     }
   }
 
@@ -132,6 +134,27 @@ export default function Security(): React.JSX.Element {
         )}
       </div>
 
+      {error && (
+        <div
+          style={{
+            padding: "8px 12px",
+            marginBottom: 12,
+            fontSize: 12,
+            color: "var(--error)",
+            background: "var(--bg-tertiary)",
+            borderRadius: 6,
+          }}
+        >
+          {error}
+          <button
+            className="btn-ghost"
+            onClick={() => setError("")}
+            style={{ marginLeft: 8 }}
+          >
+            ✕
+          </button>
+        </div>
+      )}
       <div
         style={{
           display: "flex",

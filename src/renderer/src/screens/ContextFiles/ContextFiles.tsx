@@ -10,14 +10,15 @@ export default function ContextFiles(): React.JSX.Element {
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(true);
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState("");
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const loaded = useRef(false);
 
   const load = useCallback(async () => {
     try {
       setFiles(await hermesAPI.listContextFiles());
-    } catch {
-      /* ignore */
+    } catch (e) {
+      setError(String(e));
     }
     setLoading(false);
   }, []);
@@ -79,6 +80,20 @@ export default function ContextFiles(): React.JSX.Element {
           padding: 12,
         }}
       >
+        {error && (
+          <div
+            style={{
+              padding: "6px 10px",
+              marginBottom: 8,
+              fontSize: 12,
+              color: "var(--error)",
+              background: "var(--bg-tertiary)",
+              borderRadius: 6,
+            }}
+          >
+            {error}
+          </div>
+        )}
         <div
           style={{
             display: "flex",

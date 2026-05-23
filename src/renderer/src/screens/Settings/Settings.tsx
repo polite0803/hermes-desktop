@@ -139,7 +139,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
   const loadConfig = useCallback(async (): Promise<void> => {
     // Load fast config first (cached in main process)
     const [home, aVersion, conn] = await Promise.all([
-      hermesAPI.getHermesHome(profile),
+      hermesAPI.getHermesHome(),
       hermesAPI.getAppVersion(),
       hermesAPI.getConnectionConfig(),
     ]);
@@ -280,18 +280,12 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
       }
       setConnTesting(true);
       setConnStatus(null);
-      const ok = await hermesAPI.testSshConnection(
-        sshHost.trim(),
-        parseInt(sshPort, 10) || 22,
-        sshUser.trim(),
-        sshKeyPath.trim(),
-        parseInt(sshRemotePort, 10) || 8642,
-      );
+      const result = await hermesAPI.testSshConnection();
       setConnTesting(false);
       setConnStatus(
-        ok
+        result.success
           ? t("settings.sshTunnelConnected")
-          : t("settings.sshConnectionFailed"),
+          : result.message || t("settings.sshConnectionFailed"),
       );
     } else {
       const url = connRemoteUrl.trim();

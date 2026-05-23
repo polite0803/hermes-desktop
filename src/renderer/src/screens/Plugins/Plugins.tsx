@@ -14,12 +14,14 @@ export default function Plugins(): React.JSX.Element {
     }[]
   >([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const load = useCallback(async () => {
+    setError("");
     try {
       setPlugins(await hermesAPI.listPlugins());
-    } catch {
-      /* ignore */
+    } catch (e) {
+      setError(String(e));
     }
     setLoading(false);
   }, []);
@@ -34,8 +36,8 @@ export default function Plugins(): React.JSX.Element {
         ? hermesAPI.disablePlugin(name)
         : hermesAPI.enablePlugin(name));
       await load();
-    } catch {
-      /* ignore */
+    } catch (e) {
+      setError(String(e));
     }
   }
 
@@ -55,6 +57,27 @@ export default function Plugins(): React.JSX.Element {
         </h1>
         <p className="models-subtitle">{t("plugins.subtitle")}</p>
       </div>
+      {error && (
+        <div
+          style={{
+            padding: "8px 12px",
+            marginBottom: 12,
+            fontSize: 12,
+            color: "var(--error)",
+            background: "var(--bg-tertiary)",
+            borderRadius: 6,
+          }}
+        >
+          {error}
+          <button
+            className="btn-ghost"
+            onClick={() => setError("")}
+            style={{ marginLeft: 8 }}
+          >
+            ✕
+          </button>
+        </div>
+      )}
       {plugins.length === 0 ? (
         <div className="models-empty">
           <p className="models-empty-text">{t("plugins.empty")}</p>

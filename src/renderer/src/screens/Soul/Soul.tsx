@@ -13,12 +13,19 @@ function Soul({ profile }: SoulProps): React.JSX.Element {
   const [loading, setLoading] = useState(true);
   const [saved, setSaved] = useState(false);
   const [showReset, setShowReset] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [presets, setPresets] = useState<
     { name: string; description: string }[]
   >([]);
   const loaded = useRef(false);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const loadPresets = useCallback(async (): Promise<void> => {
+    try {
+      setPresets(await hermesAPI.listPersonalities(profile));
+    } catch {
+      setPresets([]);
+    }
+  }, [profile]);
 
   const loadSoul = useCallback(async (): Promise<void> => {
     loaded.current = false;
@@ -33,7 +40,8 @@ function Soul({ profile }: SoulProps): React.JSX.Element {
 
   useEffect(() => {
     loadSoul();
-  }, [loadSoul]);
+    loadPresets();
+  }, [loadSoul, loadPresets]);
 
   const saveSoul = useCallback(
     async (text: string) => {

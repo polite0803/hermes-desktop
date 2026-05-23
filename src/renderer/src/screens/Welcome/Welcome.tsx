@@ -83,14 +83,8 @@ function Welcome({
     setSshTesting(true);
     setSshError(null);
     try {
-      const ok = await hermesAPI.testSshConnection(
-        host,
-        port,
-        user,
-        sshKeyPath.trim(),
-        remotePort,
-      );
-      if (ok) {
+      const result = await hermesAPI.testSshConnection();
+      if (result.success) {
         await hermesAPI.setSshConfig(
           host,
           port,

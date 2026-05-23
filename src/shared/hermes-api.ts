@@ -241,9 +241,7 @@ export const hermesAPI = {
     invoke("get_config_value", { key, profile }),
   setConfig: (key: string, value: string, profile?: string): Promise<boolean> =>
     invoke("set_config_value", { key, value, profile }),
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  getHermesHome: (_profile?: string): Promise<string> =>
-    invoke("get_hermes_home"),
+  getHermesHome: (): Promise<string> => invoke("get_hermes_home"),
   getModelConfig: (profile?: string): Promise<ModelConfig> =>
     invoke("get_model_config", { profile }),
   setModelConfig: (
@@ -253,7 +251,9 @@ export const hermesAPI = {
     profile?: string,
   ): Promise<boolean> =>
     invoke("set_model_config", { provider, model, baseUrl, profile }),
-  getCredentialPool: (profile?: string): Promise<unknown> =>
+  getCredentialPool: (
+    profile?: string,
+  ): Promise<Record<string, Array<{ key?: string; label?: string }>>> =>
     invoke("get_credential_pool", { profile }),
   setCredentialPool: (
     provider: string,
@@ -289,15 +289,11 @@ export const hermesAPI = {
     }).then(() => true),
   testRemoteConnection: (url: string, apiKey?: string): Promise<boolean> =>
     invoke("test_remote_connection", { url, apiKey }),
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-  testSshConnection: (
-    host: string,
-    port: number,
-    username: string,
-    keyPath: string,
-    remotePort: number,
-  ): Promise<boolean> => invoke("test_ssh_connection"),
-  /* eslint-enable @typescript-eslint/no-unused-vars */
+  testSshConnection: (): Promise<{
+    success: boolean;
+    message: string;
+    messageKey: string;
+  }> => invoke("test_ssh_connection"),
   isSshTunnelActive: (): Promise<boolean> => invoke("is_ssh_tunnel_active"),
   startSshTunnel: (): Promise<boolean> =>
     invoke("start_ssh_tunnel").then(() => true),

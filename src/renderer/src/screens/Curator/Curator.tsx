@@ -8,17 +8,19 @@ export default function Curator(): React.JSX.Element {
   const [status, setStatus] = useState("");
   const [report, setReport] = useState("");
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const load = useCallback(async () => {
+    setError("");
     try {
       setStatus(await hermesAPI.curatorStatus());
-    } catch {
-      /* ignore */
+    } catch (e) {
+      setError(String(e));
     }
     try {
       setReport(await hermesAPI.curatorReport());
-    } catch {
-      /* ignore */
+    } catch (e) {
+      setError(String(e));
     }
     setLoading(false);
   }, []);
@@ -32,8 +34,8 @@ export default function Curator(): React.JSX.Element {
     try {
       await hermesAPI.curatorTrigger();
       await load();
-    } catch {
-      /* ignore */
+    } catch (e) {
+      setError(String(e));
     }
     setLoading(false);
   }
@@ -64,6 +66,28 @@ export default function Curator(): React.JSX.Element {
           </button>
         </div>
       </div>
+
+      {error && (
+        <div
+          style={{
+            padding: "8px 12px",
+            marginBottom: 12,
+            fontSize: 12,
+            color: "var(--error)",
+            background: "var(--bg-tertiary)",
+            borderRadius: 6,
+          }}
+        >
+          {error}
+          <button
+            className="btn-ghost"
+            onClick={() => setError("")}
+            style={{ marginLeft: 8 }}
+          >
+            ✕
+          </button>
+        </div>
+      )}
 
       {status && (
         <div

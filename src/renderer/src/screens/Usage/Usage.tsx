@@ -14,22 +14,24 @@ export default function Usage(): React.JSX.Element {
   const [insights, setInsights] = useState("");
   const [version, setVersion] = useState("");
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const load = useCallback(async () => {
+    setError("");
     try {
       setStats(await hermesAPI.getUsageStats());
-    } catch {
-      /* ignore */
+    } catch (e) {
+      setError(String(e));
     }
     try {
       setInsights(await hermesAPI.getInsights());
-    } catch {
-      /* ignore */
+    } catch (e) {
+      setError(String(e));
     }
     try {
       setVersion((await hermesAPI.getAppVersion()) || "");
-    } catch {
-      /* ignore */
+    } catch (e) {
+      setError(String(e));
     }
     setLoading(false);
   }, []);
@@ -60,6 +62,27 @@ export default function Usage(): React.JSX.Element {
         </button>
       </div>
 
+      {error && (
+        <div
+          style={{
+            padding: "8px 12px",
+            marginBottom: 12,
+            fontSize: 12,
+            color: "var(--error)",
+            background: "var(--bg-tertiary)",
+            borderRadius: 6,
+          }}
+        >
+          {error}
+          <button
+            className="btn-ghost"
+            onClick={() => setError("")}
+            style={{ marginLeft: 8 }}
+          >
+            ✕
+          </button>
+        </div>
+      )}
       {stats && (
         <div className="models-grid">
           <div className="models-card" style={{ padding: 20 }}>
