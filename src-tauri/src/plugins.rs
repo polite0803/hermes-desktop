@@ -1,7 +1,7 @@
 // Plugin management — list, enable, disable hermes-agent plugins
 use serde::{Deserialize, Serialize};
 use std::fs;
-use crate::hermes_cli;
+use crate::{config, hermes_cli, ssh};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -14,6 +14,18 @@ pub struct PluginInfo {
 
 #[tauri::command]
 pub fn list_plugins() -> Result<Vec<PluginInfo>, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        let cmd = ssh::build_remote_hermes_cmd(&["plugins", "list", "--json"]);
+        let out = ssh::ssh_exec(&conn.ssh, &cmd, None, 10000).unwrap_or_default();
+        let raw: Vec<serde_json::Value> = serde_json::from_str(&out).unwrap_or_default();
+        return Ok(raw.iter().map(|v| PluginInfo {
+            name: v.get("name").and_then(|s| s.as_str()).unwrap_or("").to_string(),
+            description: v.get("description").and_then(|s| s.as_str()).unwrap_or("").to_string(),
+            installed: v.get("installed").and_then(|b| b.as_bool()).unwrap_or(true),
+            enabled: v.get("enabled").and_then(|b| b.as_bool()).unwrap_or(true),
+        }).collect());
+    }
     let plugins_dir = hermes_cli::resolve_hermes_home().join("hermes-agent").join("plugins");
     if !plugins_dir.exists() { return Ok(Vec::new()); }
 
@@ -37,12 +49,24 @@ pub fn list_plugins() -> Result<Vec<PluginInfo>, String> {
 
 #[tauri::command]
 pub fn enable_plugin(name: String) -> Result<(), String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        let cmd = ssh::build_remote_hermes_cmd(&["plugins", "enable", &name]);
+        ssh::ssh_exec(&conn.ssh, &cmd, None, 10000)?;
+        return Ok(());
+    }
     hermes_cli::run_hermes_cli(&["plugins", "enable", &name], None)?;
     Ok(())
 }
 
 #[tauri::command]
 pub fn disable_plugin(name: String) -> Result<(), String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        let cmd = ssh::build_remote_hermes_cmd(&["plugins", "disable", &name]);
+        ssh::ssh_exec(&conn.ssh, &cmd, None, 10000)?;
+        return Ok(());
+    }
     hermes_cli::run_hermes_cli(&["plugins", "disable", &name], None)?;
     Ok(())
 }

@@ -1,7 +1,7 @@
 // SQLite session management — list, search (FTS5 + LIKE fallback), messages, delete
 use rusqlite::{Connection, params};
 use serde::{Deserialize, Serialize};
-use crate::hermes_cli;
+use crate::{config, hermes_cli, ssh};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -48,8 +48,47 @@ fn decode_content(raw: &str) -> String {
     }
 }
 
+fn convert_ssh_session(v: &serde_json::Value) -> SessionSummary {
+    SessionSummary {
+        id: v.get("id").or_else(|| v.get("sessionId")).and_then(|s| s.as_str()).unwrap_or("").to_string(),
+        source: v.get("source").and_then(|s| s.as_str()).unwrap_or("").to_string(),
+        started_at: v.get("startedAt").or_else(|| v.get("started_at")).and_then(|n| n.as_i64()).unwrap_or(0),
+        ended_at: v.get("endedAt").or_else(|| v.get("ended_at")).and_then(|n| n.as_i64()),
+        message_count: v.get("messageCount").or_else(|| v.get("message_count")).and_then(|n| n.as_i64()).unwrap_or(0),
+        model: v.get("model").and_then(|s| s.as_str()).unwrap_or("").to_string(),
+        title: v.get("title").and_then(|s| s.as_str()).map(|s| s.to_string()),
+        preview: v.get("preview").and_then(|s| s.as_str()).unwrap_or("").to_string(),
+    }
+}
+
+fn convert_ssh_message(v: &serde_json::Value) -> SessionMessage {
+    SessionMessage {
+        id: v.get("id").and_then(|n| n.as_i64()).unwrap_or(0),
+        role: v.get("role").and_then(|s| s.as_str()).unwrap_or("").to_string(),
+        content: v.get("content").and_then(|s| s.as_str()).unwrap_or("").to_string(),
+        timestamp: v.get("timestamp").and_then(|n| n.as_i64()).unwrap_or(0),
+    }
+}
+
+fn convert_ssh_search_result(v: &serde_json::Value) -> SearchResult {
+    SearchResult {
+        session_id: v.get("sessionId").or_else(|| v.get("session_id")).and_then(|s| s.as_str()).unwrap_or("").to_string(),
+        title: v.get("title").and_then(|s| s.as_str()).map(|s| s.to_string()),
+        started_at: v.get("startedAt").or_else(|| v.get("started_at")).and_then(|n| n.as_i64()).unwrap_or(0),
+        source: v.get("source").and_then(|s| s.as_str()).unwrap_or("").to_string(),
+        message_count: v.get("messageCount").or_else(|| v.get("message_count")).and_then(|n| n.as_i64()).unwrap_or(0),
+        model: v.get("model").and_then(|s| s.as_str()).unwrap_or("").to_string(),
+        snippet: v.get("snippet").and_then(|s| s.as_str()).unwrap_or("").to_string(),
+    }
+}
+
 #[tauri::command]
 pub fn list_sessions(limit: Option<u32>, offset: Option<u32>) -> Result<Vec<SessionSummary>, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        let raw = ssh::ssh_list_sessions(&conn.ssh, limit, offset)?;
+        return Ok(raw.iter().map(convert_ssh_session).collect());
+    }
     let db = open_db()?;
     let lim = limit.unwrap_or(50); let off = offset.unwrap_or(0);
     let mut stmt = db.prepare(
@@ -65,6 +104,11 @@ pub fn list_sessions(limit: Option<u32>, offset: Option<u32>) -> Result<Vec<Sess
 
 #[tauri::command]
 pub fn get_session_messages(session_id: String) -> Result<Vec<SessionMessage>, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        let raw = ssh::ssh_get_session_messages(&conn.ssh, &session_id)?;
+        return Ok(raw.iter().map(convert_ssh_message).collect());
+    }
     let db = open_db()?;
     let mut stmt = db.prepare(
         "SELECT id, role, content, timestamp FROM messages WHERE session_id=?1 ORDER BY timestamp, id"
@@ -77,6 +121,11 @@ pub fn get_session_messages(session_id: String) -> Result<Vec<SessionMessage>, S
 
 #[tauri::command]
 pub fn search_sessions(query: String, limit: Option<u32>) -> Result<Vec<SearchResult>, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        let raw = ssh::ssh_search_sessions(&conn.ssh, &query, limit)?;
+        return Ok(raw.iter().map(convert_ssh_search_result).collect());
+    }
     let db = open_db()?;
     let lim = limit.unwrap_or(20) as i64;
 
@@ -107,6 +156,12 @@ pub fn search_sessions(query: String, limit: Option<u32>) -> Result<Vec<SearchRe
 
 #[tauri::command]
 pub fn delete_session(session_id: String) -> Result<(), String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        let cmd = ssh::build_remote_hermes_cmd(&["sessions", "delete", &session_id]);
+        ssh::ssh_exec(&conn.ssh, &cmd, None, 15000)?;
+        return Ok(());
+    }
     let db = open_db()?;
     db.execute("DELETE FROM messages WHERE session_id=?1", params![session_id]).map_err(|e| e.to_string())?;
     db.execute("DELETE FROM sessions WHERE id=?1", params![session_id]).map_err(|e| e.to_string())?;

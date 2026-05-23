@@ -2,7 +2,7 @@
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
-use crate::hermes_cli;
+use crate::{config, hermes_cli, ssh};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -56,20 +56,61 @@ fn walk_skill_dirs(base: &PathBuf) -> Vec<(String, String, String, PathBuf)> {
 }
 
 #[tauri::command] pub fn list_installed_skills(profile: Option<String>) -> Result<Vec<InstalledSkill>, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        let raw = ssh::ssh_list_installed_skills(&conn.ssh, profile.as_deref())?;
+        return Ok(raw.iter().map(|v| InstalledSkill {
+            name: v.get("name").and_then(|s| s.as_str()).unwrap_or("").to_string(),
+            category: v.get("category").and_then(|s| s.as_str()).unwrap_or("").to_string(),
+            description: v.get("description").and_then(|s| s.as_str()).unwrap_or("").to_string(),
+            path: v.get("path").and_then(|s| s.as_str()).unwrap_or("").to_string(),
+        }).collect());
+    }
     Ok(walk_skill_dirs(&skills_dir(profile.as_deref())).into_iter().map(|(name,category,description,path)| InstalledSkill { name, category, description, path: path.to_string_lossy().to_string() }).collect())
 }
 #[tauri::command] pub fn list_bundled_skills() -> Result<Vec<BundledSkill>, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        return Ok(Vec::new()); // bundled skills are local-only
+    }
     Ok(walk_skill_dirs(&bundled_dir()).into_iter().map(|(name,category,description,_)| BundledSkill { name, description, category, source: "bundled".into(), installed: false }).collect())
 }
 #[tauri::command] pub fn get_skill_content(path: String) -> Result<String, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        let remote_path = format!("{}/SKILL.md", path);
+        return Ok(ssh::ssh_read_file(&conn.ssh, &remote_path).unwrap_or_default());
+    }
     let f = PathBuf::from(&path).join("SKILL.md"); if !f.exists() { return Ok(String::new()); } fs::read_to_string(&f).map_err(|e| e.to_string())
 }
 #[tauri::command] pub fn install_skill(name: String, profile: Option<String>) -> Result<serde_json::Value, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        let dash_p = "-p".to_string();
+        let mut ssh_args: Vec<&str> = vec!["skills", "install", &name, "--yes"];
+        if let Some(ref p) = profile { if p != "default" { ssh_args.push(&dash_p); ssh_args.push(p); } }
+        let cmd = ssh::build_remote_hermes_cmd(&ssh_args);
+        match ssh::ssh_exec(&conn.ssh, &cmd, None, 30000) {
+            Ok(_) => return Ok(serde_json::json!({"success":true})),
+            Err(e) => return Ok(serde_json::json!({"success":false,"error":e})),
+        }
+    }
     let mut args: Vec<&str> = vec!["skills","install",&name,"--yes"];
     if let Some(ref p) = profile { if p != "default" { args.push("-p"); args.push(p); } }
     match hermes_cli::run_hermes_cli(&args, profile.as_deref()) { Ok(_) => Ok(serde_json::json!({"success":true})), Err(e) => Ok(serde_json::json!({"success":false,"error":e})) }
 }
 #[tauri::command] pub fn uninstall_skill(name: String, profile: Option<String>) -> Result<serde_json::Value, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        let dash_p = "-p".to_string();
+        let mut ssh_args: Vec<&str> = vec!["skills", "uninstall", &name];
+        if let Some(ref p) = profile { if p != "default" { ssh_args.push(&dash_p); ssh_args.push(p); } }
+        let cmd = ssh::build_remote_hermes_cmd(&ssh_args);
+        match ssh::ssh_exec(&conn.ssh, &cmd, None, 15000) {
+            Ok(_) => return Ok(serde_json::json!({"success":true})),
+            Err(e) => return Ok(serde_json::json!({"success":false,"error":e})),
+        }
+    }
     let mut args: Vec<&str> = vec!["skills","uninstall",&name];
     if let Some(ref p) = profile { if p != "default" { args.push("-p"); args.push(p); } }
     match hermes_cli::run_hermes_cli(&args, profile.as_deref()) { Ok(_) => Ok(serde_json::json!({"success":true})), Err(e) => Ok(serde_json::json!({"success":false,"error":e})) }

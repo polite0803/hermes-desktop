@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
 
-use crate::hermes_cli;
+use crate::{config, hermes_cli, ssh};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -65,6 +65,10 @@ fn generate_title(message: &str) -> String {
 
 #[tauri::command]
 pub fn sync_session_cache() -> Result<Vec<CachedSession>, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        return Ok(Vec::new()); // No local SQLite to sync in SSH mode
+    }
     let mut cache = read_cache();
     let db_path = db_path();
     if !db_path.exists() { return Ok(cache.sessions); }
@@ -127,6 +131,18 @@ pub fn sync_session_cache() -> Result<Vec<CachedSession>, String> {
 
 #[tauri::command]
 pub fn list_cached_sessions(limit: Option<u32>, offset: Option<u32>) -> Result<Vec<CachedSession>, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        let raw = ssh::ssh_list_sessions(&conn.ssh, limit, offset)?;
+        return Ok(raw.iter().map(|v| CachedSession {
+            id: v.get("id").and_then(|s| s.as_str()).unwrap_or("").to_string(),
+            title: v.get("title").and_then(|s| s.as_str()).unwrap_or("").to_string(),
+            started_at: v.get("startedAt").or_else(|| v.get("started_at")).and_then(|n| n.as_i64()).unwrap_or(0),
+            source: v.get("source").and_then(|s| s.as_str()).unwrap_or("").to_string(),
+            message_count: v.get("messageCount").or_else(|| v.get("message_count")).and_then(|n| n.as_i64()).unwrap_or(0),
+            model: v.get("model").and_then(|s| s.as_str()).unwrap_or("").to_string(),
+        }).collect());
+    }
     let cache = read_cache();
     let off = offset.unwrap_or(0) as usize;
     let lim = limit.unwrap_or(50) as usize;
@@ -135,6 +151,10 @@ pub fn list_cached_sessions(limit: Option<u32>, offset: Option<u32>) -> Result<V
 
 #[tauri::command]
 pub fn update_session_title(session_id: String, title: String) -> Result<(), String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        return Ok(()); // Local cache not used in SSH mode
+    }
     let mut cache = read_cache();
     if let Some(s) = cache.sessions.iter_mut().find(|s| s.id == session_id) { s.title = title; write_cache(&cache); }
     Ok(())

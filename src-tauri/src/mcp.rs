@@ -2,7 +2,7 @@
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::process::Command;
-use crate::hermes_cli;
+use crate::{config, hermes_cli, ssh};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -35,13 +35,49 @@ fn write_mcp_config(servers: &[McpServer]) -> Result<(), String> {
         .map_err(|e| e.to_string())
 }
 
+fn read_mcp_config_via_ssh(config: &config::SshConfig) -> Result<Vec<McpServer>, String> {
+    let content = ssh::ssh_read_file(config, "~/.hermes/mcp.json").unwrap_or_default();
+    if content.is_empty() { return Ok(Vec::new()); }
+    serde_json::from_str::<serde_json::Value>(&content).ok()
+        .and_then(|v| v.get("servers").cloned())
+        .and_then(|s| serde_json::from_value::<Vec<McpServer>>(s).ok())
+        .ok_or_else(|| "Failed to parse remote mcp.json".into())
+}
+
+fn write_mcp_config_via_ssh(config: &config::SshConfig, servers: &[McpServer]) -> Result<(), String> {
+    let json = serde_json::json!({ "servers": servers });
+    let content = serde_json::to_string_pretty(&json).unwrap_or_default();
+    ssh::ssh_write_file(config, "~/.hermes/mcp.json", &content)
+}
+
 #[tauri::command]
 pub fn list_mcp_servers() -> Result<Vec<McpServer>, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        let raw = ssh::ssh_list_mcp_servers(&conn.ssh, None)?;
+        return Ok(raw.iter().map(|v| McpServer {
+            name: v.get("name").and_then(|s| s.as_str()).unwrap_or("").to_string(),
+            command: v.get("command").and_then(|s| s.as_str()).unwrap_or("").to_string(),
+            args: v.get("args").and_then(|a| a.as_array()).map(|a| a.iter().filter_map(|v| v.as_str().map(|s| s.to_string())).collect()).unwrap_or_default(),
+            enabled: v.get("enabled").and_then(|b| b.as_bool()).unwrap_or(true),
+        }).collect());
+    }
     Ok(read_mcp_config())
 }
 
 #[tauri::command]
 pub fn add_mcp_server(name: String, command: String, args: Vec<String>) -> Result<McpServer, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        let mut servers = read_mcp_config_via_ssh(&conn.ssh)?;
+        if servers.iter().any(|s| s.name == name) {
+            return Err("mcp.serverExists".into());
+        }
+        let server = McpServer { name: name.clone(), command, args, enabled: true };
+        servers.push(server.clone());
+        write_mcp_config_via_ssh(&conn.ssh, &servers)?;
+        return Ok(server);
+    }
     let mut servers = read_mcp_config();
     if servers.iter().any(|s| s.name == name) {
         return Err("mcp.serverExists".into());
@@ -54,6 +90,12 @@ pub fn add_mcp_server(name: String, command: String, args: Vec<String>) -> Resul
 
 #[tauri::command]
 pub fn remove_mcp_server(name: String) -> Result<(), String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        let mut servers = read_mcp_config_via_ssh(&conn.ssh)?;
+        servers.retain(|s| s.name != name);
+        return write_mcp_config_via_ssh(&conn.ssh, &servers);
+    }
     let mut servers = read_mcp_config();
     servers.retain(|s| s.name != name);
     write_mcp_config(&servers)
@@ -61,6 +103,16 @@ pub fn remove_mcp_server(name: String) -> Result<(), String> {
 
 #[tauri::command]
 pub fn update_mcp_server(name: String, command: Option<String>, args: Option<Vec<String>>, enabled: Option<bool>) -> Result<McpServer, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        let mut servers = read_mcp_config_via_ssh(&conn.ssh)?;
+        let idx = servers.iter().position(|s| s.name == name).ok_or_else(|| format!("Server '{}' not found", name))?;
+        if let Some(c) = command { servers[idx].command = c; }
+        if let Some(a) = args { servers[idx].args = a; }
+        if let Some(e) = enabled { servers[idx].enabled = e; }
+        write_mcp_config_via_ssh(&conn.ssh, &servers)?;
+        return Ok(servers[idx].clone());
+    }
     let mut servers = read_mcp_config();
     let idx = servers.iter().position(|s| s.name == name).ok_or_else(|| format!("Server '{}' not found", name))?;
     if let Some(c) = command { servers[idx].command = c; }

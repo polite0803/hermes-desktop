@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
 use rusqlite::Connection;
-use crate::hermes_cli;
+use crate::{config, hermes_cli, ssh};
 
 const MEMORY_CHAR_LIMIT: usize = 2200;
 const USER_PROFILE_CHAR_LIMIT: usize = 1375;
@@ -64,8 +64,33 @@ fn get_session_stats() -> MemoryStats {
     }).unwrap_or(MemoryStats { total_sessions: 0, total_messages: 0 })
 }
 
+fn read_memory_via_ssh(config: &config::SshConfig, profile: Option<&str>) -> Result<MemoryInfo, String> {
+    let raw = ssh::ssh_read_memory(config, profile)?;
+    let mem_content = raw["memory"]["content"].as_str().unwrap_or("");
+    let user_content = raw["user"]["content"].as_str().unwrap_or("");
+    let user_len = user_content.len();
+    Ok(MemoryInfo {
+        memory: parse_memory_entries(mem_content),
+        user: UserProfile {
+            content: user_content.to_string(),
+            exists: raw["user"]["exists"].as_bool().unwrap_or(!user_content.is_empty()),
+            last_modified: raw["user"]["lastModified"].as_u64(),
+            char_count: raw["user"]["charCount"].as_u64().unwrap_or(user_len as u64) as usize,
+            char_limit: raw["user"]["charLimit"].as_u64().unwrap_or(USER_PROFILE_CHAR_LIMIT as u64) as usize,
+        },
+        stats: MemoryStats {
+            total_sessions: raw["stats"]["totalSessions"].as_i64().unwrap_or(0),
+            total_messages: raw["stats"]["totalMessages"].as_i64().unwrap_or(0),
+        },
+    })
+}
+
 #[tauri::command]
 pub fn read_memory(profile: Option<String>) -> Result<MemoryInfo, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        return read_memory_via_ssh(&conn.ssh, profile.as_deref());
+    }
     let mem = memory_path(profile.as_deref());
     let usr = user_path(profile.as_deref());
     let mem_content = if mem.exists() { fs::read_to_string(&mem).unwrap_or_default() } else { String::new() };
@@ -84,8 +109,27 @@ pub fn read_memory(profile: Option<String>) -> Result<MemoryInfo, String> {
     })
 }
 
+fn ssh_memory_path(profile: Option<&str>) -> String {
+    match profile {
+        Some(p) if p != "default" => format!("~/.hermes/profiles/{}/memories/MEMORY.md", p),
+        _ => "~/.hermes/memories/MEMORY.md".to_string(),
+    }
+}
+
 #[tauri::command]
 pub fn add_memory_entry(content: String, profile: Option<String>) -> Result<MemoryResult, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        let remote_path = ssh_memory_path(profile.as_deref());
+        let mut existing = ssh::ssh_read_file(&conn.ssh, &remote_path).unwrap_or_default();
+        if existing.len() + content.len() > MEMORY_CHAR_LIMIT {
+            return Ok(MemoryResult { success: false, error: Some(format!("Memory limit reached ({} chars)", MEMORY_CHAR_LIMIT)), error_key: Some("memory.limitReached".into()) });
+        }
+        if !existing.is_empty() && !existing.ends_with('\n') { existing.push('\n'); }
+        existing.push_str(&content);
+        ssh::ssh_write_file(&conn.ssh, &remote_path, &existing)?;
+        return Ok(MemoryResult { success: true, error: None, error_key: None });
+    }
     let path = memory_path(profile.as_deref());
     if let Some(p) = path.parent() { let _ = fs::create_dir_all(p); }
     let mut existing = if path.exists() { fs::read_to_string(&path).unwrap_or_default() } else { String::new() };
@@ -100,6 +144,22 @@ pub fn add_memory_entry(content: String, profile: Option<String>) -> Result<Memo
 
 #[tauri::command]
 pub fn update_memory_entry(index: u32, content: String, profile: Option<String>) -> Result<MemoryResult, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        let remote_path = ssh_memory_path(profile.as_deref());
+        let raw = ssh::ssh_read_file(&conn.ssh, &remote_path).unwrap_or_default();
+        if raw.is_empty() { return Ok(MemoryResult { success: false, error: Some("Memory file not found".into()), error_key: Some("memory.fileNotFound".into()) }); }
+        let entries: Vec<&str> = raw.split(ENTRY_DELIMITER).collect();
+        if (index as usize) >= entries.len() { return Ok(MemoryResult { success: false, error: Some("Index out of range".into()), error_key: Some("memory.indexOutOfRange".into()) }); }
+        let mut new_entries: Vec<&str> = entries.iter().map(|s| *s).collect();
+        new_entries[index as usize] = &content;
+        let new_content = new_entries.join(ENTRY_DELIMITER);
+        if new_content.len() > MEMORY_CHAR_LIMIT {
+            return Ok(MemoryResult { success: false, error: Some(format!("Memory limit reached ({} chars)", MEMORY_CHAR_LIMIT)), error_key: Some("memory.limitReached".into()) });
+        }
+        ssh::ssh_write_file(&conn.ssh, &remote_path, &new_content)?;
+        return Ok(MemoryResult { success: true, error: None, error_key: None });
+    }
     let path = memory_path(profile.as_deref());
     if !path.exists() { return Ok(MemoryResult { success: false, error: Some("Memory file not found".into()), error_key: Some("memory.fileNotFound".into()) }); }
     let raw = fs::read_to_string(&path).unwrap_or_default();
@@ -116,6 +176,17 @@ pub fn update_memory_entry(index: u32, content: String, profile: Option<String>)
 
 #[tauri::command]
 pub fn remove_memory_entry(index: u32, profile: Option<String>) -> Result<bool, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        let remote_path = ssh_memory_path(profile.as_deref());
+        let raw = ssh::ssh_read_file(&conn.ssh, &remote_path).unwrap_or_default();
+        if raw.is_empty() { return Ok(false); }
+        let mut entries: Vec<&str> = raw.split(ENTRY_DELIMITER).collect();
+        if (index as usize) >= entries.len() { return Ok(false); }
+        entries.remove(index as usize);
+        ssh::ssh_write_file(&conn.ssh, &remote_path, &entries.join(ENTRY_DELIMITER))?;
+        return Ok(true);
+    }
     let path = memory_path(profile.as_deref());
     if !path.exists() { return Ok(false); }
     let raw = fs::read_to_string(&path).unwrap_or_default();
@@ -126,10 +197,23 @@ pub fn remove_memory_entry(index: u32, profile: Option<String>) -> Result<bool, 
     Ok(true)
 }
 
+fn ssh_user_path(profile: Option<&str>) -> String {
+    match profile {
+        Some(p) if p != "default" => format!("~/.hermes/profiles/{}/memories/USER.md", p),
+        _ => "~/.hermes/memories/USER.md".to_string(),
+    }
+}
+
 #[tauri::command]
 pub fn write_user_profile(content: String, profile: Option<String>) -> Result<MemoryResult, String> {
     if content.len() > USER_PROFILE_CHAR_LIMIT {
         return Ok(MemoryResult { success: false, error: Some(format!("Profile limit reached ({} chars)", USER_PROFILE_CHAR_LIMIT)), error_key: Some("memory.profileLimitReached".into()) });
+    }
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        let remote_path = ssh_user_path(profile.as_deref());
+        ssh::ssh_write_file(&conn.ssh, &remote_path, &content)?;
+        return Ok(MemoryResult { success: true, error: None, error_key: None });
     }
     let path = user_path(profile.as_deref());
     if let Some(p) = path.parent() { let _ = fs::create_dir_all(p); }

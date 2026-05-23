@@ -18,7 +18,7 @@ use std::path::PathBuf;
 use std::sync::Mutex;
 use std::time::{Duration, Instant};
 
-use crate::hermes_cli;
+use crate::{hermes_cli, ssh};
 
 // ─── TTL Cache ──────────────────────────────────────────
 
@@ -318,6 +318,10 @@ fn find_top_level_key(content: &str, key: &str) -> Option<YamlPathHit> {
 
 #[tauri::command]
 pub fn get_config_value(key: String, profile: Option<String>) -> Result<Option<String>, String> {
+    let conn = get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        return ssh::ssh_get_config_value(&conn.ssh, profile.as_deref(), &key);
+    }
     let path = config_yaml_path(profile.as_deref());
     if !path.exists() { return Ok(None); }
     let content = fs::read_to_string(&path).map_err(|e| format!("Failed to read config.yaml: {}", e))?;
@@ -334,6 +338,11 @@ pub fn get_config_value(key: String, profile: Option<String>) -> Result<Option<S
 #[tauri::command]
 pub fn set_config_value(key: String, value: String, profile: Option<String>) -> Result<bool, String> {
     if key == "API_SERVER_KEY" { cache_invalidate("apiServerKey:"); }
+    let conn = get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        ssh::ssh_set_config_value(&conn.ssh, profile.as_deref(), &key, &value)?;
+        return Ok(true);
+    }
     let path = config_yaml_path(profile.as_deref());
     if !path.exists() { return Ok(false); }
 
@@ -403,7 +412,18 @@ pub fn get_env_all_raw(profile: Option<&str>) -> Result<HashMap<String, String>,
 
 #[tauri::command]
 pub fn get_env_all(profile: Option<String>) -> Result<HashMap<String, String>, String> {
+    let conn = get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        return ssh::ssh_read_env(&conn.ssh, profile.as_deref());
+    }
     get_env_all_raw(profile.as_deref())
+}
+
+fn ssh_env_path(profile: Option<&str>) -> String {
+    match profile {
+        Some(p) if p != "default" => format!("~/.hermes/profiles/{}/.env", p),
+        _ => "~/.hermes/.env".to_string(),
+    }
 }
 
 #[tauri::command]
@@ -418,6 +438,15 @@ pub fn set_env(key: String, value: String, profile: Option<String>) -> Result<bo
     cache_invalidate(&format!("env:{}", profile.as_deref().unwrap_or("default")));
     if key == "API_SERVER_KEY" { cache_invalidate("apiServerKey:"); }
 
+    let conn = get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        let remote_path = ssh_env_path(profile.as_deref());
+        let content = ssh::ssh_read_file(&conn.ssh, &remote_path).unwrap_or_default();
+        let new_content = set_env_in_content(&content, &key, &value);
+        ssh::ssh_write_file(&conn.ssh, &remote_path, &new_content)?;
+        return Ok(true);
+    }
+
     let path = env_file_path(profile.as_deref());
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent).map_err(|e| format!("Failed to create dir: {}", e))?;
@@ -430,9 +459,14 @@ pub fn set_env(key: String, value: String, profile: Option<String>) -> Result<bo
     }
 
     let content = fs::read_to_string(&path).map_err(|e| format!("Failed to read .env: {}", e))?;
-    let escaped = escape_regex(&key);
-    let line_re = regex_lite::Regex::new(&format!(r"^#?\s*{}\s*=", escaped)).ok();
+    let new_content = set_env_in_content(&content, &key, &value);
+    fs::write(&path, &new_content).map_err(|e| format!("Failed to write .env: {}", e))?;
+    Ok(true)
+}
 
+fn set_env_in_content(content: &str, key: &str, value: &str) -> String {
+    let escaped = escape_regex(key);
+    let line_re = regex_lite::Regex::new(&format!(r"^#?\s*{}\s*=", escaped)).ok();
     let mut lines: Vec<String> = content.lines().map(|s| s.to_string()).collect();
     let mut found = false;
     for line in lines.iter_mut() {
@@ -445,9 +479,7 @@ pub fn set_env(key: String, value: String, profile: Option<String>) -> Result<bo
         }
     }
     if !found { lines.push(format!("{}={}", key, value)); }
-
-    fs::write(&path, lines.join("\n")).map_err(|e| format!("Failed to write .env: {}", e))?;
-    Ok(true)
+    lines.join("\n")
 }
 
 #[tauri::command]
@@ -518,6 +550,15 @@ fn read_top_level_block_children(content: &str, block_name: &str) -> HashMap<Str
 
 #[tauri::command]
 pub fn get_model_config(profile: Option<String>) -> Result<ModelConfig, String> {
+    let conn = get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        let v = ssh::ssh_get_model_config(&conn.ssh, profile.as_deref())?;
+        return Ok(ModelConfig {
+            provider: v.get("provider").and_then(|s| s.as_str()).unwrap_or("auto").to_string(),
+            model: v.get("model").and_then(|s| s.as_str()).unwrap_or("").to_string(),
+            base_url: v.get("baseUrl").and_then(|s| s.as_str()).unwrap_or("").to_string(),
+        });
+    }
     get_model_config_raw(profile.as_deref())
 }
 
@@ -661,6 +702,10 @@ fn read_platform_override(content: &str, config_key: &str) -> Option<bool> {
 
 #[tauri::command]
 pub fn get_platform_enabled_all(profile: Option<String>) -> Result<HashMap<String, bool>, String> {
+    let conn = get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        return ssh::ssh_get_platform_enabled(&conn.ssh, profile.as_deref());
+    }
     let env = get_env_all_raw(profile.as_deref()).unwrap_or_default();
     let path = config_yaml_path(profile.as_deref());
     let content = if path.exists() {
@@ -696,6 +741,11 @@ pub fn get_platform_enabled_all(profile: Option<String>) -> Result<HashMap<Strin
 
 #[tauri::command]
 pub fn set_platform_enabled(platform: String, enabled: bool, profile: Option<String>) -> Result<bool, String> {
+    let conn = get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        ssh::ssh_set_platform_enabled(&conn.ssh, &platform, enabled)?;
+        return Ok(true);
+    }
     let config_key = match platform.as_str() {
         "home_assistant" => "homeassistant",
         other => other,

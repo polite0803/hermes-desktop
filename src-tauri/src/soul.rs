@@ -1,7 +1,7 @@
 use std::fs;
 use std::path::PathBuf;
 
-use crate::hermes_cli;
+use crate::{config, hermes_cli, ssh};
 
 const DEFAULT_SOUL: &str = r#"You are Hermes, a helpful AI assistant focused on helping the user achieve their goals. You have access to various tools and capabilities.
 
@@ -22,6 +22,10 @@ fn soul_path(profile: Option<&str>) -> PathBuf {
 
 #[tauri::command]
 pub fn read_soul(profile: Option<String>) -> Result<String, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        return ssh::ssh_read_soul(&conn.ssh, profile.as_deref());
+    }
     let path = soul_path(profile.as_deref());
     if path.exists() {
         fs::read_to_string(&path).map_err(|e| format!("Failed to read SOUL.md: {}", e))
@@ -32,6 +36,10 @@ pub fn read_soul(profile: Option<String>) -> Result<String, String> {
 
 #[tauri::command]
 pub fn write_soul(content: String, profile: Option<String>) -> Result<(), String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        return ssh::ssh_write_soul(&conn.ssh, profile.as_deref(), &content);
+    }
     let path = soul_path(profile.as_deref());
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent).map_err(|e| format!("Failed to create dir: {}", e))?;
@@ -41,6 +49,10 @@ pub fn write_soul(content: String, profile: Option<String>) -> Result<(), String
 
 #[tauri::command]
 pub fn reset_soul(profile: Option<String>) -> Result<(), String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        return ssh::ssh_write_soul(&conn.ssh, profile.as_deref(), "");
+    }
     let path = soul_path(profile.as_deref());
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent).map_err(|e| format!("Failed to create dir: {}", e))?;

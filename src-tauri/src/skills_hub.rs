@@ -1,7 +1,7 @@
 // Skills Hub — search and install skills from agentskills.io
 use serde::{Deserialize, Serialize};
 use std::time::Duration;
-use crate::hermes_cli;
+use crate::{config, hermes_cli, ssh};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -40,6 +40,14 @@ pub async fn search_skills_hub(query: String) -> Result<Vec<HubSkill>, String> {
 
 #[tauri::command]
 pub fn install_from_hub(name: String, profile: Option<String>) -> Result<serde_json::Value, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        let cmd = ssh::build_remote_hermes_cmd(&["skills", "install", &name, "--yes"]);
+        match ssh::ssh_exec(&conn.ssh, &cmd, None, 30000) {
+            Ok(_) => return Ok(serde_json::json!({"success": true})),
+            Err(e) => return Ok(serde_json::json!({"success": false, "error": e})),
+        }
+    }
     match hermes_cli::run_hermes_cli(&["skills", "install", &name, "--yes"], profile.as_deref()) {
         Ok(_) => Ok(serde_json::json!({"success": true})),
         Err(e) => Ok(serde_json::json!({"success": false, "error": e})),

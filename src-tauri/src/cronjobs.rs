@@ -2,6 +2,7 @@
 use serde::{Deserialize, Serialize};
 use crate::config;
 use crate::hermes_cli;
+use crate::ssh;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -50,6 +51,18 @@ fn normalize_job(raw: &serde_json::Value) -> CronJob {
 #[tauri::command]
 pub fn list_cron_jobs(include_disabled: Option<bool>, profile: Option<String>) -> Result<Vec<CronJob>, String> {
     let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        let cmd = ssh::build_remote_hermes_cmd(&["cron", "list", "--json"]);
+        match ssh::ssh_exec(&conn.ssh, &cmd, None, 10000) {
+            Ok(out) => {
+                let jobs: Vec<serde_json::Value> = serde_json::from_str(&out).unwrap_or_default();
+                return Ok(jobs.iter().map(normalize_job)
+                    .filter(|j| include_disabled.unwrap_or(false) || j.enabled)
+                    .collect());
+            }
+            Err(_) => return Ok(Vec::new()),
+        }
+    }
     if conn.mode == "remote" && !conn.remote_url.is_empty() {
         // Remote API
         let url = format!("{}/api/jobs", conn.remote_url.trim_end_matches('/'));
@@ -71,27 +84,40 @@ pub fn list_cron_jobs(include_disabled: Option<bool>, profile: Option<String>) -
         .collect())
 }
 
+fn run_cron_cmd(args: &[&str], profile: Option<&str>) -> Result<CronResult, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        let cmd = ssh::build_remote_hermes_cmd(args);
+        match ssh::ssh_exec(&conn.ssh, &cmd, None, 15000) {
+            Ok(_) => Ok(CronResult { success: true, error: None }),
+            Err(e) => Ok(CronResult { success: false, error: Some(e) }),
+        }
+    } else {
+        match hermes_cli::run_hermes_cli(args, profile) {
+            Ok(_) => Ok(CronResult { success: true, error: None }),
+            Err(e) => Ok(CronResult { success: false, error: Some(e) }),
+        }
+    }
+}
+
 #[tauri::command]
 pub fn create_cron_job(name: Option<String>, schedule: String, prompt: Option<String>, deliver: Option<String>, profile: Option<String>) -> Result<CronResult, String> {
     let mut args: Vec<&str> = vec!["cron", "create", "--schedule", &schedule];
     if let Some(ref n) = name { args.push("--name"); args.push(n); }
     if let Some(ref p) = prompt { args.push("--prompt"); args.push(p); }
     if let Some(ref d) = deliver { args.push("--deliver"); args.push(d); }
-    match hermes_cli::run_hermes_cli(&args, profile.as_deref()) {
-        Ok(_) => Ok(CronResult { success: true, error: None }),
-        Err(e) => Ok(CronResult { success: false, error: Some(e) }),
-    }
+    run_cron_cmd(&args, profile.as_deref())
 }
 
 #[tauri::command] pub fn remove_cron_job(id: String, profile: Option<String>) -> Result<CronResult, String> {
-    match hermes_cli::run_hermes_cli(&["cron", "remove", &id], profile.as_deref()) { Ok(_) => Ok(CronResult { success: true, error: None }), Err(e) => Ok(CronResult { success: false, error: Some(e) }) }
+    run_cron_cmd(&["cron", "remove", &id], profile.as_deref())
 }
 #[tauri::command] pub fn pause_cron_job(id: String, profile: Option<String>) -> Result<CronResult, String> {
-    match hermes_cli::run_hermes_cli(&["cron", "pause", &id], profile.as_deref()) { Ok(_) => Ok(CronResult { success: true, error: None }), Err(e) => Ok(CronResult { success: false, error: Some(e) }) }
+    run_cron_cmd(&["cron", "pause", &id], profile.as_deref())
 }
 #[tauri::command] pub fn resume_cron_job(id: String, profile: Option<String>) -> Result<CronResult, String> {
-    match hermes_cli::run_hermes_cli(&["cron", "resume", &id], profile.as_deref()) { Ok(_) => Ok(CronResult { success: true, error: None }), Err(e) => Ok(CronResult { success: false, error: Some(e) }) }
+    run_cron_cmd(&["cron", "resume", &id], profile.as_deref())
 }
 #[tauri::command] pub fn trigger_cron_job(id: String, profile: Option<String>) -> Result<CronResult, String> {
-    match hermes_cli::run_hermes_cli(&["cron", "trigger", &id], profile.as_deref()) { Ok(_) => Ok(CronResult { success: true, error: None }), Err(e) => Ok(CronResult { success: false, error: Some(e) }) }
+    run_cron_cmd(&["cron", "trigger", &id], profile.as_deref())
 }

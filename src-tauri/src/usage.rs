@@ -1,7 +1,7 @@
 // Usage dashboard — token/session stats from SQLite + hermes insights CLI
 use rusqlite::Connection;
 use serde::{Deserialize, Serialize};
-use crate::hermes_cli;
+use crate::{config, hermes_cli, ssh};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -50,5 +50,10 @@ pub fn get_usage_stats() -> Result<UsageStats, String> {
 
 #[tauri::command]
 pub fn get_insights() -> Result<String, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        let cmd = ssh::build_remote_hermes_cmd(&["insights", "--days", "30"]);
+        return ssh::ssh_exec(&conn.ssh, &cmd, None, 15000);
+    }
     hermes_cli::run_hermes_cli(&["insights", "--days", "30"], None)
 }

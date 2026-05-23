@@ -246,6 +246,10 @@ export const hermesAPI = {
     invoke("get_model_config", { profile }),
   setModelConfig: (provider: string, model: string, baseUrl: string, profile?: string): Promise<boolean> =>
     invoke("set_model_config", { provider, model, baseUrl, profile }),
+  getCredentialPool: (profile?: string): Promise<any> =>
+    invoke("get_credential_pool", { profile }),
+  setCredentialPool: (provider: string, entries: Array<{ key?: string; label?: string }>, profile?: string): Promise<boolean> =>
+    invoke("set_credential_pool", { provider, entries, profile }),
 
   // ── Connection ────────────────────────────────────────
   isRemoteMode: (): Promise<boolean> => invoke("is_remote_mode"),

@@ -233,7 +233,7 @@ fn ssh_python(config: &SshConfig, script: &str, stdin_payload: Option<&str>, tim
 }
 
 /// Build the remote Hermes CLI command string with venv probing.
-fn build_remote_hermes_cmd(args: &[&str]) -> String {
+pub fn build_remote_hermes_cmd(args: &[&str]) -> String {
     let candidates = [
         "$HOME/hermes-agent/.venv/bin/hermes",
         "$HOME/.hermes/hermes-agent/.venv/bin/hermes",

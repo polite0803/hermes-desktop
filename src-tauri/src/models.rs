@@ -1,7 +1,7 @@
 // Model management — CRUD with defaults seeding from providers + custom_providers
 use serde::{Deserialize, Serialize};
 use std::fs;
-use crate::hermes_cli;
+use crate::{config, hermes_cli, ssh};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -23,11 +23,36 @@ fn write_models(models: &[SavedModel], profile: Option<&str>) -> Result<(), Stri
 
 #[tauri::command]
 pub fn list_models() -> Result<Vec<SavedModel>, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        let raw = ssh::ssh_list_models(&conn.ssh)?;
+        return Ok(raw.iter().map(|v| SavedModel {
+            id: v.get("id").and_then(|s| s.as_str()).unwrap_or("").to_string(),
+            name: v.get("name").and_then(|s| s.as_str()).unwrap_or("").to_string(),
+            provider: v.get("provider").and_then(|s| s.as_str()).unwrap_or("").to_string(),
+            model: v.get("model").and_then(|s| s.as_str()).unwrap_or("").to_string(),
+            base_url: v.get("baseUrl").and_then(|s| s.as_str()).unwrap_or("").to_string(),
+            created_at: v.get("createdAt").and_then(|n| n.as_u64()).unwrap_or(0),
+        }).collect());
+    }
     Ok(read_models_raw(None))
 }
 
 #[tauri::command]
 pub fn add_model(name: String, provider: String, model: String, base_url: String) -> Result<SavedModel, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        let v = ssh::ssh_add_model(&conn.ssh, &name, &provider, &model, &base_url)?;
+        let ts = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map(|d| d.as_secs()).unwrap_or(0);
+        return Ok(SavedModel {
+            id: v.get("id").and_then(|s| s.as_str()).unwrap_or("").to_string(),
+            name: v.get("name").and_then(|s| s.as_str()).map(|s| s.to_string()).unwrap_or(name),
+            provider: v.get("provider").and_then(|s| s.as_str()).map(|s| s.to_string()).unwrap_or(provider),
+            model: v.get("model").and_then(|s| s.as_str()).map(|s| s.to_string()).unwrap_or(model),
+            base_url: v.get("baseUrl").and_then(|s| s.as_str()).map(|s| s.to_string()).unwrap_or(base_url),
+            created_at: v.get("createdAt").and_then(|n| n.as_u64()).unwrap_or(ts),
+        });
+    }
     let mut models = read_models_raw(None);
     if models.iter().any(|m| m.model == model && m.provider == provider) {
         return Err("models.alreadyExists".into());
@@ -41,6 +66,11 @@ pub fn add_model(name: String, provider: String, model: String, base_url: String
 
 #[tauri::command]
 pub fn remove_model(id: String) -> Result<bool, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        ssh::ssh_remove_model(&conn.ssh, &id)?;
+        return Ok(true);
+    }
     let mut models = read_models_raw(None);
     let len_before = models.len();
     models.retain(|m| m.id != id);
@@ -50,6 +80,18 @@ pub fn remove_model(id: String) -> Result<bool, String> {
 
 #[tauri::command]
 pub fn update_model(id: String, fields: serde_json::Value) -> Result<bool, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        let mut ssh_args: Vec<&str> = vec!["models", "update", &id];
+        let name_str; let provider_str; let model_str; let url_str;
+        if let Some(n) = fields.get("name").and_then(|v| v.as_str()) { name_str = n.to_string(); ssh_args.push("--name"); ssh_args.push(&name_str); }
+        if let Some(p) = fields.get("provider").and_then(|v| v.as_str()) { provider_str = p.to_string(); ssh_args.push("--provider"); ssh_args.push(&provider_str); }
+        if let Some(m) = fields.get("model").and_then(|v| v.as_str()) { model_str = m.to_string(); ssh_args.push("--model"); ssh_args.push(&model_str); }
+        if let Some(b) = fields.get("baseUrl").and_then(|v| v.as_str()) { url_str = b.to_string(); ssh_args.push("--base-url"); ssh_args.push(&url_str); }
+        let cmd = ssh::build_remote_hermes_cmd(&ssh_args);
+        ssh::ssh_exec(&conn.ssh, &cmd, None, 10000)?;
+        return Ok(true);
+    }
     let mut models = read_models_raw(None);
     if let Some(idx) = models.iter().position(|m| m.id == id) {
         if let Some(n) = fields.get("name").and_then(|v| v.as_str()) { models[idx].name = n.to_string(); }

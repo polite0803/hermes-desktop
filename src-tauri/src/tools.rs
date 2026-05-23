@@ -1,7 +1,7 @@
 // Toolset management — 16 toolsets with enable/disable via config.yaml section editing
 use serde::{Deserialize, Serialize};
 use std::fs;
-use crate::hermes_cli;
+use crate::{config, hermes_cli, ssh};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -47,12 +47,22 @@ fn parse_enabled_toolsets(content: &str) -> Vec<String> {
 
 #[tauri::command]
 pub fn get_toolsets(profile: Option<String>) -> Result<Vec<ToolsetInfo>, String> {
-    let config = hermes_cli::resolve_profile_home(profile.as_deref()).join("config.yaml");
-    let enabled_set: Vec<String> = if config.exists() {
-        fs::read_to_string(&config).ok().map(|c| parse_enabled_toolsets(&c)).unwrap_or_default()
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        let raw = ssh::ssh_get_toolsets(&conn.ssh, profile.as_deref())?;
+        return Ok(raw.iter().map(|v| ToolsetInfo {
+            key: v.get("key").and_then(|s| s.as_str()).unwrap_or("").to_string(),
+            label: v.get("label").and_then(|s| s.as_str()).unwrap_or("").to_string(),
+            description: v.get("description").and_then(|s| s.as_str()).unwrap_or("").to_string(),
+            enabled: v.get("enabled").and_then(|b| b.as_bool()).unwrap_or(false),
+        }).collect());
+    }
+    let config_path = hermes_cli::resolve_profile_home(profile.as_deref()).join("config.yaml");
+    let enabled_set: Vec<String> = if config_path.exists() {
+        fs::read_to_string(&config_path).ok().map(|c| parse_enabled_toolsets(&c)).unwrap_or_default()
     } else { Vec::new() };
 
-    let all_enabled = enabled_set.is_empty() && !config.exists();
+    let all_enabled = enabled_set.is_empty() && !config_path.exists();
     Ok(TOOLSET_DEFS.iter().map(|(k, l, d)| ToolsetInfo {
         key: k.to_string(), label: l.to_string(), description: d.to_string(),
         enabled: all_enabled || enabled_set.contains(&k.to_string()),
@@ -61,9 +71,14 @@ pub fn get_toolsets(profile: Option<String>) -> Result<Vec<ToolsetInfo>, String>
 
 #[tauri::command]
 pub fn set_toolset_enabled(name: String, enabled: bool, profile: Option<String>) -> Result<bool, String> {
-    let config = hermes_cli::resolve_profile_home(profile.as_deref()).join("config.yaml");
-    if !config.exists() { return Ok(false); }
-    let content = fs::read_to_string(&config).map_err(|e| e.to_string())?;
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        ssh::ssh_set_toolset_enabled(&conn.ssh, profile.as_deref(), &name, enabled)?;
+        return Ok(true);
+    }
+    let config_path = hermes_cli::resolve_profile_home(profile.as_deref()).join("config.yaml");
+    if !config_path.exists() { return Ok(false); }
+    let content = fs::read_to_string(&config_path).map_err(|e| e.to_string())?;
     let mut current = parse_enabled_toolsets(&content);
     if enabled { if !current.contains(&name) { current.push(name); } }
     else { current.retain(|k| k != &name); }
@@ -90,6 +105,6 @@ pub fn set_toolset_enabled(name: String, enabled: bool, profile: Option<String>)
         format!("{}\nplatform_toolsets:\n{}\n", content.trim_end(), new_section)
     };
 
-    fs::write(&config, &new_content).map_err(|e| e.to_string())?;
+    fs::write(&config_path, &new_content).map_err(|e| e.to_string())?;
     Ok(true)
 }

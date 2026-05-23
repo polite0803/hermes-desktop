@@ -1,6 +1,6 @@
 // Kanban — 17 commands mapped to hermes-agent v0.14 CLI (no --json flag)
 use serde::{Deserialize, Serialize};
-use crate::hermes_cli;
+use crate::{config, hermes_cli, ssh};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -130,8 +130,18 @@ pub fn kanban_dispatch_once(dry_run: Option<bool>, profile: Option<String>) -> R
 
 // ── helpers ──
 
+fn run_kanban_cli(args: &[&str], profile: Option<&str>) -> Result<String, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        // ssh_run_kanban prepends "kanban" itself, so strip it from args
+        let ssh_args: &[&str] = if args.first() == Some(&"kanban") { &args[1..] } else { args };
+        return ssh::ssh_run_kanban(&conn.ssh, ssh_args);
+    }
+    hermes_cli::run_hermes_cli(args, profile)
+}
+
 fn ok_text(args: &[&str], profile: Option<&str>) -> Result<Vec<serde_json::Value>, String> {
-    let out = hermes_cli::run_hermes_cli(args, profile)?;
+    let out = run_kanban_cli(args, profile)?;
     // Try JSON parse, fall back to plain text lines
     serde_json::from_str(&out).or_else(|_| {
         Ok(out.lines().map(|l| serde_json::Value::String(l.to_string())).collect())
@@ -139,7 +149,7 @@ fn ok_text(args: &[&str], profile: Option<&str>) -> Result<Vec<serde_json::Value
 }
 
 fn ok_val(args: &[&str], profile: Option<&str>) -> Result<KanbanResult<serde_json::Value>, String> {
-    match hermes_cli::run_hermes_cli(args, profile) {
+    match run_kanban_cli(args, profile) {
         Ok(out) => {
             let data = serde_json::from_str(&out).unwrap_or(serde_json::Value::String(out));
             Ok(KanbanResult { success: true, data: Some(data), error: None })
@@ -149,7 +159,7 @@ fn ok_val(args: &[&str], profile: Option<&str>) -> Result<KanbanResult<serde_jso
 }
 
 fn ok_bool(args: &[&str], profile: Option<&str>) -> Result<KanbanResult<bool>, String> {
-    match hermes_cli::run_hermes_cli(args, profile) {
+    match run_kanban_cli(args, profile) {
         Ok(_) => Ok(KanbanResult { success: true, data: Some(true), error: None }),
         Err(e) => Ok(KanbanResult { success: false, data: None, error: Some(e) }),
     }

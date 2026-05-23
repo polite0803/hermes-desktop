@@ -21,6 +21,7 @@ use tauri::Emitter;
 
 use crate::config;
 use crate::hermes_cli;
+use crate::ssh;
 
 // ─── Lazy Init ──────────────────────────────────────────
 
@@ -379,6 +380,11 @@ pub fn start_gateway(
 
 #[tauri::command]
 pub fn stop_gateway(state: tauri::State<'_, crate::AppState>) -> Result<bool, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        ssh::ssh_stop_gateway(&conn.ssh)?;
+        return Ok(true);
+    }
     let mut gw = state.gateway_state.lock().map_err(|e| format!("Lock: {}", e))?;
 
     let old = std::mem::replace(&mut *gw, GatewayState::NotRunning);
@@ -419,6 +425,10 @@ pub fn stop_gateway(state: tauri::State<'_, crate::AppState>) -> Result<bool, St
 
 #[tauri::command]
 pub fn gateway_status(state: tauri::State<'_, crate::AppState>) -> Result<bool, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        return ssh::ssh_gateway_status(&conn.ssh);
+    }
     let gw = state.gateway_state.lock().map_err(|e| format!("Lock: {}", e))?;
 
     match &*gw {

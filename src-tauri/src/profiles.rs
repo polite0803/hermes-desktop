@@ -2,7 +2,7 @@
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
-use crate::hermes_cli;
+use crate::{config, hermes_cli, ssh};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -60,8 +60,32 @@ fn read_profile_metadata(dir: &PathBuf) -> (String, String) {
     (provider, model)
 }
 
+fn list_profiles_via_ssh(ssh_config: &config::SshConfig) -> Result<Vec<Profile>, String> {
+    let raw = ssh::ssh_list_profiles(ssh_config)?;
+    Ok(raw.iter().map(|v| {
+        let name = v.get("name").and_then(|s| s.as_str()).unwrap_or("").to_string();
+        let is_default = name == "default";
+        Profile {
+            name: name.clone(),
+            path: String::new(),
+            is_default,
+            is_active: v.get("active").and_then(|b| b.as_bool()).unwrap_or(false),
+            model: v.get("model").and_then(|s| s.as_str()).unwrap_or("").to_string(),
+            provider: v.get("provider").and_then(|s| s.as_str()).unwrap_or("").to_string(),
+            has_env: false,
+            has_soul: false,
+            skill_count: v.get("skillCount").and_then(|n| n.as_u64()).unwrap_or(0) as u32,
+            gateway_running: false,
+        }
+    }).collect())
+}
+
 #[tauri::command]
 pub fn list_profiles() -> Result<Vec<Profile>, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        return list_profiles_via_ssh(&conn.ssh);
+    }
     let mut profiles = Vec::new();
     let active = active_profile_name();
 
@@ -98,6 +122,10 @@ pub fn list_profiles() -> Result<Vec<Profile>, String> {
 
 #[tauri::command]
 pub fn create_profile(name: String, clone: Option<bool>) -> Result<serde_json::Value, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        return ssh::ssh_create_profile(&conn.ssh, &name, clone.unwrap_or(false));
+    }
     let mut args: Vec<&str> = vec!["profile", "create", &name];
     if clone.unwrap_or(false) { /* hermes profile create doesn't have --clone on all versions */
         args.push("--clone-from"); args.push("default");
@@ -110,6 +138,11 @@ pub fn create_profile(name: String, clone: Option<bool>) -> Result<serde_json::V
 
 #[tauri::command]
 pub fn delete_profile(name: String) -> Result<serde_json::Value, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        ssh::ssh_delete_profile(&conn.ssh, &name)?;
+        return Ok(serde_json::json!({"success": true}));
+    }
     match hermes_cli::run_hermes_cli(&["profile", "delete", &name], None) {
         Ok(_) => Ok(serde_json::json!({"success": true})),
         Err(e) => Ok(serde_json::json!({"success": false, "error": e})),

@@ -6,7 +6,7 @@ use std::path::PathBuf;
 use std::process::{Command, Stdio};
 use tauri::{AppHandle, Emitter};
 
-use crate::hermes_cli;
+use crate::{config, hermes_cli, ssh};
 
 // ─── Constants ───
 
@@ -224,6 +224,10 @@ pub async fn start_pypi_install(app: AppHandle) -> Result<InstallResult, String>
 
 #[tauri::command]
 pub fn verify_install() -> Result<bool, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        return ssh::ssh_get_hermes_version(&conn.ssh).map(|v| v.is_some());
+    }
     // Try the hermess CLI directly — this uses resolve_python/script which handle multiple install locations
     match hermes_cli::run_hermes_cli(&["--version"], None) {
         Ok(v) => Ok(!v.is_empty()),
@@ -325,6 +329,10 @@ async fn run_install_windows_async(app: AppHandle, total: u32) -> Result<Install
 
 #[tauri::command]
 pub fn get_hermes_version() -> Result<Option<String>, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        return ssh::ssh_get_hermes_version(&conn.ssh);
+    }
     if !hermes_python().exists() { return Ok(None); }
     let mut cmd = Command::new(hermes_python());
     cmd.arg(hermes_script()).arg("--version")
@@ -338,10 +346,23 @@ pub fn get_hermes_version() -> Result<Option<String>, String> {
 
 #[tauri::command] pub fn refresh_hermes_version() -> Result<Option<String>, String> { get_hermes_version() }
 
-#[tauri::command] pub fn run_hermes_doctor() -> Result<String, String> { hermes_cli::run_hermes_cli(&["doctor"], None) }
+#[tauri::command] pub fn run_hermes_doctor() -> Result<String, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        return ssh::ssh_run_doctor(&conn.ssh);
+    }
+    hermes_cli::run_hermes_cli(&["doctor"], None)
+}
 
 #[tauri::command]
 pub async fn run_hermes_update(app: AppHandle) -> Result<InstallResult, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        match ssh::ssh_run_update(&conn.ssh) {
+            Ok(_out) => return Ok(InstallResult { success: true, error: None }),
+            Err(e) => return Ok(InstallResult { success: false, error: Some(e) }),
+        }
+    }
     if !hermes_python().exists() { return Err("install.hermesNotInstalled".into()); }
     let _ = app.emit("install-progress", InstallProgress { step: 1, total_steps: 1, title_key: "install.stepUpdatingAgent".into(), detail_key: "install.detailRunningUpdate".into(), log: None });
 
@@ -395,11 +416,20 @@ pub async fn run_hermes_migrate(app: AppHandle) -> Result<InstallResult, String>
 // ─── Backup / Import / Dump ───
 
 #[tauri::command] pub fn run_hermes_backup(profile: Option<String>) -> Result<BackupResult, String> {
-    let mut args: Vec<&str> = vec!["backup"];
-    if let Some(ref p) = profile { args.push("--profile"); args.push(p); }
-    match hermes_cli::run_hermes_cli(&args, profile.as_deref()) {
-        Ok(o) => Ok(BackupResult { success: true, path: o.trim().lines().last().map(|s| s.to_string()), error: None }),
-        Err(e) => Ok(BackupResult { success: false, path: None, error: Some(e) }),
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        let cmd = ssh::build_remote_hermes_cmd(&["backup"]);
+        match ssh::ssh_exec(&conn.ssh, &cmd, None, 30000) {
+            Ok(o) => Ok(BackupResult { success: true, path: o.trim().lines().last().map(|s| s.to_string()), error: None }),
+            Err(e) => Ok(BackupResult { success: false, path: None, error: Some(e) }),
+        }
+    } else {
+        let mut args: Vec<&str> = vec!["backup"];
+        if let Some(ref p) = profile { args.push("--profile"); args.push(p); }
+        match hermes_cli::run_hermes_cli(&args, profile.as_deref()) {
+            Ok(o) => Ok(BackupResult { success: true, path: o.trim().lines().last().map(|s| s.to_string()), error: None }),
+            Err(e) => Ok(BackupResult { success: false, path: None, error: Some(e) }),
+        }
     }
 }
 
@@ -409,7 +439,13 @@ pub async fn run_hermes_migrate(app: AppHandle) -> Result<InstallResult, String>
     match hermes_cli::run_hermes_cli(&args, profile.as_deref()) { Ok(_) => Ok(InstallResult { success: true, error: None }), Err(e) => Ok(InstallResult { success: false, error: Some(e) }) }
 }
 
-#[tauri::command] pub fn run_hermes_dump() -> Result<String, String> { hermes_cli::run_hermes_cli(&["dump"], None) }
+#[tauri::command] pub fn run_hermes_dump() -> Result<String, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        return ssh::ssh_run_dump(&conn.ssh);
+    }
+    hermes_cli::run_hermes_cli(&["dump"], None)
+}
 
 // ─── MCP / Memory Providers / Logs ───
 
@@ -421,6 +457,17 @@ const KNOWN_MEMORY_PROVIDERS: &[(&str, &str, &[&str])] = &[
 ];
 
 #[tauri::command] pub fn discover_memory_providers(profile: Option<String>) -> Result<Vec<MemoryProvider>, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        let raw = ssh::ssh_discover_memory_providers(&conn.ssh, profile.as_deref())?;
+        return Ok(raw.iter().map(|v| MemoryProvider {
+            name: v.get("name").and_then(|s| s.as_str()).unwrap_or("").to_string(),
+            description: v.get("description").and_then(|s| s.as_str()).unwrap_or("").to_string(),
+            installed: v.get("installed").and_then(|b| b.as_bool()).unwrap_or(false),
+            active: v.get("active").and_then(|b| b.as_bool()).unwrap_or(false),
+            env_vars: v.get("envVars").and_then(|a| a.as_array()).map(|a| a.iter().filter_map(|v| v.as_str().map(|s| s.to_string())).collect()).unwrap_or_default(),
+        }).collect());
+    }
     let plugins = hermes_repo().join("plugins").join("memory");
     if !plugins.exists() { return Ok(Vec::new()); }
     let active = hermes_cli::resolve_profile_home(profile.as_deref()).join("config.yaml").exists()
@@ -442,6 +489,14 @@ const KNOWN_MEMORY_PROVIDERS: &[(&str, &str, &[&str])] = &[
 }
 
 #[tauri::command] pub fn read_logs(log_file: Option<String>, lines: Option<u32>) -> Result<LogResult, String> {
+    let conn = config::get_connection_config_raw()?;
+    if conn.mode == "ssh" {
+        let v = ssh::ssh_read_logs(&conn.ssh, log_file.as_deref(), lines)?;
+        return Ok(LogResult {
+            content: v.get("content").and_then(|s| s.as_str()).unwrap_or("").to_string(),
+            path: v.get("path").and_then(|s| s.as_str()).unwrap_or("").to_string(),
+        });
+    }
     let logs = hermes_home().join("logs");
     let safe = log_file.as_deref().filter(|f| LOG_WHITELIST.contains(f)).unwrap_or("agent.log");
     let path = logs.join(safe);
