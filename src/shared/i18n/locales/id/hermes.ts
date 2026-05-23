@@ -4,5 +4,6 @@ export default {
   apiError: "Kesalahan API",
   apiServerError: "Kesalahan server API",
   streamError: "Kesalahan stream",
-  noResponse: "Tidak ada respons dari model. Periksa konfigurasi model dan kunci API Anda.",
+  noResponse:
+    "Tidak ada respons dari model. Periksa konfigurasi model dan kunci API Anda.",
 } as const;

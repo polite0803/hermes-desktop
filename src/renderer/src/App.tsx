@@ -26,7 +26,13 @@ function App(): React.JSX.Element {
   // which previously trapped restricted-network users in a reinstall
   // loop on every launch (#130).
   const [verifyWarning, setVerifyWarning] = useState(false);
-  const isMac = window.electron?.process?.platform === "darwin";
+  const isMac = (() => {
+    try {
+      return navigator.platform?.toLowerCase().includes("mac") ?? false;
+    } catch {
+      return false;
+    }
+  })();
 
   const runInstallCheck = useCallback(async () => {
     const startedAt = Date.now();

@@ -13,8 +13,12 @@ const setLocale = vi.fn().mockResolvedValue(undefined);
 
 vi.mock("@shared/hermes-api", () => ({
   hermesAPI: {
-    get getLocale() { return getLocale; },
-    get setLocale() { return setLocale; },
+    get getLocale() {
+      return getLocale;
+    },
+    get setLocale() {
+      return setLocale;
+    },
   },
 }));
 

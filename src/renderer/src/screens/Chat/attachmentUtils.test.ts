@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { processFiles, filesFromClipboard } from "./attachmentUtils";
 
 // Mock the hermesAPI module
@@ -109,7 +109,9 @@ describe("processFiles", () => {
   it("uses the origin path returned by getPathForFile for picker/drag-drop files", async () => {
     // Override the mock to return a file path (simulating picker/drag-drop)
     const { hermesAPI } = await import("@shared/hermes-api");
-    vi.mocked(hermesAPI.getPathForFile).mockReturnValue("C:/Users/me/Downloads/doc.pdf");
+    vi.mocked(hermesAPI.getPathForFile).mockReturnValue(
+      "C:/Users/me/Downloads/doc.pdf",
+    );
     vi.mocked(hermesAPI.stageAttachment).mockClear();
 
     const file = makeFile("doc.pdf", "application/pdf", "%PDF-1.4");

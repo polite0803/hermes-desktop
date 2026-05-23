@@ -28,12 +28,17 @@ interface MemoryData {
   stats: { totalSessions: number; totalMessages: number };
 }
 
-function timeAgo(ts: number | null, t: (key: string, opts?: Record<string, unknown>) => string): string {
+function timeAgo(
+  ts: number | null,
+  t: (key: string, opts?: Record<string, unknown>) => string,
+): string {
   if (!ts) return "";
   const diff = Math.floor(Date.now() / 1000) - ts;
   if (diff < 60) return t("memory.justNow");
-  if (diff < 3600) return t("memory.minutesAgo", { count: Math.floor(diff / 60) });
-  if (diff < 86400) return t("memory.hoursAgo", { count: Math.floor(diff / 3600) });
+  if (diff < 3600)
+    return t("memory.minutesAgo", { count: Math.floor(diff / 60) });
+  if (diff < 86400)
+    return t("memory.hoursAgo", { count: Math.floor(diff / 3600) });
   return t("memory.daysAgo", { count: Math.floor(diff / 86400) });
 }
 
@@ -56,7 +61,11 @@ function CapacityBar({
       <div className="memory-capacity-header">
         <span className="memory-capacity-label">{label}</span>
         <span className="memory-capacity-value">
-          {t("memory.capacityUsage", { used: used.toLocaleString(), limit: limit.toLocaleString(), pct })}
+          {t("memory.capacityUsage", {
+            used: used.toLocaleString(),
+            limit: limit.toLocaleString(),
+            pct,
+          })}
         </span>
       </div>
       <div className="memory-capacity-track">
@@ -135,16 +144,17 @@ function Memory({ profile }: { profile?: string }): React.JSX.Element {
   async function handleAddEntry(): Promise<void> {
     if (!newEntry.trim()) return;
     setError("");
-    const result = await hermesAPI.addMemoryEntry(
-      newEntry.trim(),
-      profile,
-    );
+    const result = await hermesAPI.addMemoryEntry(newEntry.trim(), profile);
     if (result.success) {
       setNewEntry("");
       setShowAdd(false);
       await loadData();
     } else {
-      setError(result.errorKey ? t(result.errorKey) : (result.error || t("memory.addFailed")));
+      setError(
+        result.errorKey
+          ? t(result.errorKey)
+          : result.error || t("memory.addFailed"),
+      );
     }
   }
 
@@ -161,7 +171,11 @@ function Memory({ profile }: { profile?: string }): React.JSX.Element {
       setEditContent("");
       await loadData();
     } else {
-      setError(result.errorKey ? t(result.errorKey) : (result.error || t("memory.updateFailed")));
+      setError(
+        result.errorKey
+          ? t(result.errorKey)
+          : result.error || t("memory.updateFailed"),
+      );
     }
   }
 
@@ -173,17 +187,18 @@ function Memory({ profile }: { profile?: string }): React.JSX.Element {
 
   async function handleSaveUserProfile(): Promise<void> {
     setError("");
-    const result = await hermesAPI.writeUserProfile(
-      userContent,
-      profile,
-    );
+    const result = await hermesAPI.writeUserProfile(userContent, profile);
     if (result.success) {
       setUserEditing(false);
       setUserSaved(true);
       setTimeout(() => setUserSaved(false), 2000);
       await loadData();
     } else {
-      setError(result.errorKey ? t(result.errorKey) : (result.error || t("memory.saveFailed")));
+      setError(
+        result.errorKey
+          ? t(result.errorKey)
+          : result.error || t("memory.saveFailed"),
+      );
     }
   }
 

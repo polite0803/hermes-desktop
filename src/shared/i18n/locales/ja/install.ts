@@ -33,7 +33,8 @@ export default {
   detailFetchingScript: "インストールスクリプトを取得中...",
   stepRunningInstaller: "インストーラーを実行中",
   detailExecutingPs1: "install.ps1を実行中...",
-  hermesNotInstalled: "Hermes Agentがインストールされていません。先にインストールを完了してください。",
+  hermesNotInstalled:
+    "Hermes Agentがインストールされていません。先にインストールを完了してください。",
   stepUpdatingAgent: "Hermes Agentを更新中",
   detailRunningUpdate: "hermes updateを実行中...",
   stepMigratingOpenClaw: "OpenClawから移行中",

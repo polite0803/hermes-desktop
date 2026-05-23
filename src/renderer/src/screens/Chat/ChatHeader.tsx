@@ -18,7 +18,9 @@ function UsageBadge({ usage }: { usage: UsageState }): React.JSX.Element {
   const tooltip =
     `${t("chat.promptTokens")}: ${usage.promptTokens.toLocaleString()} | ` +
     `${t("chat.completionTokens")}: ${usage.completionTokens.toLocaleString()}` +
-    (usage.cost != null ? ` | ${t("chat.cost")}: $${usage.cost.toFixed(4)}` : "");
+    (usage.cost != null
+      ? ` | ${t("chat.cost")}: $${usage.cost.toFixed(4)}`
+      : "");
 
   return (
     <span className="chat-token-counter" title={tooltip}>

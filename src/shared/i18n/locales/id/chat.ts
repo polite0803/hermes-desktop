@@ -23,7 +23,8 @@ export default {
   deny: "Tolak",
   newChat: "Chat baru (Cmd+N)",
   clearChat: "Bersihkan chat",
-  clearChatConfirm: "Bersihkan percakapan ini? Tindakan ini tidak dapat dibatalkan.",
+  clearChatConfirm:
+    "Bersihkan percakapan ini? Tindakan ini tidak dapat dibatalkan.",
   attach: "Lampirkan file",
   removeAttachment: "Hapus {{name}}",
   dropToAttach: "Lepaskan file untuk dilampirkan",

@@ -38,26 +38,43 @@ function Skills({ profile }: SkillsProps): React.JSX.Element {
   const [actionInProgress, setActionInProgress] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [hubSearch, setHubSearch] = useState("");
-  const [hubResults, setHubResults] = useState<{ name: string; description: string; category: string; author: string; downloads: number; installed: boolean }[]>([]);
+  const [hubResults, setHubResults] = useState<
+    {
+      name: string;
+      description: string;
+      category: string;
+      author: string;
+      downloads: number;
+      installed: boolean;
+    }[]
+  >([]);
   const [hubLoading, setHubLoading] = useState(false);
-  const [hubSource, setHubSource] = useState<"agentskills" | "huggingface">("agentskills");
+  const hubSource: "agentskills" | "huggingface" = "agentskills";
   const searchRef = useRef<HTMLInputElement>(null);
 
   async function searchHub(): Promise<void> {
     if (!hubSearch.trim()) return;
     setHubLoading(true);
     try {
-      const results = hubSource === "huggingface"
-        ? await hermesAPI.searchHuggingfaceSkills(hubSearch.trim())
-        : await hermesAPI.searchSkillsHub(hubSearch.trim());
+      const results =
+        hubSource === "huggingface"
+          ? await hermesAPI.searchHuggingfaceSkills(hubSearch.trim())
+          : await hermesAPI.searchSkillsHub(hubSearch.trim());
       setHubResults(results);
-    } catch {}
+    } catch {
+      /* ignore */
+    }
     setHubLoading(false);
   }
 
   async function installFromHub(name: string): Promise<void> {
     setActionInProgress(name);
-    try { await hermesAPI.installFromHub(name, profile); await loadInstalled(); } catch {}
+    try {
+      await hermesAPI.installFromHub(name, profile);
+      await loadInstalled();
+    } catch {
+      /* ignore */
+    }
     setActionInProgress(null);
   }
 
@@ -71,11 +88,13 @@ function Skills({ profile }: SkillsProps): React.JSX.Element {
     setBundledSkills(list);
   }, []);
 
+  /* eslint-disable react-hooks/preserve-manual-memoization */
   const loadAll = useCallback(async (): Promise<void> => {
     setLoading(true);
     await Promise.all([loadInstalled(), loadBundled()]);
     setLoading(false);
   }, [loadInstalled, loadBundled]);
+  /* eslint-enable react-hooks/preserve-manual-memoization */
 
   useEffect(() => {
     loadAll();
@@ -340,43 +359,98 @@ function Skills({ profile }: SkillsProps): React.JSX.Element {
       ) : (
         <div className="skills-grid">
           {tab === "hub" && (
-          <div style={{ marginTop: 12 }}>
-            <div className="skills-search">
-              <Search size={15} />
-              <input className="skills-search-input" type="text" placeholder={t("skills.searchHubPlaceholder")} value={hubSearch}
-                onChange={(e) => setHubSearch(e.target.value)}
-                onKeyDown={(e) => { if (e.key === "Enter") searchHub(); }} />
-              <button className="btn btn-primary btn-sm" onClick={searchHub} disabled={hubLoading}>
-                {hubLoading ? <Refresh size={13} /> : <Search size={13} />} {t("skills.searchHub")}
-              </button>
-            </div>
-            <div className="skills-grid" style={{ marginTop: 12 }}>
-              {hubResults.map((skill) => {
-                const alreadyInstalled = installedNames.has(skill.name.toLowerCase());
-                return (
-                  <div key={skill.name} className="skills-card" style={{ padding: 14 }}>
-                    <div className="skills-card-header">
-                      <div className="skills-card-name">{skill.name}</div>
-                      <span className="skills-card-category" style={{ fontSize: 11, background: "var(--bg-tertiary)", padding: "2px 8px", borderRadius: 10 }}>{skill.category}</span>
+            <div style={{ marginTop: 12 }}>
+              <div className="skills-search">
+                <Search size={15} />
+                <input
+                  className="skills-search-input"
+                  type="text"
+                  placeholder={t("skills.searchHubPlaceholder")}
+                  value={hubSearch}
+                  onChange={(e) => setHubSearch(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") searchHub();
+                  }}
+                />
+                <button
+                  className="btn btn-primary btn-sm"
+                  onClick={searchHub}
+                  disabled={hubLoading}
+                >
+                  {hubLoading ? <Refresh size={13} /> : <Search size={13} />}{" "}
+                  {t("skills.searchHub")}
+                </button>
+              </div>
+              <div className="skills-grid" style={{ marginTop: 12 }}>
+                {hubResults.map((skill) => {
+                  const alreadyInstalled = installedNames.has(
+                    skill.name.toLowerCase(),
+                  );
+                  return (
+                    <div
+                      key={skill.name}
+                      className="skills-card"
+                      style={{ padding: 14 }}
+                    >
+                      <div className="skills-card-header">
+                        <div className="skills-card-name">{skill.name}</div>
+                        <span
+                          className="skills-card-category"
+                          style={{
+                            fontSize: 11,
+                            background: "var(--bg-tertiary)",
+                            padding: "2px 8px",
+                            borderRadius: 10,
+                          }}
+                        >
+                          {skill.category}
+                        </span>
+                      </div>
+                      <div
+                        className="skills-card-desc"
+                        style={{ fontSize: 12, marginTop: 4 }}
+                      >
+                        {skill.description}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: 11,
+                          color: "var(--text-muted)",
+                          marginTop: 4,
+                        }}
+                      >
+                        {t("skills.hubSkillInfo", {
+                          author: skill.author,
+                          downloads: skill.downloads,
+                        })}
+                      </div>
+                      <div style={{ marginTop: 8 }}>
+                        {alreadyInstalled ? (
+                          <span
+                            style={{ fontSize: 12, color: "var(--accent)" }}
+                          >
+                            {t("skills.hubInstalled")}
+                          </span>
+                        ) : (
+                          <button
+                            className="btn btn-primary btn-sm"
+                            onClick={() => installFromHub(skill.name)}
+                            disabled={actionInProgress === skill.name}
+                          >
+                            <Download size={12} />{" "}
+                            {actionInProgress === skill.name
+                              ? t("skills.installing")
+                              : t("skills.install")}
+                          </button>
+                        )}
+                      </div>
                     </div>
-                    <div className="skills-card-desc" style={{ fontSize: 12, marginTop: 4 }}>{skill.description}</div>
-                    <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 4 }}>{t("skills.hubSkillInfo", { author: skill.author, downloads: skill.downloads })}</div>
-                    <div style={{ marginTop: 8 }}>
-                      {alreadyInstalled ? (
-                        <span style={{ fontSize: 12, color: "var(--accent)" }}>{t("skills.hubInstalled")}</span>
-                      ) : (
-                        <button className="btn btn-primary btn-sm" onClick={() => installFromHub(skill.name)} disabled={actionInProgress === skill.name}>
-                          <Download size={12} /> {actionInProgress === skill.name ? t("skills.installing") : t("skills.install")}
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        )}
-        {filteredBundled.map((skill) => {
+          )}
+          {filteredBundled.map((skill) => {
             const isInstalled = installedNames.has(skill.name.toLowerCase());
             const isActioning = actionInProgress === skill.name;
             return (

@@ -27,8 +27,7 @@ export default {
   setupDesc2:
     "Click below to automatically download and set up Claw3D. This will clone the repository and install all dependencies.",
   preparing: "Preparing...",
-  loadFailed:
-    "Failed to load Claw3D. The dev server may still be starting up.",
+  loadFailed: "Failed to load Claw3D. The dev server may still be starting up.",
   installStep: "Step {{step}}/{{totalSteps}}: {{title}}",
   wsPlaceholder: "ws://localhost:18789",
 } as const;

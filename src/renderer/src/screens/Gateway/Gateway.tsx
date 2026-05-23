@@ -127,10 +127,22 @@ function Gateway({ profile }: { profile?: string }): React.JSX.Element {
               {gatewayRunning ? t("gateway.running") : t("gateway.stopped")}
             </span>
             <div style={{ display: "flex", gap: 8 }}>
-              <button className="btn btn-secondary btn-sm" onClick={toggleGateway}>
+              <button
+                className="btn btn-secondary btn-sm"
+                onClick={toggleGateway}
+              >
                 {gatewayRunning ? t("common.stop") : t("common.start")}
               </button>
-              <button className="btn btn-sm" onClick={async () => { try { await hermesAPI.startProxy(); } catch(e) { alert(t("gateway.proxyError", { error: String(e) })); } }}>
+              <button
+                className="btn btn-sm"
+                onClick={async () => {
+                  try {
+                    await hermesAPI.startProxy();
+                  } catch (e) {
+                    alert(t("gateway.proxyError", { error: String(e) }));
+                  }
+                }}
+              >
                 {t("gateway.startProxy")}
               </button>
             </div>

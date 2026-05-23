@@ -1,9 +1,11 @@
 export default {
   title: "カンバン",
-  subtitle: "エージェントが自律的に取得して完了できるタスク用の永続マルチエージェントボード。",
+  subtitle:
+    "エージェントが自律的に取得して完了できるタスク用の永続マルチエージェントボード。",
   refresh: "更新",
   dispatch: "ディスパッチ",
-  dispatchTooltip: "ディスパッチャーを1回実行 — 準備完了タスクを昇格させワーカーを起動",
+  dispatchTooltip:
+    "ディスパッチャーを1回実行 — 準備完了タスクを昇格させワーカーを起動",
   newTask: "新しいタスク",
   newBoard: "新しいボード",
   columns: {
@@ -14,8 +16,10 @@ export default {
     blocked: "ブロック",
     done: "完了",
   },
-  remoteUnsupported: "カンバンにはローカルの Hermes インストールまたは SSH トンネルモードが必要です。",
-  remoteUnsupportedHint: "通常のリモート（HTTP + API キー）モードではカンバン API がまだ公開されていません。ボードを管理するには、設定でローカルまたは SSH トンネルモードに切り替えてください。",
+  remoteUnsupported:
+    "カンバンにはローカルの Hermes インストールまたは SSH トンネルモードが必要です。",
+  remoteUnsupportedHint:
+    "通常のリモート（HTTP + API キー）モードではカンバン API がまだ公開されていません。ボードを管理するには、設定でローカルまたは SSH トンネルモードに切り替えてください。",
   createTask: "新しいカンバンタスク",
   titleLabel: "タイトル",
   titlePlaceholder: "何をする必要がありますか？",
@@ -34,7 +38,8 @@ export default {
   workspaceDir: "フォルダーを選択…",
   workspaceNoFolder: "フォルダー未選択",
   workspaceBrowse: "参照…",
-  triageCheckbox: "トリアージに配置（スペシファイアが ToDo に昇格する前に仕様を展開）",
+  triageCheckbox:
+    "トリアージに配置（スペシファイアが ToDo に昇格する前に仕様を展開）",
   cancel: "キャンセル",
   creating: "作成中…",
   createTaskBtn: "タスクを作成",
@@ -60,7 +65,8 @@ export default {
   errorCreateTask: "タスクの作成に失敗しました",
   errorSwitchBoard: "ボードの切り替えに失敗しました",
   errorCreateBoard: "ボードの作成に失敗しました",
-  errorMoveTask: "デスクトップから {{from}} → {{to}} に移動できません。エージェントまたは CLI を使用してください。",
+  errorMoveTask:
+    "デスクトップから {{from}} → {{to}} に移動できません。エージェントまたは CLI を使用してください。",
   errorSpecifyTask: "タスクの指定に失敗しました",
   errorArchiveTask: "タスクのアーカイブに失敗しました",
   errorReclaim: "再取得に失敗しました",

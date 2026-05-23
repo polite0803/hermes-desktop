@@ -109,12 +109,17 @@ function priorityLabel(p: number): string {
   return "";
 }
 
-function ageLabel(createdAt: number | null, t: (key: string, opts?: Record<string, unknown>) => string): string {
+function ageLabel(
+  createdAt: number | null,
+  t: (key: string, opts?: Record<string, unknown>) => string,
+): string {
   if (!createdAt) return "";
   const seconds = Math.max(0, Math.floor(Date.now() / 1000 - createdAt));
   if (seconds < 60) return t("kanban.ageSeconds", { count: seconds });
-  if (seconds < 3600) return t("kanban.ageMinutes", { count: Math.floor(seconds / 60) });
-  if (seconds < 86400) return t("kanban.ageHours", { count: Math.floor(seconds / 3600) });
+  if (seconds < 3600)
+    return t("kanban.ageMinutes", { count: Math.floor(seconds / 60) });
+  if (seconds < 86400)
+    return t("kanban.ageHours", { count: Math.floor(seconds / 3600) });
   return t("kanban.ageDays", { count: Math.floor(seconds / 86400) });
 }
 
@@ -335,11 +340,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
     setActionBusy(task.id);
     let res: { success: boolean; error?: string };
     if (target === "done") {
-      res = await hermesAPI.kanbanCompleteTask(
-        task.id,
-        undefined,
-        profile,
-      );
+      res = await hermesAPI.kanbanCompleteTask(task.id, undefined, profile);
     } else if (target === "blocked") {
       const reason = window.prompt(t("kanban.blockReasonPrompt")) || "";
       res = await hermesAPI.kanbanBlockTask(
@@ -351,14 +352,15 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
       res = await hermesAPI.kanbanUnblockTask(task.id, profile);
     } else {
       setActionBusy(null);
-      setError(
-        t("kanban.errorMoveTask", { from: task.status, to: target }),
-      );
+      setError(t("kanban.errorMoveTask", { from: task.status, to: target }));
       return;
     }
     setActionBusy(null);
     if (!res.success) {
-      setError(res.error || t("kanban.errorMoveTask", { from: task.status, to: target }));
+      setError(
+        res.error ||
+          t("kanban.errorMoveTask", { from: task.status, to: target }),
+      );
       return;
     }
     loadAll(true);
@@ -390,13 +392,15 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
   async function handleDrop(task: KanbanTask, target: string): Promise<void> {
     if (!isValidDragTransition(task.status, target)) return;
     if (target === "done") {
-      if (!window.confirm(t("kanban.confirmMarkDone", { title: task.title }))) return;
+      if (!window.confirm(t("kanban.confirmMarkDone", { title: task.title })))
+        return;
     }
     await handleMove(task, target);
   }
 
   async function handleArchive(task: KanbanTask): Promise<void> {
-    if (!window.confirm(t("kanban.confirmArchive", { title: task.title }))) return;
+    if (!window.confirm(t("kanban.confirmArchive", { title: task.title })))
+      return;
     setActionBusy(task.id);
     const res = await hermesAPI.kanbanArchiveTask(task.id, profile);
     setActionBusy(null);
@@ -461,9 +465,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
       <div className="kanban-header">
         <div>
           <h2 className="schedules-title">{t("kanban.title")}</h2>
-          <p className="schedules-subtitle">
-            {t("kanban.subtitle")}
-          </p>
+          <p className="schedules-subtitle">{t("kanban.subtitle")}</p>
         </div>
         <div className="schedules-header-actions">
           <button
@@ -714,7 +716,9 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
             </div>
             <div className="schedules-modal-body">
               <div className="schedules-field">
-                <label className="schedules-field-label">{t("kanban.titleLabel")}</label>
+                <label className="schedules-field-label">
+                  {t("kanban.titleLabel")}
+                </label>
                 <input
                   className="input"
                   type="text"
@@ -725,7 +729,9 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
                 />
               </div>
               <div className="schedules-field">
-                <label className="schedules-field-label">{t("kanban.bodyLabel")}</label>
+                <label className="schedules-field-label">
+                  {t("kanban.bodyLabel")}
+                </label>
                 <textarea
                   className="input schedules-textarea"
                   rows={4}
@@ -752,7 +758,9 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
                 </select>
               </div>
               <div className="schedules-field">
-                <label className="schedules-field-label">{t("kanban.priorityLabel")}</label>
+                <label className="schedules-field-label">
+                  {t("kanban.priorityLabel")}
+                </label>
                 <select
                   className="input"
                   value={newPriority}
@@ -765,14 +773,20 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
                 </select>
               </div>
               <div className="schedules-field">
-                <label className="schedules-field-label">{t("kanban.workspaceLabel")}</label>
+                <label className="schedules-field-label">
+                  {t("kanban.workspaceLabel")}
+                </label>
                 <select
                   className="input"
                   value={newWorkspace}
                   onChange={(e) => setNewWorkspace(e.target.value)}
                 >
-                  <option value="scratch">{t("kanban.workspaceScratch")}</option>
-                  <option value="worktree">{t("kanban.workspaceWorktree")}</option>
+                  <option value="scratch">
+                    {t("kanban.workspaceScratch")}
+                  </option>
+                  <option value="worktree">
+                    {t("kanban.workspaceWorktree")}
+                  </option>
                   <option value="dir">{t("kanban.workspaceDir")}</option>
                 </select>
                 {newWorkspace === "dir" && (
@@ -802,9 +816,7 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
                     checked={newTriage}
                     onChange={(e) => setNewTriage(e.target.checked)}
                   />
-                  <span>
-                    {t("kanban.triageCheckbox")}
-                  </span>
+                  <span>{t("kanban.triageCheckbox")}</span>
                 </label>
               </div>
             </div>
@@ -820,7 +832,9 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
                 onClick={handleCreate}
                 disabled={!newTitle.trim() || actionBusy === "create"}
               >
-                {actionBusy === "create" ? t("kanban.creating") : t("kanban.createTaskBtn")}
+                {actionBusy === "create"
+                  ? t("kanban.creating")
+                  : t("kanban.createTaskBtn")}
               </button>
             </div>
           </div>
@@ -844,7 +858,9 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
             </div>
             <div className="schedules-modal-body">
               <div className="schedules-field">
-                <label className="schedules-field-label">{t("kanban.slugLabel")}</label>
+                <label className="schedules-field-label">
+                  {t("kanban.slugLabel")}
+                </label>
                 <input
                   className="input"
                   type="text"
@@ -879,7 +895,9 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
                 onClick={handleCreateBoard}
                 disabled={!newBoardSlug.trim() || actionBusy === "board-create"}
               >
-                {actionBusy === "board-create" ? t("kanban.creating") : t("kanban.createBoardBtn")}
+                {actionBusy === "board-create"
+                  ? t("kanban.creating")
+                  : t("kanban.createBoardBtn")}
               </button>
             </div>
           </div>
@@ -948,7 +966,11 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
                   )}
                   {detail.comments.length > 0 && (
                     <div className="kanban-detail-section">
-                      <label>{t("kanban.comments", { count: detail.comments.length })}</label>
+                      <label>
+                        {t("kanban.comments", {
+                          count: detail.comments.length,
+                        })}
+                      </label>
                       {detail.comments.map((c) => (
                         <div key={c.id} className="kanban-comment">
                           <div className="kanban-comment-author">
@@ -961,7 +983,9 @@ function Kanban({ profile, visible }: KanbanProps): React.JSX.Element {
                   )}
                   {detail.events.length > 0 && (
                     <div className="kanban-detail-section">
-                      <label>{t("kanban.events", { count: detail.events.length })}</label>
+                      <label>
+                        {t("kanban.events", { count: detail.events.length })}
+                      </label>
                       <div className="kanban-events">
                         {detail.events
                           .slice(-12)

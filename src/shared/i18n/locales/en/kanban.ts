@@ -1,9 +1,11 @@
 export default {
   title: "Kanban",
-  subtitle: "Durable multi-agent board for tasks the agent can pick up and finish on its own.",
+  subtitle:
+    "Durable multi-agent board for tasks the agent can pick up and finish on its own.",
   refresh: "Refresh",
   dispatch: "Dispatch",
-  dispatchTooltip: "Run one dispatcher pass — promote ready tasks and spawn workers",
+  dispatchTooltip:
+    "Run one dispatcher pass — promote ready tasks and spawn workers",
   newTask: "New task",
   newBoard: "New board",
   columns: {
@@ -14,8 +16,10 @@ export default {
     blocked: "Blocked",
     done: "Done",
   },
-  remoteUnsupported: "Kanban requires a local Hermes install or SSH tunnel mode.",
-  remoteUnsupportedHint: "Plain remote (HTTP + API key) mode does not yet expose the kanban API. Switch to local or SSH tunnel mode in Settings to manage the board.",
+  remoteUnsupported:
+    "Kanban requires a local Hermes install or SSH tunnel mode.",
+  remoteUnsupportedHint:
+    "Plain remote (HTTP + API key) mode does not yet expose the kanban API. Switch to local or SSH tunnel mode in Settings to manage the board.",
   createTask: "New kanban task",
   titleLabel: "Title",
   titlePlaceholder: "What needs to be done?",
@@ -34,7 +38,8 @@ export default {
   workspaceDir: "Choose folder…",
   workspaceNoFolder: "No folder selected",
   workspaceBrowse: "Browse…",
-  triageCheckbox: "Park in triage (a specifier expands the spec before promoting to to-do)",
+  triageCheckbox:
+    "Park in triage (a specifier expands the spec before promoting to to-do)",
   cancel: "Cancel",
   creating: "Creating…",
   createTaskBtn: "Create task",
@@ -60,7 +65,8 @@ export default {
   errorCreateTask: "Failed to create task",
   errorSwitchBoard: "Failed to switch board",
   errorCreateBoard: "Failed to create board",
-  errorMoveTask: "Cannot move {{from}} → {{to}} from the desktop. Use the agent or CLI.",
+  errorMoveTask:
+    "Cannot move {{from}} → {{to}} from the desktop. Use the agent or CLI.",
   errorSpecifyTask: "Failed to specify task",
   errorArchiveTask: "Failed to archive task",
   errorReclaim: "Failed to reclaim",

@@ -138,7 +138,8 @@ const SessionCard = memo(function SessionCard({
           {session.source}
         </span>
         <span className="sessions-tag">
-          {session.messageCount} {t("sessions.msgCount", { count: session.messageCount })}
+          {session.messageCount}{" "}
+          {t("sessions.msgCount", { count: session.messageCount })}
         </span>
         {session.model && (
           <span className="sessions-tag sessions-tag--model">

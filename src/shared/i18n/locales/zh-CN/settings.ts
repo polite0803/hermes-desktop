@@ -89,8 +89,7 @@ export default {
   modeSSHTunnel: "SSH 隧道",
   modeLocalHint: "使用本机安装的 Hermes",
   modeRemoteHint: "连接到网络或云服务器上的 Hermes API",
-  modeSSHTunnelHint:
-    "通过 SSH 隧道连接远程 Hermes — 无需暴露端口或 API 密钥。",
+  modeSSHTunnelHint: "通过 SSH 隧道连接远程 Hermes — 无需暴露端口或 API 密钥。",
   remoteUrl: "远程服务器地址",
   remoteUrlHint:
     "Hermes API 服务器地址（需开放 /health 和 /v1/chat/completions）",

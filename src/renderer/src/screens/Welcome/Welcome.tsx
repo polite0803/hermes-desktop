@@ -104,7 +104,9 @@ function Welcome({
         setSshError(t("welcome.errorSshUnreachable"));
       }
     } catch (e) {
-      setSshError(t("welcome.errorSshFailed", { error: t((e as Error).message) }));
+      setSshError(
+        t("welcome.errorSshFailed", { error: t((e as Error).message) }),
+      );
     } finally {
       setSshTesting(false);
     }
@@ -204,7 +206,9 @@ function Welcome({
         <div className="welcome-remote-card">
           <div style={{ display: "flex", gap: 8 }}>
             <div style={{ flex: 3 }}>
-              <label className="welcome-remote-label">{t("welcome.sshHost")}</label>
+              <label className="welcome-remote-label">
+                {t("welcome.sshHost")}
+              </label>
               <input
                 type="text"
                 className="welcome-remote-input"
@@ -215,7 +219,9 @@ function Welcome({
               />
             </div>
             <div style={{ flex: 1 }}>
-              <label className="welcome-remote-label">{t("welcome.sshPort")}</label>
+              <label className="welcome-remote-label">
+                {t("welcome.sshPort")}
+              </label>
               <input
                 type="number"
                 className="welcome-remote-input"
@@ -295,7 +301,15 @@ function Welcome({
             </p>
           )}
 
-          <p className="welcome-remote-hint" dangerouslySetInnerHTML={{ __html: t("welcome.sshHint", { user: sshUser || "user", host: sshHost || "host" }) }} />
+          <p
+            className="welcome-remote-hint"
+            dangerouslySetInnerHTML={{
+              __html: t("welcome.sshHint", {
+                user: sshUser || "user",
+                host: sshHost || "host",
+              }),
+            }}
+          />
         </div>
 
         <button

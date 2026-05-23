@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { THEME_STORAGE_KEY as STORAGE_KEY } from "../constants";
 
 type Theme = "light" | "dark" | "system";
 type ResolvedTheme = "light" | "dark";
@@ -14,8 +15,6 @@ const ThemeContext = createContext<ThemeContextValue>({
   resolved: "dark",
   setTheme: () => {},
 });
-
-import { THEME_STORAGE_KEY as STORAGE_KEY } from "../constants";
 
 function getSystemTheme(): ResolvedTheme {
   return window.matchMedia("(prefers-color-scheme: dark)").matches

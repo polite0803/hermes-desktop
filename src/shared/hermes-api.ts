@@ -215,7 +215,8 @@ export const hermesAPI = {
 
   // ── Hermes engine ─────────────────────────────────────
   getHermesVersion: (): Promise<string | null> => invoke("get_hermes_version"),
-  refreshHermesVersion: (): Promise<string | null> => invoke("refresh_hermes_version"),
+  refreshHermesVersion: (): Promise<string | null> =>
+    invoke("refresh_hermes_version"),
   runHermesDoctor: (): Promise<string> => invoke("run_hermes_doctor"),
   runHermesUpdate: (): Promise<{ success: boolean; error?: string }> =>
     invoke("run_hermes_update"),
@@ -240,15 +241,25 @@ export const hermesAPI = {
     invoke("get_config_value", { key, profile }),
   setConfig: (key: string, value: string, profile?: string): Promise<boolean> =>
     invoke("set_config_value", { key, value, profile }),
-  getHermesHome: (profile?: string): Promise<string> =>
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  getHermesHome: (_profile?: string): Promise<string> =>
     invoke("get_hermes_home"),
   getModelConfig: (profile?: string): Promise<ModelConfig> =>
     invoke("get_model_config", { profile }),
-  setModelConfig: (provider: string, model: string, baseUrl: string, profile?: string): Promise<boolean> =>
+  setModelConfig: (
+    provider: string,
+    model: string,
+    baseUrl: string,
+    profile?: string,
+  ): Promise<boolean> =>
     invoke("set_model_config", { provider, model, baseUrl, profile }),
-  getCredentialPool: (profile?: string): Promise<any> =>
+  getCredentialPool: (profile?: string): Promise<unknown> =>
     invoke("get_credential_pool", { profile }),
-  setCredentialPool: (provider: string, entries: Array<{ key?: string; label?: string }>, profile?: string): Promise<boolean> =>
+  setCredentialPool: (
+    provider: string,
+    entries: Array<{ key?: string; label?: string }>,
+    profile?: string,
+  ): Promise<boolean> =>
     invoke("set_credential_pool", { provider, entries, profile }),
 
   // ── Connection ────────────────────────────────────────
@@ -256,19 +267,42 @@ export const hermesAPI = {
   isRemoteOnlyMode: (): Promise<boolean> => invoke("is_remote_only_mode"),
   getConnectionConfig: (): Promise<ConnectionConfig> =>
     invoke("get_connection_config"),
-  setConnectionConfig: (mode: string, remoteUrl: string, apiKey?: string): Promise<boolean> =>
+  setConnectionConfig: (
+    mode: string,
+    remoteUrl: string,
+    apiKey?: string,
+  ): Promise<boolean> =>
     invoke("set_connection_config", { mode, remoteUrl, apiKey }),
-  setSshConfig: (host: string, port: number, username: string, keyPath: string, remotePort: number, localPort: number): Promise<boolean> =>
+  setSshConfig: (
+    host: string,
+    port: number,
+    username: string,
+    keyPath: string,
+    remotePort: number,
+    localPort: number,
+  ): Promise<boolean> =>
     invoke("set_connection_config", {
-      config: { mode: "ssh", ssh: { host, port, username, keyPath, remotePort, localPort } }
+      config: {
+        mode: "ssh",
+        ssh: { host, port, username, keyPath, remotePort, localPort },
+      },
     }).then(() => true),
   testRemoteConnection: (url: string, apiKey?: string): Promise<boolean> =>
     invoke("test_remote_connection", { url, apiKey }),
-  testSshConnection: (host: string, port: number, username: string, keyPath: string, remotePort: number): Promise<boolean> =>
-    invoke("test_ssh_connection"),
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  testSshConnection: (
+    host: string,
+    port: number,
+    username: string,
+    keyPath: string,
+    remotePort: number,
+  ): Promise<boolean> => invoke("test_ssh_connection"),
+  /* eslint-enable @typescript-eslint/no-unused-vars */
   isSshTunnelActive: (): Promise<boolean> => invoke("is_ssh_tunnel_active"),
-  startSshTunnel: (): Promise<boolean> => invoke("start_ssh_tunnel").then(() => true),
-  stopSshTunnel: (): Promise<boolean> => invoke("stop_ssh_tunnel").then(() => true),
+  startSshTunnel: (): Promise<boolean> =>
+    invoke("start_ssh_tunnel").then(() => true),
+  stopSshTunnel: (): Promise<boolean> =>
+    invoke("stop_ssh_tunnel").then(() => true),
 
   // ── Chat ──────────────────────────────────────────────
   sendMessage: (
@@ -278,7 +312,13 @@ export const hermesAPI = {
     history?: ChatMessage[],
     attachments?: unknown[],
   ): Promise<{ response: string; sessionId?: string }> =>
-    invoke("send_message", { message, profile, resumeSessionId, history, attachments }),
+    invoke("send_message", {
+      message,
+      profile,
+      resumeSessionId,
+      history,
+      attachments,
+    }),
   abortChat: (): Promise<void> => invoke("abort_chat"),
 
   getPathForFile: (file: File): string => {
@@ -294,15 +334,24 @@ export const hermesAPI = {
   },
 
   // ── System info (replaces Electron's process.*) ──────
-  getSystemInfo: (): Promise<{ platform: string; arch: string; appVersion: string }> =>
-    invoke("get_system_info"),
+  getSystemInfo: (): Promise<{
+    platform: string;
+    arch: string;
+    appVersion: string;
+  }> => invoke("get_system_info"),
 
   stageAttachment: (
     sessionId: string,
     filename: string,
     base64Bytes: string,
   ): Promise<string> =>
-    invoke("stage_attachment", { sessionId, filename, kind: "file", mime: "application/octet-stream", base64Content: base64Bytes }),
+    invoke("stage_attachment", {
+      sessionId,
+      filename,
+      kind: "file",
+      mime: "application/octet-stream",
+      base64Content: base64Bytes,
+    }),
 
   clearStagedAttachments: (sessionId: string): Promise<void> =>
     invoke("clear_staged_attachments", { sessionId }),
@@ -312,7 +361,11 @@ export const hermesAPI = {
     baseUrl?: string,
     apiKey?: string,
     profile?: string,
-  ): Promise<{ models: string[]; status: "ok" | "no-key" | "unsupported" | "unknown-host"; cached: boolean }> =>
+  ): Promise<{
+    models: string[];
+    status: "ok" | "no-key" | "unsupported" | "unknown-host";
+    cached: boolean;
+  }> =>
     invoke("discover_provider_models", { provider, baseUrl, apiKey, profile }),
 
   // ── Chat events ───────────────────────────────────────
@@ -322,30 +375,50 @@ export const hermesAPI = {
     onEvent("chat-done", callback),
   onChatToolProgress: (callback: (tool: string) => void): (() => void) =>
     onEvent("chat-tool-progress", callback),
-  onChatUsage: (callback: (usage: { promptTokens: number; completionTokens: number; totalTokens: number; cost?: number; rateLimitRemaining?: number; rateLimitReset?: number }) => void): (() => void) =>
-    onEvent("chat-usage", callback),
+  onChatUsage: (
+    callback: (usage: {
+      promptTokens: number;
+      completionTokens: number;
+      totalTokens: number;
+      cost?: number;
+      rateLimitRemaining?: number;
+      rateLimitReset?: number;
+    }) => void,
+  ): (() => void) => onEvent("chat-usage", callback),
   onChatError: (callback: (error: string) => void): (() => void) =>
     onEvent("chat-error", callback),
 
   // ── Gateway ───────────────────────────────────────────
-  startGateway: (): Promise<boolean> => invoke("start_gateway").then(() => true),
+  startGateway: (): Promise<boolean> =>
+    invoke("start_gateway").then(() => true),
   stopGateway: (): Promise<boolean> => invoke("stop_gateway").then(() => true),
-  gatewayStatus: (): Promise<boolean> => invoke("gateway_status").then((s: string) => s === "running"),
+  gatewayStatus: (): Promise<boolean> =>
+    invoke("gateway_status").then((s: string) => s === "running"),
 
   // ── Platform toggles ──────────────────────────────────
   getPlatformEnabled: (profile?: string): Promise<Record<string, boolean>> =>
     invoke("get_platform_enabled_all", { profile }),
-  setPlatformEnabled: (platform: string, enabled: boolean, profile?: string): Promise<boolean> =>
-    invoke("set_platform_enabled", { platform, enabled, profile }).then(() => true),
+  setPlatformEnabled: (
+    platform: string,
+    enabled: boolean,
+    profile?: string,
+  ): Promise<boolean> =>
+    invoke("set_platform_enabled", { platform, enabled, profile }).then(
+      () => true,
+    ),
 
   // ── Sessions ──────────────────────────────────────────
   listSessions: (limit?: number, offset?: number): Promise<SessionSummary[]> =>
     invoke("list_sessions", { limit, offset }),
   getSessionMessages: (sessionId: string): Promise<SessionMessage[]> =>
     invoke("get_session_messages", { sessionId }),
-  listCachedSessions: (limit?: number, offset?: number): Promise<CachedSession[]> =>
+  listCachedSessions: (
+    limit?: number,
+    offset?: number,
+  ): Promise<CachedSession[]> =>
     invoke("list_cached_sessions", { limit, offset }),
-  syncSessionCache: (): Promise<CachedSession[]> => invoke("sync_session_cache"),
+  syncSessionCache: (): Promise<CachedSession[]> =>
+    invoke("sync_session_cache"),
   updateSessionTitle: (sessionId: string, title: string): Promise<void> =>
     invoke("update_session_title", { sessionId, title }),
   deleteSession: (sessionId: string): Promise<void> =>
@@ -355,9 +428,14 @@ export const hermesAPI = {
 
   // ── Profiles ──────────────────────────────────────────
   listProfiles: (): Promise<Profile[]> => invoke("list_profiles"),
-  createProfile: (name: string, clone: boolean): Promise<{ success: boolean; error?: string }> =>
+  createProfile: (
+    name: string,
+    clone: boolean,
+  ): Promise<{ success: boolean; error?: string }> =>
     invoke("create_profile", { name, clone }),
-  deleteProfile: (name: string): Promise<{ success: boolean; error?: string }> =>
+  deleteProfile: (
+    name: string,
+  ): Promise<{ success: boolean; error?: string }> =>
     invoke("delete_profile", { name }),
   setActiveProfile: (name: string): Promise<boolean> =>
     invoke("set_active_profile", { name }).then(() => true),
@@ -365,13 +443,23 @@ export const hermesAPI = {
   // ── Memory ────────────────────────────────────────────
   readMemory: (profile?: string): Promise<MemoryInfo> =>
     invoke("read_memory", { profile }),
-  addMemoryEntry: (content: string, profile?: string): Promise<{ success: boolean; error?: string; errorKey?: string }> =>
+  addMemoryEntry: (
+    content: string,
+    profile?: string,
+  ): Promise<{ success: boolean; error?: string; errorKey?: string }> =>
     invoke("add_memory_entry", { content, profile }),
-  updateMemoryEntry: (index: number, content: string, profile?: string): Promise<{ success: boolean; error?: string; errorKey?: string }> =>
+  updateMemoryEntry: (
+    index: number,
+    content: string,
+    profile?: string,
+  ): Promise<{ success: boolean; error?: string; errorKey?: string }> =>
     invoke("update_memory_entry", { index, content, profile }),
   removeMemoryEntry: (index: number, profile?: string): Promise<boolean> =>
     invoke("remove_memory_entry", { index, profile }),
-  writeUserProfile: (content: string, profile?: string): Promise<{ success: boolean; error?: string; errorKey?: string }> =>
+  writeUserProfile: (
+    content: string,
+    profile?: string,
+  ): Promise<{ success: boolean; error?: string; errorKey?: string }> =>
     invoke("write_user_profile", { content, profile }),
 
   // ── Soul ──────────────────────────────────────────────
@@ -385,8 +473,14 @@ export const hermesAPI = {
   // ── Toolsets ──────────────────────────────────────────
   getToolsets: (profile?: string): Promise<ToolsetInfo[]> =>
     invoke("get_toolsets", { profile }),
-  setToolsetEnabled: (key: string, enabled: boolean, profile?: string): Promise<boolean> =>
-    invoke("set_toolset_enabled", { name: key, enabled, profile }).then(() => true),
+  setToolsetEnabled: (
+    key: string,
+    enabled: boolean,
+    profile?: string,
+  ): Promise<boolean> =>
+    invoke("set_toolset_enabled", { name: key, enabled, profile }).then(
+      () => true,
+    ),
 
   // ── Skills ────────────────────────────────────────────
   listInstalledSkills: (profile?: string): Promise<InstalledSkill[]> =>
@@ -395,14 +489,25 @@ export const hermesAPI = {
     invoke("list_bundled_skills"),
   getSkillContent: (skillPath: string): Promise<string> =>
     invoke("get_skill_content", { path: skillPath }),
-  installSkill: (identifier: string, profile?: string): Promise<{ success: boolean; error?: string }> =>
+  installSkill: (
+    identifier: string,
+    profile?: string,
+  ): Promise<{ success: boolean; error?: string }> =>
     invoke("install_skill", { name: identifier, profile }),
-  uninstallSkill: (name: string, profile?: string): Promise<{ success: boolean; error?: string }> =>
+  uninstallSkill: (
+    name: string,
+    profile?: string,
+  ): Promise<{ success: boolean; error?: string }> =>
     invoke("uninstall_skill", { name, profile }),
 
   // ── Models ────────────────────────────────────────────
   listModels: (): Promise<SavedModel[]> => invoke("list_models"),
-  addModel: (name: string, provider: string, model: string, baseUrl: string): Promise<SavedModel> =>
+  addModel: (
+    name: string,
+    provider: string,
+    model: string,
+    baseUrl: string,
+  ): Promise<SavedModel> =>
     invoke("add_model", { name, provider, model, baseUrl }),
   removeModel: (id: string): Promise<boolean> =>
     invoke("remove_model", { id }).then(() => true),
@@ -413,15 +518,18 @@ export const hermesAPI = {
   claw3dStatus: (): Promise<Claw3dStatus> => invoke("claw3d_status"),
   claw3dSetup: (): Promise<{ success: boolean; error?: string }> =>
     invoke("claw3d_setup"),
-  onClaw3dSetupProgress: (callback: (p: InstallProgress) => void): (() => void) =>
-    onEvent("claw3d-setup-progress", callback),
+  onClaw3dSetupProgress: (
+    callback: (p: InstallProgress) => void,
+  ): (() => void) => onEvent("claw3d-setup-progress", callback),
   claw3dGetPort: (): Promise<number> => invoke("claw3d_get_port"),
   claw3dSetPort: (port: number): Promise<boolean> =>
     invoke("claw3d_set_port", { port }).then(() => true),
   claw3dGetWsUrl: (): Promise<string> => invoke("claw3d_get_ws_url"),
   claw3dSetWsUrl: (url: string): Promise<boolean> =>
     invoke("claw3d_set_ws_url", { url }).then(() => true),
-  claw3dStartAll: (profile?: string): Promise<{ success: boolean; error?: string }> =>
+  claw3dStartAll: (
+    profile?: string,
+  ): Promise<{ success: boolean; error?: string }> =>
     invoke("claw3d_start_all", { profile }),
   claw3dStopAll: (): Promise<boolean> =>
     invoke("claw3d_stop_all").then(() => true),
@@ -436,18 +544,17 @@ export const hermesAPI = {
     invoke("claw3d_stop_adapter").then(() => true),
 
   // ── Updates ───────────────────────────────────────────
-  checkForUpdates: (): Promise<string | null> =>
-    invoke("check_for_updates"),
-  downloadUpdate: (): Promise<boolean> =>
-    invoke("download_update"),
-  installUpdate: (): Promise<void> =>
-    invoke("install_update"),
+  checkForUpdates: (): Promise<string | null> => invoke("check_for_updates"),
+  downloadUpdate: (): Promise<boolean> => invoke("download_update"),
+  installUpdate: (): Promise<void> => invoke("install_update"),
   getAppVersion: (): Promise<string> => invoke("get_app_version"),
 
-  onUpdateAvailable: (callback: (info: { version: string; releaseNotes: string }) => void): (() => void) =>
-    onEvent("update-available", callback),
-  onUpdateDownloadProgress: (callback: (info: { percent: number }) => void): (() => void) =>
-    onEvent("update-download-progress", callback),
+  onUpdateAvailable: (
+    callback: (info: { version: string; releaseNotes: string }) => void,
+  ): (() => void) => onEvent("update-available", callback),
+  onUpdateDownloadProgress: (
+    callback: (info: { percent: number }) => void,
+  ): (() => void) => onEvent("update-download-progress", callback),
   onUpdateDownloaded: (callback: () => void): (() => void) =>
     onEvent("update-downloaded", callback),
   onUpdateError: (callback: (message: string) => void): (() => void) =>
@@ -460,42 +567,109 @@ export const hermesAPI = {
     onEvent("menu-search-sessions", callback),
 
   // ── Cron Jobs ─────────────────────────────────────────
-  listCronJobs: (includeDisabled?: boolean, profile?: string): Promise<CronJob[]> =>
+  listCronJobs: (
+    includeDisabled?: boolean,
+    profile?: string,
+  ): Promise<CronJob[]> =>
     invoke("list_cron_jobs", { includeDisabled, profile }),
-  createCronJob: (schedule: string, prompt?: string, name?: string, deliver?: string, profile?: string): Promise<{ success: boolean; error?: string }> =>
+  createCronJob: (
+    schedule: string,
+    prompt?: string,
+    name?: string,
+    deliver?: string,
+    profile?: string,
+  ): Promise<{ success: boolean; error?: string }> =>
     invoke("create_cron_job", { name, schedule, prompt, deliver, profile }),
-  removeCronJob: (jobId: string, profile?: string): Promise<{ success: boolean; error?: string }> =>
+  removeCronJob: (
+    jobId: string,
+    profile?: string,
+  ): Promise<{ success: boolean; error?: string }> =>
     invoke("remove_cron_job", { id: jobId, profile }),
-  pauseCronJob: (jobId: string, profile?: string): Promise<{ success: boolean; error?: string }> =>
+  pauseCronJob: (
+    jobId: string,
+    profile?: string,
+  ): Promise<{ success: boolean; error?: string }> =>
     invoke("pause_cron_job", { id: jobId, profile }),
-  resumeCronJob: (jobId: string, profile?: string): Promise<{ success: boolean; error?: string }> =>
+  resumeCronJob: (
+    jobId: string,
+    profile?: string,
+  ): Promise<{ success: boolean; error?: string }> =>
     invoke("resume_cron_job", { id: jobId, profile }),
-  triggerCronJob: (jobId: string, profile?: string): Promise<{ success: boolean; error?: string }> =>
+  triggerCronJob: (
+    jobId: string,
+    profile?: string,
+  ): Promise<{ success: boolean; error?: string }> =>
     invoke("trigger_cron_job", { id: jobId, profile }),
 
   // ── Kanban ────────────────────────────────────────────
-  kanbanListBoards: (includeArchived?: boolean, profile?: string): Promise<{ success: boolean; data?: unknown[]; error?: string }> =>
+  kanbanListBoards: (
+    includeArchived?: boolean,
+    profile?: string,
+  ): Promise<{ success: boolean; data?: unknown[]; error?: string }> =>
     invoke("kanban_list_boards", { includeArchived, profile }),
   kanbanCurrentBoard: (profile?: string): Promise<unknown> =>
     invoke("kanban_current_board", { profile }),
   kanbanSwitchBoard: (slug: string, profile?: string): Promise<unknown> =>
     invoke("kanban_switch_board", { slug, profile }),
-  kanbanCreateBoard: (slug: string, name?: string, switchAfter?: boolean, profile?: string): Promise<unknown> =>
+  kanbanCreateBoard: (
+    slug: string,
+    name?: string,
+    switchAfter?: boolean,
+    profile?: string,
+  ): Promise<unknown> =>
     invoke("kanban_create_board", { slug, name, switchAfter, profile }),
-  kanbanRemoveBoard: (slug: string, hardDelete?: boolean, profile?: string): Promise<unknown> =>
+  kanbanRemoveBoard: (
+    slug: string,
+    hardDelete?: boolean,
+    profile?: string,
+  ): Promise<unknown> =>
     invoke("kanban_remove_board", { slug, hardDelete, profile }),
-  kanbanListTasks: (filters?: { status?: string; assignee?: string; tenant?: string; includeArchived?: boolean; profile?: string }): Promise<{ success: boolean; data?: unknown[]; error?: string }> =>
+  kanbanListTasks: (filters?: {
+    status?: string;
+    assignee?: string;
+    tenant?: string;
+    includeArchived?: boolean;
+    profile?: string;
+  }): Promise<{ success: boolean; data?: unknown[]; error?: string }> =>
     invoke("kanban_list_tasks", { filters }),
-  kanbanGetTask: (taskId: string, profile?: string): Promise<{ success: boolean; data?: unknown; error?: string }> =>
+  kanbanGetTask: (
+    taskId: string,
+    profile?: string,
+  ): Promise<{ success: boolean; data?: unknown; error?: string }> =>
     invoke("kanban_get_task", { taskId, profile }),
-  kanbanCreateTask: (input: { title: string; body?: string; assignee?: string; priority?: number; tenant?: string; workspace?: string; triage?: boolean; skills?: string[]; maxRetries?: number }, profile?: string): Promise<{ success: boolean; data?: unknown; error?: string }> =>
+  kanbanCreateTask: (
+    input: {
+      title: string;
+      body?: string;
+      assignee?: string;
+      priority?: number;
+      tenant?: string;
+      workspace?: string;
+      triage?: boolean;
+      skills?: string[];
+      maxRetries?: number;
+    },
+    profile?: string,
+  ): Promise<{ success: boolean; data?: unknown; error?: string }> =>
     invoke("kanban_create_task", { input, profile }),
   selectFolder: (): Promise<string | null> => invoke("select_folder"),
-  kanbanAssignTask: (taskId: string, assignee: string | null, profile?: string): Promise<unknown> =>
+  kanbanAssignTask: (
+    taskId: string,
+    assignee: string | null,
+    profile?: string,
+  ): Promise<unknown> =>
     invoke("kanban_assign_task", { taskId, assignee, profile }),
-  kanbanCompleteTask: (taskId: string, result?: string, profile?: string): Promise<unknown> =>
+  kanbanCompleteTask: (
+    taskId: string,
+    result?: string,
+    profile?: string,
+  ): Promise<unknown> =>
     invoke("kanban_complete_task", { taskId, result, profile }),
-  kanbanBlockTask: (taskId: string, reason?: string, profile?: string): Promise<unknown> =>
+  kanbanBlockTask: (
+    taskId: string,
+    reason?: string,
+    profile?: string,
+  ): Promise<unknown> =>
     invoke("kanban_block_task", { taskId, reason, profile }),
   kanbanUnblockTask: (taskId: string, profile?: string): Promise<unknown> =>
     invoke("kanban_unblock_task", { taskId, profile }),
@@ -503,9 +677,17 @@ export const hermesAPI = {
     invoke("kanban_archive_task", { taskId, profile }),
   kanbanSpecifyTask: (taskId: string, profile?: string): Promise<unknown> =>
     invoke("kanban_specify_task", { taskId, profile }),
-  kanbanReclaimTask: (taskId: string, reason?: string, profile?: string): Promise<unknown> =>
+  kanbanReclaimTask: (
+    taskId: string,
+    reason?: string,
+    profile?: string,
+  ): Promise<unknown> =>
     invoke("kanban_reclaim_task", { taskId, reason, profile }),
-  kanbanCommentTask: (taskId: string, body: string, profile?: string): Promise<unknown> =>
+  kanbanCommentTask: (
+    taskId: string,
+    body: string,
+    profile?: string,
+  ): Promise<unknown> =>
     invoke("kanban_comment_task", { taskId, body, profile }),
   kanbanDispatchOnce: (dryRun?: boolean, profile?: string): Promise<unknown> =>
     invoke("kanban_dispatch_once", { dryRun, profile }),
@@ -522,9 +704,14 @@ export const hermesAPI = {
   },
 
   // ── Backup / Import ───────────────────────────────────
-  runHermesBackup: (profile?: string): Promise<{ success: boolean; path?: string; error?: string }> =>
+  runHermesBackup: (
+    profile?: string,
+  ): Promise<{ success: boolean; path?: string; error?: string }> =>
     invoke("run_hermes_backup", { profile }),
-  runHermesImport: (archivePath: string, profile?: string): Promise<{ success: boolean; error?: string }> =>
+  runHermesImport: (
+    archivePath: string,
+    profile?: string,
+  ): Promise<{ success: boolean; error?: string }> =>
     invoke("run_hermes_import", { path: archivePath, profile }),
   runHermesDump: (): Promise<string> => invoke("run_hermes_dump"),
 
@@ -534,48 +721,81 @@ export const hermesAPI = {
 
   // ── MCP servers ───────────────────────────────────────
   // ── Skills Hub ───────────────────────────────────
-  searchSkillsHub: (query: string): Promise<{ name: string; description: string; category: string; author: string; downloads: number; installed: boolean }[]> =>
-    invoke("search_skills_hub", { query }),
-  installFromHub: (name: string, profile?: string): Promise<{ success: boolean; error?: string }> =>
+  searchSkillsHub: (
+    query: string,
+  ): Promise<
+    {
+      name: string;
+      description: string;
+      category: string;
+      author: string;
+      downloads: number;
+      installed: boolean;
+    }[]
+  > => invoke("search_skills_hub", { query }),
+  installFromHub: (
+    name: string,
+    profile?: string,
+  ): Promise<{ success: boolean; error?: string }> =>
     invoke("install_from_hub", { name, profile }),
 
   // ── Personality Presets ───────────────────────────
-  listPersonalities: (profile?: string): Promise<{ name: string; description: string }[]> =>
+  listPersonalities: (
+    profile?: string,
+  ): Promise<{ name: string; description: string }[]> =>
     invoke("list_personalities", { profile }),
   applyPersonality: (name: string, profile?: string): Promise<void> =>
     invoke("apply_personality", { name, profile }),
 
   // ── Plugins ──────────────────────────────────────
-  listPlugins: (): Promise<{ name: string; description: string; installed: boolean; enabled: boolean }[]> =>
-    invoke("list_plugins"),
+  listPlugins: (): Promise<
+    {
+      name: string;
+      description: string;
+      installed: boolean;
+      enabled: boolean;
+    }[]
+  > => invoke("list_plugins"),
   enablePlugin: (name: string): Promise<void> =>
     invoke("enable_plugin", { name }),
   disablePlugin: (name: string): Promise<void> =>
     invoke("disable_plugin", { name }),
 
   // ── Usage ─────────────────────────────────────────
-  getUsageStats: (): Promise<{ totalSessions: number; totalMessages: number; activeSkills: number; memoryEntries: number }> =>
-    invoke("get_usage_stats"),
-  getInsights: (): Promise<string> =>
-    invoke("get_insights"),
+  getUsageStats: (): Promise<{
+    totalSessions: number;
+    totalMessages: number;
+    activeSkills: number;
+    memoryEntries: number;
+  }> => invoke("get_usage_stats"),
+  getInsights: (): Promise<string> => invoke("get_insights"),
 
   // ── Context Files ─────────────────────────────────
-  listContextFiles: (): Promise<string[]> =>
-    invoke("list_context_files"),
+  listContextFiles: (): Promise<string[]> => invoke("list_context_files"),
   readContextFile: (name: string): Promise<{ name: string; content: string }> =>
     invoke("read_context_file", { name }),
   writeContextFile: (name: string, content: string): Promise<void> =>
     invoke("write_context_file", { name, content }),
 
   // ── MCP Servers ──────────────────────────────────
-  listMcpServers: (): Promise<McpServer[]> =>
-    invoke("list_mcp_servers"),
-  addMcpServer: (name: string, command: string, args: string[]): Promise<McpServer> =>
-    invoke("add_mcp_server", { name, command, args }),
+  listMcpServers: (): Promise<McpServer[]> => invoke("list_mcp_servers"),
+  addMcpServer: (
+    name: string,
+    command: string,
+    args: string[],
+  ): Promise<McpServer> => invoke("add_mcp_server", { name, command, args }),
   removeMcpServer: (name: string): Promise<void> =>
     invoke("remove_mcp_server", { name }),
-  updateMcpServer: (name: string, updates: { command?: string; args?: string[]; enabled?: boolean }): Promise<McpServer> =>
-    invoke("update_mcp_server", { name, command: updates.command, args: updates.args, enabled: updates.enabled }),
+  updateMcpServer: (
+    name: string,
+    updates: { command?: string; args?: string[]; enabled?: boolean },
+  ): Promise<McpServer> =>
+    invoke("update_mcp_server", {
+      name,
+      command: updates.command,
+      args: updates.args,
+      enabled: updates.enabled,
+    }),
   testMcpServer: (name: string): Promise<boolean> =>
     invoke("test_mcp_server", { name }),
   installComputerUseMcp: (): Promise<boolean> =>
@@ -590,16 +810,34 @@ export const hermesAPI = {
   startProxy: (): Promise<boolean> => invoke("start_proxy"),
 
   // ── HuggingFace Skills ────────────────────────────
-  searchHuggingfaceSkills: (query: string): Promise<{ name: string; description: string; category: string; author: string; downloads: number; installed: boolean }[]> =>
-    invoke("search_huggingface_skills", { query }),
+  searchHuggingfaceSkills: (
+    query: string,
+  ): Promise<
+    {
+      name: string;
+      description: string;
+      category: string;
+      author: string;
+      downloads: number;
+      installed: boolean;
+    }[]
+  > => invoke("search_huggingface_skills", { query }),
 
   // ── Sandbox Backend ──────────────────────────────
-  getTerminalBackend: (): Promise<string> =>
-    invoke("get_terminal_backend"),
-  setTerminalBackend: (backend: string, config?: Record<string, string>): Promise<boolean> =>
-    invoke("set_terminal_backend", { backend, configJson: config ? JSON.stringify(config) : null }),
+  getTerminalBackend: (): Promise<string> => invoke("get_terminal_backend"),
+  setTerminalBackend: (
+    backend: string,
+    config?: Record<string, string>,
+  ): Promise<boolean> =>
+    invoke("set_terminal_backend", {
+      backend,
+      configJson: config ? JSON.stringify(config) : null,
+    }),
 
   // ── Log viewer ────────────────────────────────────────
-  readLogs: (logFile?: string, lines?: number): Promise<{ content: string; path: string }> =>
+  readLogs: (
+    logFile?: string,
+    lines?: number,
+  ): Promise<{ content: string; path: string }> =>
     invoke("read_logs", { logFile, lines }),
 };

@@ -1,9 +1,11 @@
 export default {
   title: "Kanban",
-  subtitle: "Quadro multiagente duradouro para tarefas que o agente pode pegar e concluir por conta própria.",
+  subtitle:
+    "Quadro multiagente duradouro para tarefas que o agente pode pegar e concluir por conta própria.",
   refresh: "Atualizar",
   dispatch: "Despachar",
-  dispatchTooltip: "Executar uma passada do despachante — promover tarefas prontas e iniciar trabalhadores",
+  dispatchTooltip:
+    "Executar uma passada do despachante — promover tarefas prontas e iniciar trabalhadores",
   newTask: "Nova tarefa",
   newBoard: "Novo quadro",
   columns: {
@@ -14,8 +16,10 @@ export default {
     blocked: "Bloqueado",
     done: "Concluído",
   },
-  remoteUnsupported: "O Kanban requer uma instalação local do Hermes ou modo de túnel SSH.",
-  remoteUnsupportedHint: "O modo remoto simples (HTTP + chave de API) ainda não expõe a API do kanban. Alterne para o modo local ou túnel SSH nas Configurações para gerenciar o quadro.",
+  remoteUnsupported:
+    "O Kanban requer uma instalação local do Hermes ou modo de túnel SSH.",
+  remoteUnsupportedHint:
+    "O modo remoto simples (HTTP + chave de API) ainda não expõe a API do kanban. Alterne para o modo local ou túnel SSH nas Configurações para gerenciar o quadro.",
   createTask: "Nova tarefa kanban",
   titleLabel: "Título",
   titlePlaceholder: "O que precisa ser feito?",
@@ -34,7 +38,8 @@ export default {
   workspaceDir: "Escolher pasta…",
   workspaceNoFolder: "Nenhuma pasta selecionada",
   workspaceBrowse: "Procurar…",
-  triageCheckbox: "Estacionar na triagem (um especificador expande a especificação antes de promover para a fazer)",
+  triageCheckbox:
+    "Estacionar na triagem (um especificador expande a especificação antes de promover para a fazer)",
   cancel: "Cancelar",
   creating: "Criando…",
   createTaskBtn: "Criar tarefa",
@@ -60,7 +65,8 @@ export default {
   errorCreateTask: "Falha ao criar tarefa",
   errorSwitchBoard: "Falha ao trocar de quadro",
   errorCreateBoard: "Falha ao criar quadro",
-  errorMoveTask: "Não é possível mover {{from}} → {{to}} pela área de trabalho. Use o agente ou CLI.",
+  errorMoveTask:
+    "Não é possível mover {{from}} → {{to}} pela área de trabalho. Use o agente ou CLI.",
   errorSpecifyTask: "Falha ao especificar tarefa",
   errorArchiveTask: "Falha ao arquivar tarefa",
   errorReclaim: "Falha ao recuperar",

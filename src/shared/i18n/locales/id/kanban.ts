@@ -1,9 +1,11 @@
 export default {
   title: "Kanban",
-  subtitle: "Papan multi-agen tahan lama untuk tugas yang dapat diambil dan diselesaikan agen secara mandiri.",
+  subtitle:
+    "Papan multi-agen tahan lama untuk tugas yang dapat diambil dan diselesaikan agen secara mandiri.",
   refresh: "Segarkan",
   dispatch: "Kirim",
-  dispatchTooltip: "Jalankan satu kali pengiriman — promosikan tugas yang siap dan jalankan pekerja",
+  dispatchTooltip:
+    "Jalankan satu kali pengiriman — promosikan tugas yang siap dan jalankan pekerja",
   newTask: "Tugas baru",
   newBoard: "Papan baru",
   columns: {
@@ -14,8 +16,10 @@ export default {
     blocked: "Terblokir",
     done: "Selesai",
   },
-  remoteUnsupported: "Kanban memerlukan instalasi Hermes lokal atau mode terowongan SSH.",
-  remoteUnsupportedHint: "Mode remote biasa (HTTP + kunci API) belum mengekspos API kanban. Beralih ke mode lokal atau terowongan SSH di Pengaturan untuk mengelola papan.",
+  remoteUnsupported:
+    "Kanban memerlukan instalasi Hermes lokal atau mode terowongan SSH.",
+  remoteUnsupportedHint:
+    "Mode remote biasa (HTTP + kunci API) belum mengekspos API kanban. Beralih ke mode lokal atau terowongan SSH di Pengaturan untuk mengelola papan.",
   createTask: "Tugas kanban baru",
   titleLabel: "Judul",
   titlePlaceholder: "Apa yang perlu dilakukan?",
@@ -34,7 +38,8 @@ export default {
   workspaceDir: "Pilih folder…",
   workspaceNoFolder: "Tidak ada folder dipilih",
   workspaceBrowse: "Jelajahi…",
-  triageCheckbox: "Parkir di triase (penentu memperluas spesifikasi sebelum mempromosikan ke daftar tugas)",
+  triageCheckbox:
+    "Parkir di triase (penentu memperluas spesifikasi sebelum mempromosikan ke daftar tugas)",
   cancel: "Batal",
   creating: "Membuat…",
   createTaskBtn: "Buat tugas",
@@ -60,7 +65,8 @@ export default {
   errorCreateTask: "Gagal membuat tugas",
   errorSwitchBoard: "Gagal mengganti papan",
   errorCreateBoard: "Gagal membuat papan",
-  errorMoveTask: "Tidak dapat memindahkan {{from}} → {{to}} dari desktop. Gunakan agen atau CLI.",
+  errorMoveTask:
+    "Tidak dapat memindahkan {{from}} → {{to}} dari desktop. Gunakan agen atau CLI.",
   errorSpecifyTask: "Gagal menentukan tugas",
   errorArchiveTask: "Gagal mengarsipkan tugas",
   errorReclaim: "Gagal mengklaim kembali",

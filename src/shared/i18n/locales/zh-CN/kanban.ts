@@ -15,7 +15,8 @@ export default {
     done: "完成",
   },
   remoteUnsupported: "看板需要本地安装的 Hermes 或 SSH 隧道模式。",
-  remoteUnsupportedHint: "纯远程（HTTP + API 密钥）模式尚未开放看板 API。请在设置中切换到本地或 SSH 隧道模式来管理看板。",
+  remoteUnsupportedHint:
+    "纯远程（HTTP + API 密钥）模式尚未开放看板 API。请在设置中切换到本地或 SSH 隧道模式来管理看板。",
   createTask: "新建看板任务",
   titleLabel: "标题",
   titlePlaceholder: "需要完成什么？",

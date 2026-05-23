@@ -21,8 +21,7 @@ export default {
   remoteHint:
     "如果伺服器接受未驗證的請求（如透過 SSH 隧道到 localhost），請留空金鑰。",
   connectViaSsh: "透過 SSH 連線",
-  sshSubtitle:
-    "透過 SSH 隧道連線到遠端 Hermes — 無需暴露連接埠或 API 金鑰。",
+  sshSubtitle: "透過 SSH 隧道連線到遠端 Hermes — 無需暴露連接埠或 API 金鑰。",
   sshHost: "SSH 主機",
   sshPort: "SSH 連接埠",
   username: "使用者名稱",

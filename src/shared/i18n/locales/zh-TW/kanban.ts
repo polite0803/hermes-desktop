@@ -15,7 +15,8 @@ export default {
     done: "完成",
   },
   remoteUnsupported: "看板需要本機安裝的 Hermes 或 SSH 隧道模式。",
-  remoteUnsupportedHint: "純遠端（HTTP + API 金鑰）模式尚未開放看板 API。請在設定中切換到本機或 SSH 隧道模式來管理看板。",
+  remoteUnsupportedHint:
+    "純遠端（HTTP + API 金鑰）模式尚未開放看板 API。請在設定中切換到本機或 SSH 隧道模式來管理看板。",
   createTask: "新建看板任務",
   titleLabel: "標題",
   titlePlaceholder: "需要完成什麼？",

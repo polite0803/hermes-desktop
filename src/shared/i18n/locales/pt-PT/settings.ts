@@ -128,7 +128,6 @@ export default {
   sandboxModal: "Modal",
   sandboxDaytona: "Daytona",
   sandboxVercel: "Vercel Sandbox",
-  savedButton: "✓ Guardado",
   autoDetected: "auto-detectado a partir do URL base",
   remoteUrlPlaceholder: "http://192.168.1.100:8642",
   sshHostPlaceholder: "192.168.1.100 ou meuservidor.local",

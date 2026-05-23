@@ -49,7 +49,9 @@ export const MessageRow = memo(function MessageRow({
   return (
     <div className={`chat-message chat-message-${msg.role}`}>
       {msg.role === "user" ? (
-        <div className="chat-avatar chat-avatar-user">{t("chat.userAvatar")}</div>
+        <div className="chat-avatar chat-avatar-user">
+          {t("chat.userAvatar")}
+        </div>
       ) : (
         <HermesAvatar />
       )}
@@ -89,8 +91,13 @@ export const MessageRow = memo(function MessageRow({
         <div
           className="chat-image-preview-backdrop"
           onClick={() => setPreviewAttachment(null)}
+          onKeyDown={(e) => {
+            if (e.key === "Escape") setPreviewAttachment(null);
+          }}
           role="dialog"
           aria-modal="true"
+          tabIndex={-1}
+          ref={(el) => el?.focus()}
         >
           <img
             src={previewAttachment.dataUrl}

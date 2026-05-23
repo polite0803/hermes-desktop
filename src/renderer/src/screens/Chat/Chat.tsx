@@ -43,6 +43,7 @@ function Chat({
   const [remoteMode, setRemoteMode] = useState(false);
   const dragCounter = useRef(0);
   const chatInputRef = useRef<ChatInputHandle>(null);
+  const isCleaningUp = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -65,7 +66,11 @@ function Chat({
 
   useChatIPC({
     setMessages,
-    setHermesSessionId,
+    setHermesSessionId: (id) => {
+      // Guard against onChatDone firing during cleanup, which would
+      // re-set hermesSessionId right after handleClear nulled it.
+      if (!isCleaningUp.current) setHermesSessionId(id);
+    },
     setToolProgress,
     setIsLoading,
     setUsage,
@@ -76,7 +81,6 @@ function Chat({
   // remount would discard unrelated local state (model picker, etc.).
   useEffect(() => {
     if (messages.length === 0) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setHermesSessionId(null);
     }
   }, [messages]);
@@ -97,13 +101,14 @@ function Chat({
     (content: string) => {
       setMessages((prev) => [
         ...prev,
-        { id: `agent-local-${Date.now()}`, role: "agent", content },
+        { id: `agent-local-${crypto.randomUUID()}`, role: "agent", content },
       ]);
     },
     [setMessages],
   );
 
   const handleClear = useCallback(() => {
+    isCleaningUp.current = true;
     if (isLoading) {
       hermesAPI.abortChat();
       setIsLoading(false);
@@ -117,6 +122,11 @@ function Chat({
     setHermesSessionId(null);
     setUsage(null);
     setToolProgress(null);
+    // Reset the guard after the current microtask so that any pending
+    // onChatDone callbacks have already been filtered out.
+    queueMicrotask(() => {
+      isCleaningUp.current = false;
+    });
   }, [isLoading, hermesSessionId, sessionId, setMessages]);
 
   const localCommands = useLocalCommands({
@@ -229,10 +239,29 @@ function Chat({
       </div>
 
       {goal && (
-        <div className="chat-goal-bar" style={{ display: "flex", alignItems: "center", gap: 8, padding: "4px 12px", background: "var(--accent-subtle)", fontSize: 12 }}>
-          <span style={{ fontWeight: 600, color: "var(--accent-text)" }}>{t("chat.goal")}:</span>
+        <div
+          className="chat-goal-bar"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            padding: "4px 12px",
+            background: "var(--accent-subtle)",
+            fontSize: 12,
+          }}
+        >
+          <span style={{ fontWeight: 600, color: "var(--accent-text)" }}>
+            {t("chat.goal")}:
+          </span>
           <span style={{ flex: 1, color: "var(--text-primary)" }}>{goal}</span>
-          <button className="btn-ghost" onClick={() => setGoal("")} style={{ fontSize: 11, color: "var(--text-muted)" }} title={t("chat.closeGoal")}>✕</button>
+          <button
+            className="btn-ghost"
+            onClick={() => setGoal("")}
+            style={{ fontSize: 11, color: "var(--text-muted)" }}
+            title={t("chat.closeGoal")}
+          >
+            ✕
+          </button>
         </div>
       )}
       <div className="chat-input-area">

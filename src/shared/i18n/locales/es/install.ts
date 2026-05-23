@@ -33,7 +33,8 @@ export default {
   detailFetchingScript: "Obteniendo script de instalación...",
   stepRunningInstaller: "Ejecutando instalador",
   detailExecutingPs1: "Ejecutando install.ps1...",
-  hermesNotInstalled: "Hermes Agent no está instalado. Complete la instalación primero.",
+  hermesNotInstalled:
+    "Hermes Agent no está instalado. Complete la instalación primero.",
   stepUpdatingAgent: "Actualizando Hermes Agent",
   detailRunningUpdate: "Ejecutando hermes update...",
   stepMigratingOpenClaw: "Migrando desde OpenClaw",

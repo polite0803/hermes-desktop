@@ -147,10 +147,7 @@ function Office({
       setWebviewReady(false);
       const e = evt as { errorDescription?: string; errorCode?: number };
       if (e?.errorCode === -3) return; // Aborted — ignore (happens on reload)
-      setWebviewError(
-        e?.errorDescription ||
-          t("office.loadFailed"),
-      );
+      setWebviewError(e?.errorDescription || t("office.loadFailed"));
     };
 
     wv.addEventListener("did-start-loading", onStartLoad);
@@ -313,7 +310,11 @@ function Office({
           </div>
           <div className="install-step-info">
             <div className="install-step-title">
-              {t("office.installStep", { step: progress.step, totalSteps: progress.totalSteps, title: t(progress.titleKey) })}
+              {t("office.installStep", {
+                step: progress.step,
+                totalSteps: progress.totalSteps,
+                title: t(progress.titleKey),
+              })}
             </div>
             <div className="install-step-detail">{t(progress.detailKey)}</div>
           </div>

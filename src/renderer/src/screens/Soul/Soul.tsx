@@ -13,7 +13,10 @@ function Soul({ profile }: SoulProps): React.JSX.Element {
   const [loading, setLoading] = useState(true);
   const [saved, setSaved] = useState(false);
   const [showReset, setShowReset] = useState(false);
-  const [presets, setPresets] = useState<{ name: string; description: string }[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [presets, setPresets] = useState<
+    { name: string; description: string }[]
+  >([]);
   const loaded = useRef(false);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -113,10 +116,25 @@ function Soul({ profile }: SoulProps): React.JSX.Element {
       )}
 
       {presets.length > 0 && (
-        <div className="soul-presets" style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
+        <div
+          className="soul-presets"
+          style={{
+            display: "flex",
+            gap: 8,
+            flexWrap: "wrap",
+            marginBottom: 12,
+          }}
+        >
           {presets.map((p) => (
-            <button key={p.name} className="btn btn-secondary btn-sm" title={p.description}
-              onClick={async () => { await hermesAPI.applyPersonality(p.name, profile); await loadSoul(); }}>
+            <button
+              key={p.name}
+              className="btn btn-secondary btn-sm"
+              title={p.description}
+              onClick={async () => {
+                await hermesAPI.applyPersonality(p.name, profile);
+                await loadSoul();
+              }}
+            >
               {p.name}
             </button>
           ))}

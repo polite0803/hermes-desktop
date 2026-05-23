@@ -173,12 +173,7 @@ function Models({ visible }: ModelsProps = {}): React.JSX.Element {
         baseUrl: formBaseUrl.trim(),
       });
     } else {
-      await hermesAPI.addModel(
-        name,
-        formProvider,
-        model,
-        formBaseUrl.trim(),
-      );
+      await hermesAPI.addModel(name, formProvider, model, formBaseUrl.trim());
     }
 
     if (formApiKey.trim() && formProvider === "custom") {

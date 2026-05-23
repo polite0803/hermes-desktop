@@ -37,7 +37,7 @@ export function useChatIPC({
         if (!chunk || !chunk.trim()) return prev;
         return [
           ...prev,
-          { id: `agent-${Date.now()}`, role: "agent", content: chunk },
+          { id: `agent-${crypto.randomUUID()}`, role: "agent", content: chunk },
         ];
       });
     });
@@ -52,7 +52,7 @@ export function useChatIPC({
       setMessages((prev) => [
         ...prev,
         {
-          id: `error-${Date.now()}`,
+          id: `error-${crypto.randomUUID()}`,
           role: "agent",
           content: `Error: ${error}`,
         },

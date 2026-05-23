@@ -197,7 +197,9 @@ function Providers({
       ...existing,
       {
         key: poolNewKey.trim(),
-        label: poolNewLabel.trim() || t("providers.keyLabel", { n: existing.length + 1 }),
+        label:
+          poolNewLabel.trim() ||
+          t("providers.keyLabel", { n: existing.length + 1 }),
       },
     ];
     await hermesAPI.setCredentialPool(poolProvider, entries);
@@ -305,9 +307,7 @@ function Providers({
               value={modelName}
               onChange={(e) => setModelName(e.target.value)}
               placeholder={t("settings.modelNamePlaceholder")}
-              list={
-                discovery.models.length > 0 ? discoveryListId : undefined
-              }
+              list={discovery.models.length > 0 ? discoveryListId : undefined}
               autoComplete="off"
             />
             {discovery.status !== "unsupported" &&

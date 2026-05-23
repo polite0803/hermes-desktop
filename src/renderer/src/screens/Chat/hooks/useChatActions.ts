@@ -61,7 +61,7 @@ export function useChatActions({
       setMessages((prev) => [
         ...prev,
         {
-          id: `${idPrefix}-${Date.now()}`,
+          id: `${idPrefix}-${crypto.randomUUID()}`,
           role: "user",
           content,
           ...(attachments && attachments.length > 0 ? { attachments } : {}),
@@ -75,23 +75,28 @@ export function useChatActions({
     async (text: string, attachments?: Attachment[]): Promise<void> => {
       try {
         const fullText = goal ? `[Goal: ${goal}]\n\n${text}` : text;
+        // Limit history to last 30 messages to keep IPC payload manageable.
+        // Older messages with large content (e.g. Base64 image data URLs)
+        // are excluded to prevent performance degradation over long chats.
+        const history = messagesRef.current.slice(-30).map((m) => ({
+          role: m.role,
+          content: m.content,
+        }));
         await hermesAPI.sendMessage(
           fullText,
           profile,
           hermesSessionId || undefined,
-          messagesRef.current.map((m) => ({
-            role: m.role,
-            content: m.content,
-          })),
+          history,
           attachments,
         );
       } catch {
         // onChatError IPC already surfaces this to the user
       }
     },
-    [profile, hermesSessionId],
+    [profile, hermesSessionId, goal],
   );
 
+  /* eslint-disable react-hooks/preserve-manual-memoization */
   const handleSend = useCallback(
     async (text: string, attachments?: Attachment[]): Promise<void> => {
       const hasPayload = text.length > 0 || (attachments?.length ?? 0) > 0;
@@ -120,6 +125,7 @@ export function useChatActions({
     },
     [localCommands, pushUser, onSessionStarted, sendToAgent, setIsLoading],
   );
+  /* eslint-enable react-hooks/preserve-manual-memoization */
 
   const handleQuickAsk = useCallback(
     async (text: string, attachments?: Attachment[]): Promise<void> => {

@@ -127,9 +127,7 @@ function Install({ onComplete, onFailed }: InstallProps): React.JSX.Element {
             </button>
             <button
               className="btn btn-secondary btn-sm"
-              onClick={() =>
-                hermesAPI.openExternal(TELEGRAM_COMMUNITY_URL)
-              }
+              onClick={() => hermesAPI.openExternal(TELEGRAM_COMMUNITY_URL)}
               title={TELEGRAM_COMMUNITY_URL}
             >
               <Send size={13} />

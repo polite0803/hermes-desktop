@@ -1,5 +1,6 @@
 export default {
-  subtitle: "Manage MCP (Model Context Protocol) servers to extend Hermes capabilities",
+  subtitle:
+    "Manage MCP (Model Context Protocol) servers to extend Hermes capabilities",
   addServer: "Add Server",
   serverName: "Server name",
   command: "Command (e.g. npx, python)",

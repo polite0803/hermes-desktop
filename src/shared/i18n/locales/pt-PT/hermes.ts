@@ -4,5 +4,6 @@ export default {
   apiError: "Erro de API",
   apiServerError: "Erro do servidor API",
   streamError: "Erro de fluxo",
-  noResponse: "Nenhuma resposta recebida do modelo. Verifique a configuração do modelo e a chave API.",
+  noResponse:
+    "Nenhuma resposta recebida do modelo. Verifique a configuração do modelo e a chave API.",
 } as const;

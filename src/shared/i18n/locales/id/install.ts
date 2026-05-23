@@ -33,7 +33,8 @@ export default {
   detailFetchingScript: "Mengambil script instalasi...",
   stepRunningInstaller: "Menjalankan installer",
   detailExecutingPs1: "Menjalankan install.ps1...",
-  hermesNotInstalled: "Hermes Agent belum terinstal. Silakan selesaikan instalasi terlebih dahulu.",
+  hermesNotInstalled:
+    "Hermes Agent belum terinstal. Silakan selesaikan instalasi terlebih dahulu.",
   stepUpdatingAgent: "Memperbarui Hermes Agent",
   detailRunningUpdate: "Menjalankan hermes update...",
   stepMigratingOpenClaw: "Bermigrasi dari OpenClaw",

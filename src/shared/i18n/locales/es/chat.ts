@@ -23,7 +23,8 @@ export default {
   deny: "Rechazar",
   newChat: "Nuevo chat (Cmd+N)",
   clearChat: "Borrar chat",
-  clearChatConfirm: "¿Borrar esta conversación? Esta acción no se puede deshacer.",
+  clearChatConfirm:
+    "¿Borrar esta conversación? Esta acción no se puede deshacer.",
   attach: "Adjuntar archivos",
   removeAttachment: "Quitar {{name}}",
   dropToAttach: "Suelta los archivos para adjuntarlos",

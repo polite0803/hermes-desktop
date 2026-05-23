@@ -1,13 +1,34 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { hermesAPI } from "@shared/hermes-api";
 
 function Versions(): React.JSX.Element {
-  const [versions] = useState(window.electron.process.versions);
+  const [info, setInfo] = useState<{
+    appVersion: string;
+    platform: string;
+    arch: string;
+  } | null>(null);
+
+  useEffect(() => {
+    hermesAPI
+      .getSystemInfo()
+      .then((sys) =>
+        setInfo({
+          appVersion: sys.appVersion,
+          platform: sys.platform,
+          arch: sys.arch,
+        }),
+      )
+      .catch(() => {});
+  }, []);
 
   return (
     <ul className="versions">
-      <li className="electron-version">Electron v{versions.electron}</li>
-      <li className="chrome-version">Chromium v{versions.chrome}</li>
-      <li className="node-version">Node v{versions.node}</li>
+      <li className="electron-version">
+        Hermes Desktop v{info?.appVersion || "—"}
+      </li>
+      <li className="chrome-version">
+        {info?.platform || "—"} / {info?.arch || "—"}
+      </li>
     </ul>
   );
 }

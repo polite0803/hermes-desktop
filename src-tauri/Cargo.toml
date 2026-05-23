@@ -1,6 +1,6 @@
 [package]
 name = "hermes-desktop"
-version = "0.7.0"
+version = "0.7.1"
 description = "Hermes Agent Desktop — self-improving AI assistant"
 authors = ["fathah"]
 edition = "2021"

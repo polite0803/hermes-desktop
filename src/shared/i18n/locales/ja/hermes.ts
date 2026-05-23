@@ -4,5 +4,6 @@ export default {
   apiError: "APIエラー",
   apiServerError: "APIサーバーエラー",
   streamError: "ストリームエラー",
-  noResponse: "モデルから応答がありません。モデル設定とAPIキーを確認してください。",
+  noResponse:
+    "モデルから応答がありません。モデル設定とAPIキーを確認してください。",
 } as const;

@@ -11,7 +11,11 @@ interface TabPageProps {
   defaultTab?: string;
 }
 
-export function TabPage({ tabs, children, defaultTab }: TabPageProps): React.JSX.Element {
+export function TabPage({
+  tabs,
+  children,
+  defaultTab,
+}: TabPageProps): React.JSX.Element {
   const [active, setActive] = useState(defaultTab || tabs[0]?.key || "");
 
   return (
@@ -27,9 +31,7 @@ export function TabPage({ tabs, children, defaultTab }: TabPageProps): React.JSX
           </button>
         ))}
       </div>
-      <div className="tab-content">
-        {children(active)}
-      </div>
+      <div className="tab-content">{children(active)}</div>
     </div>
   );
 }

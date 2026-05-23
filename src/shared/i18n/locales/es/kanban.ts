@@ -1,9 +1,11 @@
 export default {
   title: "Kanban",
-  subtitle: "Tablero multiagente duradero para tareas que el agente puede recoger y completar por su cuenta.",
+  subtitle:
+    "Tablero multiagente duradero para tareas que el agente puede recoger y completar por su cuenta.",
   refresh: "Actualizar",
   dispatch: "Despachar",
-  dispatchTooltip: "Ejecutar una pasada del despachador — promover tareas listas e iniciar trabajadores",
+  dispatchTooltip:
+    "Ejecutar una pasada del despachador — promover tareas listas e iniciar trabajadores",
   newTask: "Nueva tarea",
   newBoard: "Nuevo tablero",
   columns: {
@@ -14,8 +16,10 @@ export default {
     blocked: "Bloqueado",
     done: "Hecho",
   },
-  remoteUnsupported: "Kanban requiere una instalación local de Hermes o modo de túnel SSH.",
-  remoteUnsupportedHint: "El modo remoto simple (HTTP + clave API) aún no expone la API de kanban. Cambie a modo local o túnel SSH en Configuración para gestionar el tablero.",
+  remoteUnsupported:
+    "Kanban requiere una instalación local de Hermes o modo de túnel SSH.",
+  remoteUnsupportedHint:
+    "El modo remoto simple (HTTP + clave API) aún no expone la API de kanban. Cambie a modo local o túnel SSH en Configuración para gestionar el tablero.",
   createTask: "Nueva tarea kanban",
   titleLabel: "Título",
   titlePlaceholder: "¿Qué necesita hacerse?",
@@ -34,7 +38,8 @@ export default {
   workspaceDir: "Elegir carpeta…",
   workspaceNoFolder: "Ninguna carpeta seleccionada",
   workspaceBrowse: "Examinar…",
-  triageCheckbox: "Estacionar en triaje (un especificador expande la especificación antes de promover a pendiente)",
+  triageCheckbox:
+    "Estacionar en triaje (un especificador expande la especificación antes de promover a pendiente)",
   cancel: "Cancelar",
   creating: "Creando…",
   createTaskBtn: "Crear tarea",
@@ -60,7 +65,8 @@ export default {
   errorCreateTask: "Error al crear la tarea",
   errorSwitchBoard: "Error al cambiar de tablero",
   errorCreateBoard: "Error al crear el tablero",
-  errorMoveTask: "No se puede mover {{from}} → {{to}} desde el escritorio. Use el agente o la CLI.",
+  errorMoveTask:
+    "No se puede mover {{from}} → {{to}} desde el escritorio. Use el agente o la CLI.",
   errorSpecifyTask: "Error al especificar la tarea",
   errorArchiveTask: "Error al archivar la tarea",
   errorReclaim: "Error al recuperar",

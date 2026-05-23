@@ -112,10 +112,14 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
   // Backup / Import state
   const [backingUp, setBackingUp] = useState(false);
   const [backupResult, setBackupResult] = useState<string | null>(null);
-  const [backupResultType, setBackupResultType] = useState<"success" | "error" | null>(null);
+  const [backupResultType, setBackupResultType] = useState<
+    "success" | "error" | null
+  >(null);
   const [importing, setImporting] = useState(false);
   const [importResult, setImportResult] = useState<string | null>(null);
-  const [importResultType, setImportResultType] = useState<"success" | "error" | null>(null);
+  const [importResultType, setImportResultType] = useState<
+    "success" | "error" | null
+  >(null);
 
   // Log viewer state
   const [logContent, setLogContent] = useState("");
@@ -251,11 +255,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
       );
     } else {
       const apiKey = getConnectionApiKeyForSave();
-      await hermesAPI.setConnectionConfig(
-        connMode,
-        connRemoteUrl,
-        apiKey,
-      );
+      await hermesAPI.setConnectionConfig(connMode, connRemoteUrl, apiKey);
       if (apiKey !== undefined) {
         const hasApiKey = apiKey.length > 0;
         setConnHasApiKey(hasApiKey);
@@ -288,7 +288,11 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
         parseInt(sshRemotePort, 10) || 8642,
       );
       setConnTesting(false);
-      setConnStatus(ok ? t("settings.sshTunnelConnected") : t("settings.sshConnectionFailed"));
+      setConnStatus(
+        ok
+          ? t("settings.sshTunnelConnected")
+          : t("settings.sshConnectionFailed"),
+      );
     } else {
       const url = connRemoteUrl.trim();
       if (!url) {
@@ -302,7 +306,9 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
         getConnectionApiKeyForSave(),
       );
       setConnTesting(false);
-      setConnStatus(ok ? t("settings.connectionSuccess") : t("settings.connectionFailed"));
+      setConnStatus(
+        ok ? t("settings.connectionSuccess") : t("settings.connectionFailed"),
+      );
     }
   }
 
@@ -324,7 +330,9 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
     const result = await hermesAPI.runHermesBackup(profile);
     setBackingUp(false);
     if (result.success) {
-      setBackupResult(t("settings.backupCreated", { path: result.path || "success" }));
+      setBackupResult(
+        t("settings.backupCreated", { path: result.path || "success" }),
+      );
       setBackupResultType("success");
     } else {
       setBackupResult(result.error || t("settings.backupFailed"));
@@ -461,7 +469,9 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
               )}
             </div>
             <div className="settings-hermes-detail">
-              <span className="settings-hermes-label">{t("settings.python")}</span>
+              <span className="settings-hermes-label">
+                {t("settings.python")}
+              </span>
               {hermesVersion === null ? (
                 <span className="skeleton skeleton-sm" />
               ) : (
@@ -471,7 +481,9 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
               )}
             </div>
             <div className="settings-hermes-detail">
-              <span className="settings-hermes-label">{t("settings.openaiSdk")}</span>
+              <span className="settings-hermes-label">
+                {t("settings.openaiSdk")}
+              </span>
               {hermesVersion === null ? (
                 <span className="skeleton skeleton-sm" />
               ) : (
@@ -550,9 +562,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
       </div>
 
       <div className="settings-section">
-        <div className="settings-section-title">
-          {t("settings.community")}
-        </div>
+        <div className="settings-section-title">{t("settings.community")}</div>
         <div className="settings-field">
           <div className="settings-field-hint" style={{ marginBottom: 10 }}>
             {t("settings.communityDesc")}
@@ -560,9 +570,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
           <div className="settings-hermes-actions">
             <button
               className="btn btn-secondary"
-              onClick={() =>
-                hermesAPI.openExternal(TELEGRAM_COMMUNITY_URL)
-              }
+              onClick={() => hermesAPI.openExternal(TELEGRAM_COMMUNITY_URL)}
               title={TELEGRAM_COMMUNITY_URL}
             >
               <Send size={14} style={{ marginRight: 6 }} />
@@ -680,7 +688,9 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
         {connMode === "ssh" && (
           <>
             <div className="settings-field">
-              <label className="settings-field-label">{t("settings.sshHost")}</label>
+              <label className="settings-field-label">
+                {t("settings.sshHost")}
+              </label>
               <input
                 className="input"
                 type="text"
@@ -690,7 +700,9 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
               />
             </div>
             <div className="settings-field">
-              <label className="settings-field-label">{t("settings.sshPort")}</label>
+              <label className="settings-field-label">
+                {t("settings.sshPort")}
+              </label>
               <input
                 className="input"
                 type="number"
@@ -700,7 +712,9 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
               />
             </div>
             <div className="settings-field">
-              <label className="settings-field-label">{t("settings.username")}</label>
+              <label className="settings-field-label">
+                {t("settings.username")}
+              </label>
               <input
                 className="input"
                 type="text"
@@ -738,7 +752,15 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
                 onChange={(e) => setSshRemotePort(e.target.value)}
                 placeholder={t("settings.sshRemotePortPlaceholder")}
               />
-              <div className="settings-field-hint" dangerouslySetInnerHTML={{ __html: t("settings.sshConnectionHint", { user: sshUser || "user", host: sshHost || "host" }) }} />
+              <div
+                className="settings-field-hint"
+                dangerouslySetInnerHTML={{
+                  __html: t("settings.sshConnectionHint", {
+                    user: htmlEscape(sshUser || "user"),
+                    host: htmlEscape(sshHost || "host"),
+                  }),
+                }}
+              />
             </div>
             <div className="settings-hermes-actions">
               <button
@@ -746,7 +768,9 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
                 onClick={handleTestConnection}
                 disabled={connTesting}
               >
-                {connTesting ? t("settings.testingSSH") : t("settings.testSSHConnection")}
+                {connTesting
+                  ? t("settings.testingSSH")
+                  : t("settings.testSSHConnection")}
               </button>
               <button
                 className="btn btn-primary"
@@ -770,7 +794,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
                 className="settings-migration-desc"
                 dangerouslySetInnerHTML={{
                   __html: t("settings.migrationDesc", {
-                    path: openclawPath || "",
+                    path: htmlEscape(openclawPath || ""),
                   }),
                 }}
               />
@@ -1037,6 +1061,20 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
   );
 }
 
+/**
+ * HTML-escape user-controlled values before injecting into
+ * dangerouslySetInnerHTML content, preventing XSS via interpolated
+ * translation variables like {{path}}, {user}, or {host}.
+ */
+function htmlEscape(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 function LanguageSelect({
   locale,
   onSelect,
@@ -1048,23 +1086,35 @@ function LanguageSelect({
   const ref = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState({ top: 0, left: 0, width: 0 });
 
-  function toggle(): void {
-    if (!isOpen && ref.current) {
+  function updatePosition(): void {
+    if (ref.current) {
       const r = ref.current.getBoundingClientRect();
       setPos({ top: r.bottom + 4, left: r.left, width: r.width });
     }
+  }
+
+  function toggle(): void {
+    if (!isOpen) updatePosition();
     setIsOpen((v) => !v);
   }
 
   useEffect(() => {
     if (!isOpen) return;
     function outside(e: MouseEvent): void {
-      if (ref.current && !ref.current.contains(e.target as Node)) setIsOpen(false);
+      if (ref.current && !ref.current.contains(e.target as Node))
+        setIsOpen(false);
     }
-    function esc(e: KeyboardEvent): void { if (e.key === "Escape") setIsOpen(false); }
+    function esc(e: KeyboardEvent): void {
+      if (e.key === "Escape") setIsOpen(false);
+    }
     document.addEventListener("mousedown", outside);
     document.addEventListener("keydown", esc);
-    return () => { document.removeEventListener("mousedown", outside); document.removeEventListener("keydown", esc); };
+    document.addEventListener("scroll", updatePosition, { capture: true });
+    return () => {
+      document.removeEventListener("mousedown", outside);
+      document.removeEventListener("keydown", esc);
+      document.removeEventListener("scroll", updatePosition, { capture: true });
+    };
   }, [isOpen]);
 
   return (
@@ -1081,7 +1131,17 @@ function LanguageSelect({
           <ChevronDown size={14} />
         </button>
         {isOpen && (
-          <div className="settings-language-dropdown" style={{ position: "fixed", top: pos.top, left: pos.left, width: pos.width || undefined, zIndex: 9999 }} role="listbox">
+          <div
+            className="settings-language-dropdown"
+            style={{
+              position: "fixed",
+              top: pos.top,
+              left: pos.left,
+              width: pos.width || undefined,
+              zIndex: 9999,
+            }}
+            role="listbox"
+          >
             {APP_LOCALES.map((l) => {
               const active = l === locale;
               return (
@@ -1114,11 +1174,17 @@ function SandboxBackendSection(): React.JSX.Element {
   const [backend, setBackend] = useState("local");
   const [saved, setSaved] = useState(false);
 
-  useEffect(() => { hermesAPI.getTerminalBackend().then(setBackend).catch(() => {}); }, []);
+  useEffect(() => {
+    hermesAPI
+      .getTerminalBackend()
+      .then(setBackend)
+      .catch(() => {});
+  }, []);
 
   async function save(): Promise<void> {
     await hermesAPI.setTerminalBackend(backend);
-    setSaved(true); setTimeout(() => setSaved(false), 2000);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
   }
 
   return (
@@ -1128,7 +1194,12 @@ function SandboxBackendSection(): React.JSX.Element {
         {t("settings.sandboxBackendHint")}
       </p>
       <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-        <select className="models-search-input" value={backend} onChange={(e) => setBackend(e.target.value)} style={{ maxWidth: 300 }}>
+        <select
+          className="models-search-input"
+          value={backend}
+          onChange={(e) => setBackend(e.target.value)}
+          style={{ maxWidth: 300 }}
+        >
           <option value="local">{t("settings.sandboxLocal")}</option>
           <option value="docker">{t("settings.sandboxDocker")}</option>
           <option value="ssh">{t("settings.sandboxSSH")}</option>
