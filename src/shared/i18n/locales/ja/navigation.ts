@@ -22,6 +22,5 @@ export default {
   plugins: "プラグイン",
   curator: "Curator",
   schedules: "スケジュール",
-  security: "セキュリティ",
   usage: "使用量",
 } as const;

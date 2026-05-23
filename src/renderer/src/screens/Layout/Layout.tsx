@@ -17,7 +17,7 @@ import McpServers from "../McpServers/McpServers";
 import Plugins from "../Plugins/Plugins";
 import Usage from "../Usage/Usage";
 import ContextFiles from "../ContextFiles/ContextFiles";
-import SecurityScreen from "../Security/Security";
+
 import Curator from "../Curator/Curator";
 import RemoteNotice from "../../components/RemoteNotice";
 import VerifyWarningBanner from "../../components/VerifyWarningBanner";
@@ -433,7 +433,6 @@ function Layout({
             <TabPage
               tabs={[
                 { key: "general", label: t("navigation.settings") },
-                { key: "security", label: t("navigation.security") },
                 { key: "usage", label: t("navigation.usage") },
               ]}
             >
@@ -441,8 +440,6 @@ function Layout({
                 switch (tab) {
                   case "general":
                     return <Settings profile={activeProfile} />;
-                  case "security":
-                    return <SecurityScreen />;
                   case "usage":
                     return <Usage />;
                   default:

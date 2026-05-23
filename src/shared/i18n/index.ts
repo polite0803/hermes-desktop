@@ -11,7 +11,6 @@ import mcpEn from "./locales/en/mcp";
 import pluginsEn from "./locales/en/plugins";
 import usageEn from "./locales/en/usage";
 import contextFilesEn from "./locales/en/contextFiles";
-import securityEn from "./locales/en/security";
 import curatorEn from "./locales/en/curator";
 import navigationEn from "./locales/en/navigation";
 import welcomeEn from "./locales/en/welcome";
@@ -40,7 +39,6 @@ import claw3dI18nEn from "./locales/en/claw3d";
 import commonEs from "./locales/es/common";
 import pluginsEs from "./locales/es/plugins";
 import contextFilesEs from "./locales/es/contextFiles";
-import securityEs from "./locales/es/security";
 import usageEs from "./locales/es/usage";
 import curatorEs from "./locales/es/curator";
 import navigationEs from "./locales/es/navigation";
@@ -70,7 +68,6 @@ import claw3dI18nEs from "./locales/es/claw3d";
 import commonId from "./locales/id/common";
 import pluginsId from "./locales/id/plugins";
 import contextFilesId from "./locales/id/contextFiles";
-import securityId from "./locales/id/security";
 import usageId from "./locales/id/usage";
 import curatorId from "./locales/id/curator";
 import navigationId from "./locales/id/navigation";
@@ -100,7 +97,6 @@ import claw3dI18nId from "./locales/id/claw3d";
 import commonZh from "./locales/zh-CN/common";
 import pluginsZh from "./locales/zh-CN/plugins";
 import contextFilesZh from "./locales/zh-CN/contextFiles";
-import securityZh from "./locales/zh-CN/security";
 import usageZh from "./locales/zh-CN/usage";
 import curatorZh from "./locales/zh-CN/curator";
 import navigationZh from "./locales/zh-CN/navigation";
@@ -130,7 +126,6 @@ import claw3dI18nZh from "./locales/zh-CN/claw3d";
 import commonZhTw from "./locales/zh-TW/common";
 import pluginsZhTw from "./locales/zh-TW/plugins";
 import contextFilesZhTw from "./locales/zh-TW/contextFiles";
-import securityZhTw from "./locales/zh-TW/security";
 import usageZhTw from "./locales/zh-TW/usage";
 import curatorZhTw from "./locales/zh-TW/curator";
 import navigationZhTw from "./locales/zh-TW/navigation";
@@ -160,7 +155,6 @@ import claw3dI18nZhTw from "./locales/zh-TW/claw3d";
 import commonJa from "./locales/ja/common";
 import pluginsJa from "./locales/ja/plugins";
 import contextFilesJa from "./locales/ja/contextFiles";
-import securityJa from "./locales/ja/security";
 import usageJa from "./locales/ja/usage";
 import curatorJa from "./locales/ja/curator";
 import navigationJa from "./locales/ja/navigation";
@@ -190,7 +184,6 @@ import claw3dI18nJa from "./locales/ja/claw3d";
 import commonPt from "./locales/pt-BR/common";
 import pluginsPt from "./locales/pt-BR/plugins";
 import contextFilesPt from "./locales/pt-BR/contextFiles";
-import securityPt from "./locales/pt-BR/security";
 import usagePt from "./locales/pt-BR/usage";
 import curatorPt from "./locales/pt-BR/curator";
 import navigationPt from "./locales/pt-BR/navigation";
@@ -220,7 +213,6 @@ import claw3dI18nPt from "./locales/pt-BR/claw3d";
 import commonPtPt from "./locales/pt-PT/common";
 import pluginsPtPt from "./locales/pt-PT/plugins";
 import contextFilesPtPt from "./locales/pt-PT/contextFiles";
-import securityPtPt from "./locales/pt-PT/security";
 import usagePtPt from "./locales/pt-PT/usage";
 import curatorPtPt from "./locales/pt-PT/curator";
 import navigationPtPt from "./locales/pt-PT/navigation";
@@ -255,7 +247,6 @@ export const resources = {
       plugins: pluginsEn,
       contextFiles: contextFilesEn,
       curator: curatorEn,
-      security: securityEn,
       usage: usageEn,
       mcp: mcpEn,
       navigation: navigationEn,
@@ -289,7 +280,6 @@ export const resources = {
       common: commonEs,
       plugins: pluginsEs,
       contextFiles: contextFilesEs,
-      security: securityEs,
       usage: usageEs,
       curator: curatorEs,
       navigation: navigationEs,
@@ -323,7 +313,6 @@ export const resources = {
       common: commonId,
       plugins: pluginsId,
       contextFiles: contextFilesId,
-      security: securityId,
       usage: usageId,
       curator: curatorId,
       navigation: navigationId,
@@ -357,7 +346,6 @@ export const resources = {
       common: commonZh,
       plugins: pluginsZh,
       contextFiles: contextFilesZh,
-      security: securityZh,
       usage: usageZh,
       curator: curatorZh,
       navigation: navigationZh,
@@ -391,7 +379,6 @@ export const resources = {
       common: commonZhTw,
       plugins: pluginsZhTw,
       contextFiles: contextFilesZhTw,
-      security: securityZhTw,
       usage: usageZhTw,
       curator: curatorZhTw,
       navigation: navigationZhTw,
@@ -425,7 +412,6 @@ export const resources = {
       common: commonPt,
       plugins: pluginsPt,
       contextFiles: contextFilesPt,
-      security: securityPt,
       usage: usagePt,
       curator: curatorPt,
       navigation: navigationPt,
@@ -459,7 +445,6 @@ export const resources = {
       common: commonPtPt,
       plugins: pluginsPtPt,
       contextFiles: contextFilesPtPt,
-      security: securityPtPt,
       usage: usagePtPt,
       curator: curatorPtPt,
       navigation: navigationPtPt,
@@ -493,7 +478,6 @@ export const resources = {
       common: commonJa,
       plugins: pluginsJa,
       contextFiles: contextFilesJa,
-      security: securityJa,
       usage: usageJa,
       curator: curatorJa,
       navigation: navigationJa,
