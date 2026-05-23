@@ -104,7 +104,7 @@ export default function Security(): React.JSX.Element {
         {config.mode !== "local" && (
           <div className="models-card" style={{ padding: 16 }}>
             <label style={{ fontSize: 13, fontWeight: 600, marginBottom: 8, display: "block" }}>{t("security.remoteUrl")}</label>
-            <input className="models-search-input" value={config.remoteUrl} onChange={(e) => setConfig({ ...config, remoteUrl: e.target.value })} placeholder="http://host:8642" />
+            <input className="models-search-input" value={config.remoteUrl} onChange={(e) => setConfig({ ...config, remoteUrl: e.target.value })} placeholder={t("security.remoteUrlPlaceholder")} />
             {config.mode === "remote" && (
               <div style={{ marginTop: 8, display: "flex", gap: 8, alignItems: "center" }}>
                 <button className="btn btn-sm" onClick={testConnection} disabled={testing}>
@@ -124,7 +124,7 @@ export default function Security(): React.JSX.Element {
           <label style={{ fontSize: 13, fontWeight: 600, marginBottom: 8, display: "block" }}>
             {t("security.apiKey")} {config.mode === "local" ? `(${t("security.optional")})` : ""}
           </label>
-          <input className="models-search-input" type="password" value={config.apiKey} onChange={(e) => setConfig({ ...config, apiKey: e.target.value })} placeholder="sk-..." />
+          <input className="models-search-input" type="password" value={config.apiKey} onChange={(e) => setConfig({ ...config, apiKey: e.target.value })} placeholder={t("security.apiKeyPlaceholder")} />
         </div>
 
         {config.mode === "ssh" && (

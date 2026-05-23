@@ -629,7 +629,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
                 type="url"
                 value={connRemoteUrl}
                 onChange={(e) => setConnRemoteUrl(e.target.value)}
-                placeholder="http://192.168.1.100:8642"
+                placeholder={t("settings.remoteUrlPlaceholder")}
                 onBlur={handleSaveConnection}
               />
               <div className="settings-field-hint">
@@ -686,7 +686,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
                 type="text"
                 value={sshHost}
                 onChange={(e) => setSshHost(e.target.value)}
-                placeholder="192.168.1.100 or myserver.local"
+                placeholder={t("settings.sshHostPlaceholder")}
               />
             </div>
             <div className="settings-field">
@@ -696,7 +696,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
                 type="number"
                 value={sshPort}
                 onChange={(e) => setSshPort(e.target.value)}
-                placeholder="22"
+                placeholder={t("settings.sshPortPlaceholder")}
               />
             </div>
             <div className="settings-field">
@@ -706,7 +706,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
                 type="text"
                 value={sshUser}
                 onChange={(e) => setSshUser(e.target.value)}
-                placeholder="hermes"
+                placeholder={t("settings.sshUserPlaceholder")}
               />
             </div>
             <div className="settings-field">
@@ -721,7 +721,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
                 type="text"
                 value={sshKeyPath}
                 onChange={(e) => setSshKeyPath(e.target.value)}
-                placeholder="~/.ssh/id_rsa"
+                placeholder={t("settings.sshKeyPlaceholder")}
               />
             </div>
             <div className="settings-field">
@@ -736,7 +736,7 @@ function Settings({ profile }: { profile?: string }): React.JSX.Element {
                 type="number"
                 value={sshRemotePort}
                 onChange={(e) => setSshRemotePort(e.target.value)}
-                placeholder="8642"
+                placeholder={t("settings.sshRemotePortPlaceholder")}
               />
               <div className="settings-field-hint" dangerouslySetInnerHTML={{ __html: t("settings.sshConnectionHint", { user: sshUser || "user", host: sshHost || "host" }) }} />
             </div>

@@ -48,6 +48,8 @@ export default {
   errorMessage: "发生了意外错误。",
   tryAgain: "重试",
   copied: "已复制！",
+  yes: "是",
+  no: "否",
   remoteNotice: {
     title: "已连接到远程 Hermes",
     desc: "{{feature}} 在远程模式下不可用。此数据存储在服务器上，尚无法通过 API 访问。",

@@ -15,4 +15,5 @@ export default {
   serverExists: "サーバーは既に存在します",
   computerUseLinuxOnly: "Computer-use MCPはLinuxのみサポートされています",
   cloneFailed: "リポジトリのクローンに失敗しました",
+  restartError: "再起動エラー：{{error}}",
 } as const;

@@ -8,4 +8,5 @@ export default {
   gatewayHint:
     "Connects Hermes to Telegram, Discord, Slack, and other platforms",
   startProxy: "Start Proxy",
+  proxyError: "Proxy error: {{error}}",
 } as const;

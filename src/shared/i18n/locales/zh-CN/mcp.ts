@@ -15,4 +15,5 @@ export default {
   serverExists: "服务器已存在",
   computerUseLinuxOnly: "Computer-use MCP 仅支持 Linux",
   cloneFailed: "克隆仓库失败",
+  restartError: "重启错误：{{error}}",
 } as const;

@@ -15,4 +15,5 @@ export default {
   serverExists: "El servidor ya existe",
   computerUseLinuxOnly: "Computer-use MCP solo es compatible con Linux",
   cloneFailed: "Error al clonar el repositorio",
+  restartError: "Error al reiniciar: {{error}}",
 } as const;

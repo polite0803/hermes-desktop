@@ -41,4 +41,10 @@ export default {
   errorSshUnreachable:
     "無法透過 SSH 連線或無法存取遠端 Hermes。請確保：\n• SSH 金鑰正確（或預設的 ~/.ssh/id_rsa 可用）\n• 遠端 Hermes 閘道正在執行\n• 遠端連接埠正確（預設為 8642）",
   errorSshFailed: "SSH 連線測試失敗：{error}",
+  remoteUrlPlaceholder: "http://192.168.1.100:8642",
+  sshHostPlaceholder: "192.168.1.100 或 myserver.local",
+  sshPortPlaceholder: "22",
+  sshUserPlaceholder: "hermes",
+  sshKeyPlaceholder: "~/.ssh/id_rsa",
+  sshRemotePortPlaceholder: "8642",
 } as const;

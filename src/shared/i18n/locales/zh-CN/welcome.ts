@@ -40,4 +40,10 @@ export default {
   errorSshUnreachable:
     "无法通过 SSH 连接或无法访问远程 Hermes。请确保：\n• SSH 密钥正确（或默认的 ~/.ssh/id_rsa 可用）\n• 远程 Hermes 网关正在运行\n• 远程端口正确（默认为 8642）",
   errorSshFailed: "SSH 连接测试失败：{error}",
+  remoteUrlPlaceholder: "http://192.168.1.100:8642",
+  sshHostPlaceholder: "192.168.1.100 或 myserver.local",
+  sshPortPlaceholder: "22",
+  sshUserPlaceholder: "hermes",
+  sshKeyPlaceholder: "~/.ssh/id_rsa",
+  sshRemotePortPlaceholder: "8642",
 } as const;

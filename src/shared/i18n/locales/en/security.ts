@@ -21,4 +21,6 @@ export default {
   tunnelActive: "Tunnel active",
   tunnelInactive: "Tunnel inactive",
   saveSettings: "Save Settings",
+  remoteUrlPlaceholder: "http://host:8642",
+  apiKeyPlaceholder: "sk-...",
 } as const;

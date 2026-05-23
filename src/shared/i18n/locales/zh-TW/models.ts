@@ -25,4 +25,5 @@ export default {
     "儲存為環境變數。會依 URL 符合對應的環境變數名稱，否則使用 CUSTOM_API_KEY。",
   autoDetected: "根據基礎 URL 自動偵測",
   alreadyExists: "此供應商已有相同模型",
+  apiKeyPlaceholder: "sk-...",
 } as const;

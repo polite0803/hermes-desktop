@@ -7,4 +7,5 @@ export default {
   stopped: "已停止",
   gatewayHint: "將 Hermes 連線到 Telegram、Discord、Slack 等平台",
   startProxy: "啟動 Proxy",
+  proxyError: "代理錯誤：{{error}}",
 } as const;

@@ -31,4 +31,5 @@ export default {
   loadFailed:
     "No se pudo cargar Claw3D. El servidor de desarrollo puede que aún esté iniciándose.",
   installStep: "Paso {{step}}/{{totalSteps}}: {{title}}",
+  wsPlaceholder: "ws://localhost:18789",
 } as const;

@@ -46,4 +46,5 @@ export default {
   localLlm: "ローカル LLM",
   modelBaseUrlPlaceholder: "http://localhost:1234/v1",
   modelNamePlaceholder: "例：llama-3.1-8b",
+  apiKeyPlaceholder: "sk-...",
 } as const;

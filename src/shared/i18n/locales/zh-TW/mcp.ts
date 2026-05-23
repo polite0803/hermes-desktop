@@ -15,4 +15,5 @@ export default {
   serverExists: "伺服器已存在",
   computerUseLinuxOnly: "Computer-use MCP 僅支援 Linux",
   cloneFailed: "複製儲存庫失敗",
+  restartError: "重啟錯誤：{{error}}",
 } as const;

@@ -412,7 +412,7 @@ function Office({
               onKeyDown={(e) => {
                 if (e.key === "Enter") handleWsUrlSave();
               }}
-              placeholder="ws://localhost:18789"
+              placeholder={t("office.wsPlaceholder")}
             />
           </div>
           <button className="btn btn-secondary btn-sm" onClick={loadLogs}>

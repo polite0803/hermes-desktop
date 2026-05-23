@@ -465,7 +465,7 @@ function Models({ visible }: ModelsProps = {}): React.JSX.Element {
                       type={showApiKey ? "text" : "password"}
                       value={formApiKey}
                       onChange={(e) => setFormApiKey(e.target.value)}
-                      placeholder="sk-..."
+                      placeholder={t("models.apiKeyPlaceholder")}
                     />
                     <button
                       className="setup-toggle-visibility"

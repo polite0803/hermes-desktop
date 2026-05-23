@@ -128,7 +128,7 @@ function Welcome({
           <input
             type="url"
             className="welcome-remote-input"
-            placeholder="http://192.168.1.100:8642"
+            placeholder={t("welcome.remoteUrlPlaceholder")}
             value={remoteUrl}
             onChange={(e) => setRemoteUrl(e.target.value)}
             onKeyDown={(e) => {
@@ -195,11 +195,10 @@ function Welcome({
       <div className="screen welcome-screen">
         <HermesLogo size={36} />
         <h1 className="welcome-title" style={{ fontSize: 22 }}>
-          Connect via SSH
+          {t("welcome.connectViaSsh")}
         </h1>
         <p className="welcome-subtitle" style={{ marginBottom: 24 }}>
-          Tunnel to a remote Hermes over SSH — no exposed ports or API keys
-          needed.
+          {t("welcome.sshSubtitle")}
         </p>
 
         <div className="welcome-remote-card">
@@ -209,7 +208,7 @@ function Welcome({
               <input
                 type="text"
                 className="welcome-remote-input"
-                placeholder="192.168.1.100 or myserver.local"
+                placeholder={t("welcome.sshHostPlaceholder")}
                 value={sshHost}
                 onChange={(e) => setSshHost(e.target.value)}
                 autoFocus
@@ -220,7 +219,7 @@ function Welcome({
               <input
                 type="number"
                 className="welcome-remote-input"
-                placeholder="22"
+                placeholder={t("welcome.sshPortPlaceholder")}
                 value={sshPort}
                 onChange={(e) => setSshPort(e.target.value)}
               />
@@ -233,7 +232,7 @@ function Welcome({
           <input
             type="text"
             className="welcome-remote-input"
-            placeholder="hermes"
+            placeholder={t("welcome.sshUserPlaceholder")}
             value={sshUser}
             onChange={(e) => setSshUser(e.target.value)}
           />
@@ -247,7 +246,7 @@ function Welcome({
           <input
             type="text"
             className="welcome-remote-input"
-            placeholder="~/.ssh/id_rsa"
+            placeholder={t("welcome.sshKeyPlaceholder")}
             value={sshKeyPath}
             onChange={(e) => setSshKeyPath(e.target.value)}
           />
@@ -261,7 +260,7 @@ function Welcome({
           <input
             type="number"
             className="welcome-remote-input"
-            placeholder="8642"
+            placeholder={t("welcome.sshRemotePortPlaceholder")}
             value={sshRemotePort}
             onChange={(e) => setSshRemotePort(e.target.value)}
           />

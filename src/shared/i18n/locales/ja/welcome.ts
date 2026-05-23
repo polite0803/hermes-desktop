@@ -42,4 +42,10 @@ export default {
   errorSshUnreachable:
     "SSH で接続できないか、リモートの Hermes に到達できません。以下を確認してください：\n• SSH キーが正しい（またはデフォルトの ~/.ssh/id_rsa が機能する）\n• リモートで Hermes ゲートウェイが実行中である\n• リモートポートが正しい（デフォルト 8642）",
   errorSshFailed: "SSH 接続テストに失敗しました：{error}",
+  remoteUrlPlaceholder: "http://192.168.1.100:8642",
+  sshHostPlaceholder: "192.168.1.100 または myserver.local",
+  sshPortPlaceholder: "22",
+  sshUserPlaceholder: "hermes",
+  sshKeyPlaceholder: "~/.ssh/id_rsa",
+  sshRemotePortPlaceholder: "8642",
 } as const;

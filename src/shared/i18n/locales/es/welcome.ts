@@ -43,4 +43,10 @@ export default {
   errorSshUnreachable:
     "No se pudo conectar vía SSH ni alcanzar Hermes en el remoto. Asegúrate de:\n• La clave SSH es correcta (o la predeterminada ~/.ssh/id_rsa funciona)\n• La pasarela de Hermes se está ejecutando en el remoto\n• El puerto remoto es correcto (por defecto 8642)",
   errorSshFailed: "La prueba de conexión SSH falló: {error}",
+  remoteUrlPlaceholder: "http://192.168.1.100:8642",
+  sshHostPlaceholder: "192.168.1.100 o mi-servidor.local",
+  sshPortPlaceholder: "22",
+  sshUserPlaceholder: "hermes",
+  sshKeyPlaceholder: "~/.ssh/id_rsa",
+  sshRemotePortPlaceholder: "8642",
 } as const;

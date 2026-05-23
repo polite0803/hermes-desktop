@@ -42,4 +42,10 @@ export default {
   errorSshUnreachable:
     "Tidak dapat terhubung via SSH atau mengakses Hermes di remote. Pastikan:\n• Kunci SSH benar (atau default ~/.ssh/id_rsa berfungsi)\n• Gateway Hermes berjalan di remote\n• Port remote benar (default 8642)",
   errorSshFailed: "Pengujian koneksi SSH gagal: {error}",
+  remoteUrlPlaceholder: "http://192.168.1.100:8642",
+  sshHostPlaceholder: "192.168.1.100 atau server-saya.local",
+  sshPortPlaceholder: "22",
+  sshUserPlaceholder: "hermes",
+  sshKeyPlaceholder: "~/.ssh/id_rsa",
+  sshRemotePortPlaceholder: "8642",
 } as const;

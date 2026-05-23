@@ -73,7 +73,7 @@ export default function McpServers(): React.JSX.Element {
           </button>
           <button className="btn btn-sm" onClick={async () => {
             try { await hermesAPI.installComputerUseMcp(); await loadServers(); }
-            catch (e) { alert(String(e)); }
+            catch (e) { alert(t("mcp.restartError", { error: String(e) })); }
           }}>
             <Download size={14} /> {t("mcp.installComputerUse")}
           </button>
@@ -119,7 +119,7 @@ export default function McpServers(): React.JSX.Element {
                 </button>
                 {testResult[s.name] !== undefined && (
                   <span style={{ fontSize: 12, color: testResult[s.name] ? "var(--accent)" : "var(--error)" }}>
-                    {testResult[s.name] ? "✓" : "✗"}
+                    {testResult[s.name] ? t("common.yes") : t("common.no")}
                   </span>
                 )}
                 <button className="btn btn-sm" onClick={() => handleToggle(s.name, s.enabled)}>

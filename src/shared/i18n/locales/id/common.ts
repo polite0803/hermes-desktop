@@ -48,6 +48,8 @@ export default {
   errorMessage: "Terjadi kesalahan tak terduga.",
   tryAgain: "Coba Lagi",
   copied: "Tersalin!",
+  yes: "Ya",
+  no: "Tidak",
   remoteNotice: {
     title: "Terhubung ke Hermes remote",
     desc: "{{feature}} tidak tersedia dalam mode remote. Data ini berada di server dan belum dapat diakses melalui API.",

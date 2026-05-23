@@ -48,6 +48,8 @@ export default {
   errorMessage: "An unexpected error occurred.",
   tryAgain: "Try Again",
   copied: "Copied!",
+  yes: "Yes",
+  no: "No",
   remoteNotice: {
     title: "Connected to remote Hermes",
     desc: "{{feature}} is not available in remote mode. This data lives on the server and is not accessible through the API yet.",

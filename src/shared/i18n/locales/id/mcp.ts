@@ -15,4 +15,5 @@ export default {
   serverExists: "Server sudah ada",
   computerUseLinuxOnly: "Computer-use MCP hanya didukung di Linux",
   cloneFailed: "Gagal mengkloning repositori",
+  restartError: "Kesalahan restart: {{error}}",
 } as const;

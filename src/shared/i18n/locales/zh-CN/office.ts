@@ -28,4 +28,5 @@ export default {
   preparing: "准备中...",
   loadFailed: "加载 Claw3D 失败。开发服务器可能仍在启动中。",
   installStep: "步骤 {{step}}/{{totalSteps}}：{{title}}",
+  wsPlaceholder: "ws://localhost:18789",
 } as const;

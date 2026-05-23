@@ -8,4 +8,5 @@ export default {
   gatewayHint:
     "Hermes を Telegram・Discord・Slack などのプラットフォームに接続します",
   startProxy: "プロキシを開始",
+  proxyError: "プロキシエラー：{{error}}",
 } as const;

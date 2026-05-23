@@ -41,7 +41,7 @@ export default function ContextFiles(): React.JSX.Element {
   }, [content, selected]);
 
   async function handleCreate(): Promise<void> {
-    const name = prompt("File name (e.g. RULES.md):");
+    const name = prompt(t("contextFiles.fileNamePrompt"));
     if (!name) return;
     await hermesAPI.writeContextFile(name, "");
     await load();
@@ -70,7 +70,7 @@ export default function ContextFiles(): React.JSX.Element {
           <div>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
               <h2 style={{ fontSize: 16, fontWeight: 600 }}>{selected}</h2>
-              {saved && <span style={{ fontSize: 11, color: "var(--accent)" }}>✓ Saved</span>}
+              {saved && <span style={{ fontSize: 11, color: "var(--accent)" }}>{t("common.saved")}</span>}
             </div>
             <textarea className="soul-textarea" value={content} onChange={(e) => setContent(e.target.value)}
               style={{ width: "100%", height: "calc(100vh - 160px)", background: "var(--bg-tertiary)", color: "var(--text-primary)", border: "1px solid var(--border)", borderRadius: 8, padding: 16, fontFamily: "monospace", fontSize: 13, resize: "none" }} />

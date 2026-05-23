@@ -31,4 +31,5 @@ export default {
   loadFailed:
     "Gagal memuat Claw3D. Server pengembangan mungkin masih dalam proses dimulai.",
   installStep: "Langkah {{step}}/{{totalSteps}}: {{title}}",
+  wsPlaceholder: "ws://localhost:18789",
 } as const;
